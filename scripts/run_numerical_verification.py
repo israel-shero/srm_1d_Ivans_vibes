@@ -63,6 +63,8 @@ def _write_limit_csv(path: Path, result: dict) -> None:
         fieldnames.extend((
             f"{name}_activations",
             f"{name}_duration_s",
+            f"{name}_first_activation_time_s",
+            f"{name}_last_activation_time_s",
             f"{name}_absolute_correction_energy_j",
         ))
     with path.open("w", newline="", encoding="utf-8") as stream:
@@ -78,11 +80,41 @@ def _write_limit_csv(path: Path, result: dict) -> None:
                 row[f"{name}_duration_s"] = float(
                     diagnostic["duration_s_by_cell"][index]
                 )
+                row[f"{name}_first_activation_time_s"] = float(
+                    diagnostic["first_activation_time_s_by_cell"][index]
+                )
+                row[f"{name}_last_activation_time_s"] = float(
+                    diagnostic["last_activation_time_s_by_cell"][index]
+                )
                 energy = diagnostic.get("absolute_correction_energy_j_by_cell")
                 row[f"{name}_absolute_correction_energy_j"] = (
                     float(energy[index]) if energy is not None else 0.0
                 )
             writer.writerow(row)
+
+
+def _write_mach_limit_csv(path: Path, result: dict) -> None:
+    diagnostic = result["numerical_limits"]["port_mach_cap"]
+    fieldnames = [
+        "interior_face_index", "x_m", "activations", "duration_s",
+        "first_activation_time_s", "last_activation_time_s",
+    ]
+    with path.open("w", newline="", encoding="utf-8") as stream:
+        writer = csv.DictWriter(stream, fieldnames=fieldnames)
+        writer.writeheader()
+        for index, x_m in enumerate(diagnostic["x_m"]):
+            writer.writerow({
+                "interior_face_index": index + 1,
+                "x_m": float(x_m),
+                "activations": int(diagnostic["activation_count_by_face"][index]),
+                "duration_s": float(diagnostic["duration_s_by_face"][index]),
+                "first_activation_time_s": float(
+                    diagnostic["first_activation_time_s_by_face"][index]
+                ),
+                "last_activation_time_s": float(
+                    diagnostic["last_activation_time_s_by_face"][index]
+                ),
+            })
 
 
 def _extract_metrics(result: dict, performance: dict | None = None) -> dict:
@@ -149,12 +181,47 @@ def _extract_metrics(result: dict, performance: dict | None = None) -> dict:
             metrics[f"{prefix}_total_cell_duration_s"] = float(np.sum(durations))
             metrics[f"{prefix}_max_cell_duration_s"] = float(durations[max_index])
             metrics[f"{prefix}_max_duration_x_m"] = float(x_m[max_index])
+            first_times = np.asarray(
+                diagnostic["first_activation_time_s_by_cell"], dtype=float
+            )
+            last_times = np.asarray(
+                diagnostic["last_activation_time_s_by_cell"], dtype=float
+            )
+            metrics[f"{prefix}_first_activation_time_s"] = (
+                float(np.nanmin(first_times)) if np.any(np.isfinite(first_times)) else None
+            )
+            metrics[f"{prefix}_last_activation_time_s"] = (
+                float(np.nanmax(last_times)) if np.any(np.isfinite(last_times)) else None
+            )
             energy = diagnostic.get("absolute_correction_energy_j_by_cell")
             if energy is not None:
                 energy = np.asarray(energy, dtype=float)
                 energy_index = int(np.argmax(energy))
                 metrics[f"{prefix}_total_abs_energy_j"] = float(np.sum(energy))
                 metrics[f"{prefix}_max_energy_x_m"] = float(x_m[energy_index])
+        diagnostic = limits["port_mach_cap"]
+        counts = np.asarray(diagnostic["activation_count_by_face"], dtype=np.int64)
+        durations = np.asarray(diagnostic["duration_s_by_face"], dtype=float)
+        first_times = np.asarray(
+            diagnostic["first_activation_time_s_by_face"], dtype=float
+        )
+        last_times = np.asarray(
+            diagnostic["last_activation_time_s_by_face"], dtype=float
+        )
+        metrics["limit_port_mach_cap_threshold_mach"] = float(
+            diagnostic["threshold_mach"]
+        )
+        metrics["limit_port_mach_cap_active_faces"] = int(np.count_nonzero(counts))
+        metrics["limit_port_mach_cap_total_activations"] = int(np.sum(counts))
+        metrics["limit_port_mach_cap_total_face_duration_s"] = float(
+            np.sum(durations)
+        )
+        metrics["limit_port_mach_cap_first_activation_time_s"] = (
+            float(np.nanmin(first_times)) if np.any(np.isfinite(first_times)) else None
+        )
+        metrics["limit_port_mach_cap_last_activation_time_s"] = (
+            float(np.nanmax(last_times)) if np.any(np.isfinite(last_times)) else None
+        )
     return metrics
 
 
@@ -181,6 +248,7 @@ def run_single_point(
     cfl: float,
     history_capacity: int | None = None,
     output_root: Path | None = None,
+    port_mach_cap: float | None = None,
 ) -> Path:
     if profile not in {"startup", "full"}:
         raise ValueError(f"Unknown verification profile: {profile!r}")
@@ -203,6 +271,8 @@ def run_single_point(
     })
     if history_capacity is not None:
         options["history_capacity"] = history_capacity
+    if port_mach_cap is not None:
+        options["port_mach_cap"] = port_mach_cap
 
     output = artifact_dir(
         f"verification_chunc_{profile}_point",
@@ -245,8 +315,11 @@ def run_single_point(
         payload["metrics"] = _extract_metrics(result, performance)
         limit_path = output / "numerical_limits_by_cell.csv"
         _write_limit_csv(limit_path, result)
+        mach_limit_path = output / "mach_limit_by_face.csv"
+        _write_mach_limit_csv(mach_limit_path, result)
         payload["outputs"] = {
             limit_path.name: _sha256(limit_path),
+            mach_limit_path.name: _sha256(mach_limit_path),
         }
         _write_json(point_path, payload)
         return output
@@ -437,6 +510,7 @@ def main() -> int:
     parser.add_argument("--single-cells", type=int)
     parser.add_argument("--single-cfl", type=float)
     parser.add_argument("--history-capacity", type=int)
+    parser.add_argument("--single-port-mach-cap", type=float)
     args = parser.parse_args()
     single_requested = args.single_cells is not None or args.single_cfl is not None
     if single_requested:
@@ -448,10 +522,14 @@ def main() -> int:
             args.single_cfl,
             args.history_capacity,
             args.output_root,
+            args.single_port_mach_cap,
         )
     else:
-        if args.history_capacity is not None:
-            parser.error("--history-capacity requires single-point mode")
+        if args.history_capacity is not None or args.single_port_mach_cap is not None:
+            parser.error(
+                "--history-capacity and --single-port-mach-cap require "
+                "single-point mode"
+            )
         output = run_study(args.profile, args.output_root)
     print(f"Verification artifacts: {output}")
     return 0

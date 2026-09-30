@@ -158,8 +158,10 @@ or load named motors from `srm_1d/motors/*.ric`.)
   (in-loop coupling).
 - `result['numerical_limits']` — per-cell activation counts and accumulated
   active duration for the temperature floor, temperature ceiling, and pressure
-  floor; temperature limits also report absolute correction energy by cell.
-  These are diagnostics only and do not alter the limiter equations.
+  floor, plus per-face diagnostics for the optional port Mach cap. First and
+  last activation times are recorded for every limit; temperature limits also
+  report absolute correction energy by cell. These are diagnostics only and do
+  not alter the limiter equations.
 - `print_performance_summary(perf, nozzle)` — Formatted output with
   divergence/throat/skin loss factors and throat change.
 

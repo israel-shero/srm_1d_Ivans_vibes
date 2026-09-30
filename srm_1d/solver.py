@@ -288,6 +288,13 @@ def _piso_step_with_energy_diagnostics(
     limit_activation_counts=None,
     limit_duration_s=None,
     limit_abs_energy_j=None,
+    limit_first_time_s=None,
+    limit_last_time_s=None,
+    mach_limit_activation_counts=None,
+    mach_limit_duration_s=None,
+    mach_limit_first_time_s=None,
+    mach_limit_last_time_s=None,
+    step_start_time_s=0.0,
 ):
     """
     One complete PISO time step on a staggered grid.
@@ -604,8 +611,22 @@ def _piso_step_with_energy_diagnostics(
             u_lim = port_mach_cap * a_f
             if u_new[j] > u_lim:
                 u_new[j] = u_lim
+                if mach_limit_activation_counts is not None:
+                    face_index = j - 1
+                    mach_limit_activation_counts[face_index] += 1
+                    mach_limit_duration_s[face_index] += dt
+                    if mach_limit_first_time_s[face_index] < 0.0:
+                        mach_limit_first_time_s[face_index] = step_start_time_s
+                    mach_limit_last_time_s[face_index] = step_start_time_s + dt
             elif u_new[j] < -u_lim:
                 u_new[j] = -u_lim
+                if mach_limit_activation_counts is not None:
+                    face_index = j - 1
+                    mach_limit_activation_counts[face_index] += 1
+                    mach_limit_duration_s[face_index] += dt
+                    if mach_limit_first_time_s[face_index] < 0.0:
+                        mach_limit_first_time_s[face_index] = step_start_time_s
+                    mach_limit_last_time_s[face_index] = step_start_time_s + dt
 
     # -------------------------------------------------------
     # STEP 3b: ENERGY EQUATION  (v0.7.1 Phase 3: sensible-enthalpy form)
@@ -692,6 +713,9 @@ def _piso_step_with_energy_diagnostics(
             limit_activation_counts[limit_index, i] += 1
             limit_duration_s[limit_index, i] += dt
             limit_abs_energy_j[limit_index, i] += abs(correction_power_i) * dt
+            if limit_first_time_s[limit_index, i] < 0.0:
+                limit_first_time_s[limit_index, i] = step_start_time_s
+            limit_last_time_s[limit_index, i] = step_start_time_s + dt
         T_new[i] = T_clipped
         gas_energy_after += new_mass * Cp_i * T_new[i]
 
@@ -704,6 +728,9 @@ def _piso_step_with_energy_diagnostics(
             if limit_activation_counts is not None:
                 limit_activation_counts[LIMIT_PRESSURE_FLOOR, i] += 1
                 limit_duration_s[LIMIT_PRESSURE_FLOOR, i] += dt
+                if limit_first_time_s[LIMIT_PRESSURE_FLOOR, i] < 0.0:
+                    limit_first_time_s[LIMIT_PRESSURE_FLOOR, i] = step_start_time_s
+                limit_last_time_s[LIMIT_PRESSURE_FLOOR, i] = step_start_time_s + dt
             P_new[i] = pressure_floor
     rho_new = np.zeros(N)
     for i in range(N):

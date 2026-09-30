@@ -9,6 +9,7 @@ from scripts.run_numerical_verification import (
     _adjacent_changes,
     _extract_metrics,
     _write_limit_csv,
+    _write_mach_limit_csv,
 )
 
 
@@ -32,16 +33,30 @@ def _localized_result():
             "temperature_floor": {
                 "activation_count_by_cell": np.array([0, 0]),
                 "duration_s_by_cell": np.array([0.0, 0.0]),
+                "first_activation_time_s_by_cell": np.array([np.nan, np.nan]),
+                "last_activation_time_s_by_cell": np.array([np.nan, np.nan]),
                 "absolute_correction_energy_j_by_cell": np.array([0.0, 0.0]),
             },
             "temperature_ceiling": {
                 "activation_count_by_cell": np.array([2, 1]),
                 "duration_s_by_cell": np.array([0.002, 0.001]),
+                "first_activation_time_s_by_cell": np.array([0.01, 0.02]),
+                "last_activation_time_s_by_cell": np.array([0.04, 0.03]),
                 "absolute_correction_energy_j_by_cell": np.array([3.0, 5.0]),
             },
             "pressure_floor": {
                 "activation_count_by_cell": np.array([0, 0]),
                 "duration_s_by_cell": np.array([0.0, 0.0]),
+                "first_activation_time_s_by_cell": np.array([np.nan, np.nan]),
+                "last_activation_time_s_by_cell": np.array([np.nan, np.nan]),
+            },
+            "port_mach_cap": {
+                "threshold_mach": 1.0,
+                "x_m": np.array([0.15]),
+                "activation_count_by_face": np.array([3]),
+                "duration_s_by_face": np.array([0.003]),
+                "first_activation_time_s_by_face": np.array([0.01]),
+                "last_activation_time_s_by_face": np.array([0.04]),
             },
         },
     }
@@ -109,6 +124,10 @@ def test_extract_metrics_localizes_numerical_limits():
     assert metrics["limit_temperature_ceiling_total_cell_duration_s"] == pytest.approx(0.003)
     assert metrics["limit_temperature_ceiling_max_duration_x_m"] == pytest.approx(0.1)
     assert metrics["limit_temperature_ceiling_max_energy_x_m"] == pytest.approx(0.2)
+    assert metrics["limit_temperature_ceiling_first_activation_time_s"] == 0.01
+    assert metrics["limit_temperature_ceiling_last_activation_time_s"] == 0.04
+    assert metrics["limit_port_mach_cap_active_faces"] == 1
+    assert metrics["limit_port_mach_cap_total_activations"] == 3
 
 
 def test_limit_csv_preserves_each_cell(tmp_path):
@@ -122,6 +141,19 @@ def test_limit_csv_preserves_each_cell(tmp_path):
     assert rows[1]["x_m"] == "0.2"
     assert rows[1]["temperature_ceiling_activations"] == "1"
     assert rows[1]["temperature_ceiling_absolute_correction_energy_j"] == "5.0"
+
+
+def test_mach_limit_csv_preserves_each_interior_face(tmp_path):
+    result = _localized_result()
+    path = tmp_path / "mach_limits.csv"
+    _write_mach_limit_csv(path, result)
+
+    with path.open(newline="", encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    assert len(rows) == 1
+    assert rows[0]["interior_face_index"] == "1"
+    assert rows[0]["x_m"] == "0.15"
+    assert rows[0]["activations"] == "3"
 
 
 def test_adjacent_changes_use_finer_value_as_denominator():

@@ -1393,6 +1393,9 @@ def _run_time_loop(
     gamma_mix_arr, Cp_mix_arr, R_mix_arr, M_mix_arr,
     T_ceiling_arr,
     limit_activation_counts, limit_duration_s, limit_abs_energy_j,
+    limit_first_time_s, limit_last_time_s,
+    mach_limit_activation_counts, mach_limit_duration_s,
+    mach_limit_first_time_s, mach_limit_last_time_s,
     # --- v0.7.2 Phase A: pyrogen axial distribution ---
     pyrogen_axial_weights,
     # --- v0.7.2 Phase B-v2: flame-front h_c augmentation ---
@@ -2001,6 +2004,10 @@ def _run_time_loop(
             A_throat, P_ambient, ambient_temperature, N,
             port_mach_cap,
             limit_activation_counts, limit_duration_s, limit_abs_energy_j,
+            limit_first_time_s, limit_last_time_s,
+            mach_limit_activation_counts, mach_limit_duration_s,
+            mach_limit_first_time_s, mach_limit_last_time_s,
+            t,
         )
 
         # ============================================
@@ -2503,6 +2510,12 @@ def run_simulation(
     )
     limit_duration_s = np.zeros((N_LIMIT_DIAGNOSTICS, N))
     limit_abs_energy_j = np.zeros((N_LIMIT_DIAGNOSTICS, N))
+    limit_first_time_s = np.full((N_LIMIT_DIAGNOSTICS, N), -1.0)
+    limit_last_time_s = np.full((N_LIMIT_DIAGNOSTICS, N), -1.0)
+    mach_limit_activation_counts = np.zeros(max(N - 1, 0), dtype=np.int64)
+    mach_limit_duration_s = np.zeros(max(N - 1, 0))
+    mach_limit_first_time_s = np.full(max(N - 1, 0), -1.0)
+    mach_limit_last_time_s = np.full(max(N - 1, 0), -1.0)
 
     # Ignition state
     is_burning = np.zeros(N, dtype=np.bool_)
@@ -2809,6 +2822,9 @@ def run_simulation(
         gamma_mix_arr, Cp_mix_arr, R_mix_arr, M_mix_arr,
         T_ceiling_arr,
         limit_activation_counts, limit_duration_s, limit_abs_energy_j,
+        limit_first_time_s, limit_last_time_s,
+        mach_limit_activation_counts, mach_limit_duration_s,
+        mach_limit_first_time_s, mach_limit_last_time_s,
         # v0.7.2 Phase A: pyrogen axial distribution
         pyrogen_axial_weights,
         # v0.7.2 Phase B-v2: flame-front h_c augmentation
@@ -3144,6 +3160,14 @@ def run_simulation(
                 'duration_s_by_cell': limit_duration_s[
                     LIMIT_TEMPERATURE_FLOOR
                 ].copy(),
+                'first_activation_time_s_by_cell': np.where(
+                    limit_first_time_s[LIMIT_TEMPERATURE_FLOOR] >= 0.0,
+                    limit_first_time_s[LIMIT_TEMPERATURE_FLOOR], np.nan,
+                ),
+                'last_activation_time_s_by_cell': np.where(
+                    limit_last_time_s[LIMIT_TEMPERATURE_FLOOR] >= 0.0,
+                    limit_last_time_s[LIMIT_TEMPERATURE_FLOOR], np.nan,
+                ),
                 'absolute_correction_energy_j_by_cell': limit_abs_energy_j[
                     LIMIT_TEMPERATURE_FLOOR
                 ].copy(),
@@ -3156,6 +3180,14 @@ def run_simulation(
                 'duration_s_by_cell': limit_duration_s[
                     LIMIT_TEMPERATURE_CEILING
                 ].copy(),
+                'first_activation_time_s_by_cell': np.where(
+                    limit_first_time_s[LIMIT_TEMPERATURE_CEILING] >= 0.0,
+                    limit_first_time_s[LIMIT_TEMPERATURE_CEILING], np.nan,
+                ),
+                'last_activation_time_s_by_cell': np.where(
+                    limit_last_time_s[LIMIT_TEMPERATURE_CEILING] >= 0.0,
+                    limit_last_time_s[LIMIT_TEMPERATURE_CEILING], np.nan,
+                ),
                 'absolute_correction_energy_j_by_cell': limit_abs_energy_j[
                     LIMIT_TEMPERATURE_CEILING
                 ].copy(),
@@ -3168,6 +3200,28 @@ def run_simulation(
                 'duration_s_by_cell': limit_duration_s[
                     LIMIT_PRESSURE_FLOOR
                 ].copy(),
+                'first_activation_time_s_by_cell': np.where(
+                    limit_first_time_s[LIMIT_PRESSURE_FLOOR] >= 0.0,
+                    limit_first_time_s[LIMIT_PRESSURE_FLOOR], np.nan,
+                ),
+                'last_activation_time_s_by_cell': np.where(
+                    limit_last_time_s[LIMIT_PRESSURE_FLOOR] >= 0.0,
+                    limit_last_time_s[LIMIT_PRESSURE_FLOOR], np.nan,
+                ),
+            },
+            'port_mach_cap': {
+                'threshold_mach': float(port_mach_cap),
+                'x_m': 0.5 * (x_centers[:-1] + x_centers[1:]),
+                'activation_count_by_face': mach_limit_activation_counts.copy(),
+                'duration_s_by_face': mach_limit_duration_s.copy(),
+                'first_activation_time_s_by_face': np.where(
+                    mach_limit_first_time_s >= 0.0,
+                    mach_limit_first_time_s, np.nan,
+                ),
+                'last_activation_time_s_by_face': np.where(
+                    mach_limit_last_time_s >= 0.0,
+                    mach_limit_last_time_s, np.nan,
+                ),
             },
         },
         # v0.7.1: N-species final state and species registry

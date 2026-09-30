@@ -308,7 +308,40 @@ def test_run_exposes_per_cell_numerical_limit_diagnostics():
     for name in ('temperature_floor', 'temperature_ceiling', 'pressure_floor'):
         assert limits[name]['activation_count_by_cell'].shape == (geo.N_cells,)
         assert limits[name]['duration_s_by_cell'].shape == (geo.N_cells,)
+        assert limits[name]['first_activation_time_s_by_cell'].shape == (
+            geo.N_cells,
+        )
+        assert limits[name]['last_activation_time_s_by_cell'].shape == (
+            geo.N_cells,
+        )
         assert np.all(limits[name]['activation_count_by_cell'] >= 0)
+    mach_limit = limits['port_mach_cap']
+    assert mach_limit['threshold_mach'] == 0.0
+    assert mach_limit['x_m'].shape == (geo.N_cells - 1,)
+    assert np.count_nonzero(mach_limit['activation_count_by_face']) == 0
+    assert np.all(np.isnan(mach_limit['first_activation_time_s_by_face']))
+
+
+def test_enabled_port_mach_cap_reports_face_activations():
+    geo, prop, nozzle = _small_motor()
+    result = run_simulation(
+        geo, prop, nozzle, _test_chamber(),
+        T_ignition=294.0,
+        port_mach_cap=1.0e-6,
+        t_max=0.001,
+        P_cutoff=1.0,
+        snapshot_interval=0.001,
+        verbose=False,
+    )
+
+    diagnostic = result['numerical_limits']['port_mach_cap']
+    active = diagnostic['activation_count_by_face'] > 0
+    assert np.any(active)
+    assert np.all(np.isfinite(diagnostic['first_activation_time_s_by_face'][active]))
+    assert np.all(
+        diagnostic['last_activation_time_s_by_face'][active]
+        >= diagnostic['first_activation_time_s_by_face'][active]
+    )
 
 
 def test_pyrogen_driven_run_reports_ignition_and_pyrogen_state():

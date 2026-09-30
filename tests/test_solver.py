@@ -164,17 +164,21 @@ class TestPisoSources:
         counts = np.zeros((3, 1), dtype=np.int64)
         durations = np.zeros((3, 1))
         energies = np.zeros((3, 1))
+        first_times = np.full((3, 1), -1.0)
+        last_times = np.full((3, 1), -1.0)
         dt = 1.0e-4
 
         self._single_cell_source_step(
             1.0e-3, 100.0, 10_000.0, dt,
             diagnostics=True,
-            limit_arrays=(counts, durations, energies),
+            limit_arrays=(counts, durations, energies, first_times, last_times),
         )
 
         assert counts[1, 0] == 1
         assert durations[1, 0] == pytest.approx(dt)
         assert energies[1, 0] > 0.0
+        assert first_times[1, 0] == 0.0
+        assert last_times[1, 0] == pytest.approx(dt)
         assert counts[0, 0] == 0
 
     def test_thermal_source_controls_injection_temperature(self):
