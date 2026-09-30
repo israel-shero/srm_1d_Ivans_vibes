@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "python": {
+    "major_minor": "3.10",
+    "validated_patch": "3.10.10"
+  },
+  "repositories": {
+    "srm_1d": {
+      "path": ".",
+      "origin": "https://github.com/eJar0k/srm_1d.git",
+      "commit": "db0a980ebae4cc9cdc29c841afa8ffff3f240fdb",
+      "pin_mode": "contains",
+      "required_paths": [
+        "srm_1d/srm1d_plugin.py",
+        "srm_1d/openmotor_adapter.py"
+      ]
+    },
+    "openMotor": {
+      "path": "../openMotor-compatible",
+      "origin": "https://github.com/eJar0k/openMotor.git",
+      "commit": "92e425f7832ed3f3e926ff985117649e3c77881a",
+      "pin_mode": "exact",
+      "required_paths": [
+        "motorlib/solvers.py",
+        "motorlib/taper.py"
+      ]
+    }
+  }
+}

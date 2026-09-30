@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "cases": {
+    "hasegawa_a": {
+      "configuration_source": "examples/hasegawa_motor_a.py",
+      "motor_path": "motors/hasegawa_a.ric",
+      "transport": {
+        "mode": "embedded_ric",
+        "transport_path": null
+      },
+      "run_options": {
+        "roughness": 0.000032,
+        "kappa": 0.44,
+        "pyrogen": "bpnv",
+        "pyrogen_mass": null,
+        "T_ignition": 756.0,
+        "P_cutoff": 50000.0,
+        "snapshot_interval": 0.2,
+        "print_interval": 0.2
+      },
+      "comparison": {
+        "enabled": true,
+        "measurement_case_id": "hasegawa_a",
+        "time_offset_s": 1.1,
+        "alignment_method": "checked_in_manual_offset"
+      },
+      "plots": {
+        "flow_snapshot_time_s": 2.0
+      }
+    },
+    "chunc": {
+      "configuration_source": "examples/run_chunc.py",
+      "motor_path": "motors/machbusterNew.ric",
+      "transport": {
+        "mode": "embedded_ric",
+        "transport_path": null
+      },
+      "run_options": {
+        "pyrogen": "mtv",
+        "pyrogen_mass": null,
+        "pyrogen_throat_area": null,
+        "pyrogen_volume": null,
+        "roughness": 0.000035,
+        "kappa": 0.45,
+        "T_ignition": 900.0,
+        "k_solid": 0.4,
+        "P_cutoff": 50000.0,
+        "t_max": 3.0,
+        "cfl_target": 0.3,
+        "snapshot_interval": 0.2,
+        "print_interval": 0.2
+      },
+      "comparison": {
+        "enabled": false,
+        "measurement_case_id": "chunc",
+        "reason": "Experimental time-zero/alignment rule is not frozen."
+      },
+      "plots": {
+        "flow_snapshot_time_s": 1.0
+      }
+    }
+  }
+}

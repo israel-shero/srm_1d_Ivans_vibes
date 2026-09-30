@@ -1,0 +1,405 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-09-29",
+  "readiness_values": [
+    "baseline_executed",
+    "candidate",
+    "blocked"
+  ],
+  "quality_flags": {
+    "coarse_sampling": "Trace resolution limits transient-shape comparisons.",
+    "digitized_trace": "Values were digitized from a published figure rather than supplied as raw measurements.",
+    "manual_time_alignment": "The current overlay uses a manually selected time offset.",
+    "csv_not_wired_to_example": "A preferred CSV exists but the checked-in example does not load it.",
+    "historical_noncanonical_settings": "The example contains case-specific historical settings that differ from current canonical defaults.",
+    "unknown_calibration": "Measurement calibration or channel derivation is unresolved.",
+    "limited_pre_event_baseline": "The trace has insufficient quiescent pre-event data for a reliable tare.",
+    "uncertain_time_zero": "The event time origin is estimated or not yet frozen by a deterministic rule.",
+    "scale_transfer_required": "The measurement and modeled motor are different scales.",
+    "missing_measurement": "The expected measured trace is not present in the repository.",
+    "runner_path_broken": "The example contains a known invalid or nonportable data path.",
+    "motor_measurement_identity_unverified": "The measured trace has not been proven to belong to the modeled motor input.",
+    "no_measured_trace": "No measured trace is paired with this motor.",
+    "no_independent_burn_rate": "No independent burn-rate dataset is registered for this case."
+  },
+  "cases": [
+    {
+      "id": "hasegawa_a",
+      "label": "Hasegawa Motor A",
+      "readiness": "baseline_executed",
+      "runner": "examples.hasegawa_motor_a",
+      "files": [
+        {
+          "role": "runner",
+          "path": "examples/hasegawa_motor_a.py",
+          "sha256": "60265bf260a725171d0044e9d8f558bfa43d1217c247d91fa8e4fffd257bbf98"
+        },
+        {
+          "role": "motor",
+          "path": "motors/hasegawa_a.ric",
+          "sha256": "109583c1b056774eb16e932a6189f38b78c4a04b5110df60e19a2d9d6f563897"
+        },
+        {
+          "role": "effective_transport",
+          "path": "motors/hasegawa_a.transport.yaml",
+          "sha256": "8ba7f3f98fd9a852e52941222c634fcd66ca78686607790c3f79ca975789e4c0"
+        },
+        {
+          "role": "frozen_transport",
+          "path": "motors/hasegawa_a.frozen.transport.yaml",
+          "sha256": "ed63244e204155d65910c87dc966caf4209b47a8696b624c60d6bf929ab79581"
+        },
+        {
+          "role": "measurement_source",
+          "path": "srm_1d/plotting.py",
+          "sha256": "9afb6540ddb2e6bbe16dfdbf3ab3dbd507bd9d16bd4abb9b06b866c4b5133510"
+        }
+      ],
+      "measurement": {
+        "kind": "python_symbol",
+        "symbol": "HASEGAWA_MOTOR_A_EXPERIMENTAL",
+        "points": 36,
+        "time_unit": "s",
+        "pressure_unit": "MPa",
+        "provenance": "Digitized from Ma et al. (2020), Figure 10.",
+        "alignment": {
+          "method": "manual_offset",
+          "offset_s": 1.1
+        }
+      },
+      "quality_flags": [
+        "digitized_trace",
+        "coarse_sampling",
+        "manual_time_alignment",
+        "no_independent_burn_rate"
+      ],
+      "notes": "Headless example executed twice. Solver metrics repeated at reported precision; no experimental error metric was emitted."
+    },
+    {
+      "id": "zerox",
+      "label": "Zerox",
+      "readiness": "candidate",
+      "runner": "examples.zerox",
+      "files": [
+        {
+          "role": "runner",
+          "path": "examples/zerox.py",
+          "sha256": "bc75582da2154c5d1aaaea239aefb4aa12184e2c0c0dc18c69efd847ceca9359"
+        },
+        {
+          "role": "motor",
+          "path": "motors/zerox.ric",
+          "sha256": "b3179bfb77a9b741bb231df9898b6ad85c0818c597f00784926ebbba3e4bcdcb"
+        },
+        {
+          "role": "effective_transport",
+          "path": "motors/zerox.transport.yaml",
+          "sha256": "07e983c668bb8c8cff81f6e36a4c58a39e9906f96dc49fd29b5997e12d993ee7"
+        },
+        {
+          "role": "frozen_transport",
+          "path": "motors/zerox.frozen.transport.yaml",
+          "sha256": "b72cfe410e26e89f4641ac00a4bd19c06e532ac9fdedba003e4ecd9375e1a77a"
+        },
+        {
+          "role": "measurement_csv",
+          "path": "static_fire_data/zerox_data.csv",
+          "sha256": "a31569d780b4c6683f57d8950f0ba876bad1ecf70c47ee9a957528abe755d54f",
+          "data_rows": 58,
+          "skip_header": 1
+        },
+        {
+          "role": "measurement_workbook",
+          "path": "static_fire_data/Zerox Data.xlsx",
+          "sha256": "0c2b3810a81dc76f6bac60a8156fab7c537ed772d98cc1b629b22a1204ad9662"
+        }
+      ],
+      "measurement": {
+        "kind": "csv",
+        "time_column": 1,
+        "pressure_column": 0,
+        "time_unit": "s",
+        "pressure_unit": "MPa",
+        "delimiter": ",",
+        "skip_header": 1,
+        "alignment": {
+          "method": "not_frozen"
+        }
+      },
+      "quality_flags": [
+        "coarse_sampling",
+        "csv_not_wired_to_example",
+        "uncertain_time_zero",
+        "no_independent_burn_rate"
+      ],
+      "notes": "CSV columns are pressure then time. The example currently uses an in-code 58-point trace; equivalence must be established."
+    },
+    {
+      "id": "chunc",
+      "label": "Chunc / machbusterNew",
+      "readiness": "candidate",
+      "runner": "examples.run_chunc",
+      "files": [
+        {
+          "role": "runner",
+          "path": "examples/run_chunc.py",
+          "sha256": "0d9539014de4518c0b5bf2e2464c4e7b5d16b79a31d92f783a00934f0ecc0e22"
+        },
+        {
+          "role": "motor",
+          "path": "motors/machbusterNew.ric",
+          "sha256": "4a7163cf24d68a2cc4604a1f99e6a806d55aaae6f7ce61ee3077d96a1535d378"
+        },
+        {
+          "role": "effective_transport",
+          "path": "motors/machbusterNew.transport.yaml",
+          "sha256": "f16686a99076d985321bf446e1a15b867f6443c0be0c3f3a066f52f7128ead54"
+        },
+        {
+          "role": "frozen_transport",
+          "path": "motors/machbusterNew.frozen.transport.yaml",
+          "sha256": "334a1ae881373b40aecad665a74249a41a66119bbf9aa99c5917030cc51dbadf"
+        },
+        {
+          "role": "measurement_csv",
+          "path": "static_fire_data/thomas_chunc_firing.csv",
+          "sha256": "1e0840de48623542d4d79b9079eef0cc76f9ca8ad475d5f14657e8ac5afa7e08",
+          "data_rows": 346,
+          "skip_header": 1
+        },
+        {
+          "role": "measurement_workbook",
+          "path": "static_fire_data/thomas_chunc_firing.xlsx",
+          "sha256": "d406481a9769df735e56c257afa4d14882f6e15cdb0c4d5765a6f03c9edc9a7b"
+        }
+      ],
+      "measurement": {
+        "kind": "csv",
+        "time_column": 0,
+        "pressure_column": 1,
+        "time_unit": "s",
+        "pressure_unit": "MPa",
+        "delimiter": ",",
+        "skip_header": 1,
+        "alignment": {
+          "method": "not_frozen"
+        }
+      },
+      "quality_flags": [
+        "csv_not_wired_to_example",
+        "historical_noncanonical_settings",
+        "uncertain_time_zero",
+        "no_independent_burn_rate"
+      ],
+      "notes": "The runner currently disables the CSV overlay and uses historical MTV/roughness/kappa/thermal settings. These must be captured as case configuration, not promoted to defaults."
+    },
+    {
+      "id": "ballsstick_3in",
+      "label": "BALLSStick 3-inch model with 2-inch subscale trace",
+      "readiness": "blocked",
+      "runner": "examples.run_BALLSstick",
+      "files": [
+        {
+          "role": "runner",
+          "path": "examples/run_BALLSstick.py",
+          "sha256": "9a224e5b2b637fe5e0a6465587f88ff052cc8cf5c0d9df92ce2b0f924dced7cb"
+        },
+        {
+          "role": "motor",
+          "path": "motors/BALLSstick.ric",
+          "sha256": "a208e6cacbcc082fe1c633108013f6dbb2c41b6f2da9b50a309019c6e9eae35f"
+        },
+        {
+          "role": "effective_transport",
+          "path": "motors/BALLSstick.transport.yaml",
+          "sha256": "e7990a1f110064c2581a91bf83b8500bc420cc6e11f561f3224511348cc49bb9"
+        },
+        {
+          "role": "frozen_transport",
+          "path": "motors/BALLSstick.frozen.transport.yaml",
+          "sha256": "1815eba194a61346283ad126049663abba132ee6838734fb9fb9eee1b2c47530"
+        },
+        {
+          "role": "raw_measurement_csv",
+          "path": "static_fire_data/raw/ballsstick_subscale_raw.csv",
+          "sha256": "8cc9f70fe8e429bbe73faa35a9153ac0a40521dadf3e67fc94db31ac9be6f176",
+          "data_rows": 417,
+          "skip_header": 1
+        }
+      ],
+      "measurement": {
+        "kind": "raw_csv",
+        "time_column": 0,
+        "logged_pressure_column": 5,
+        "logged_pressure_unit": "psi",
+        "ignition_time_estimate_s": 1388.37,
+        "allowed_uses": [
+          "qualitative_shape",
+          "startup_pressure_ratio"
+        ],
+        "prohibited_uses": [
+          "absolute_pressure_validation",
+          "direct_3in_validation"
+        ]
+      },
+      "quality_flags": [
+        "unknown_calibration",
+        "limited_pre_event_baseline",
+        "uncertain_time_zero",
+        "scale_transfer_required",
+        "no_independent_burn_rate"
+      ],
+      "notes": "The raw trace is a 2-inch subscale firing. No 3-inch firing is present."
+    },
+    {
+      "id": "pathfinder54_overlay",
+      "label": "Pathfinder 54 trace with current ST2.0 runner input",
+      "readiness": "blocked",
+      "runner": "examples.run_pathfin54",
+      "files": [
+        {
+          "role": "runner",
+          "path": "examples/run_pathfin54.py",
+          "sha256": "14d38e6688f44c6941731eb2947e103258b1f1ef476ab4ca6947ac03121fd9fe"
+        },
+        {
+          "role": "motor",
+          "path": "motors/2025.12.25 54-2800 ST2.0.ric",
+          "sha256": "45eb618280711fc492d77c5d92b8e690e46c5b64b24fd51aad89bc8bf2ff2631"
+        },
+        {
+          "role": "transport",
+          "path": "motors/2025.12.25 54-2800 ST2.0.transport.yaml",
+          "sha256": "812093800f34b680e7259728d8d288ec306f503781cc7b232630a023b0f87640"
+        },
+        {
+          "role": "measurement_csv",
+          "path": "static_fire_data/pathfin54.csv",
+          "sha256": "2dbbd9f87c37e101f23ca95126d8a109676993f7e38e3c4ca131f3c737b2b1a1",
+          "data_rows": 409,
+          "skip_header": 1
+        }
+      ],
+      "measurement": {
+        "kind": "csv",
+        "time_column": 0,
+        "force_column": 1,
+        "pressure_column": 2,
+        "time_unit": "s",
+        "force_unit": "N",
+        "pressure_unit": "Pa",
+        "delimiter": ",",
+        "skip_header": 1,
+        "alignment": {
+          "method": "not_frozen"
+        }
+      },
+      "quality_flags": [
+        "runner_path_broken",
+        "motor_measurement_identity_unverified",
+        "uncertain_time_zero",
+        "no_independent_burn_rate"
+      ],
+      "notes": "The runner points to a Windows path with a trailing slash and currently uses the ST2.0 motor input. Pairing with pathfin54.csv is not yet proven."
+    },
+    {
+      "id": "st2_54_2800",
+      "label": "54-2800 ST2.0",
+      "readiness": "blocked",
+      "runner": "examples.run_pathfin54st2_0",
+      "files": [
+        {
+          "role": "runner",
+          "path": "examples/run_pathfin54st2_0.py",
+          "sha256": "5b61e411a79e8643772641e02e3d0dd9df61528739a194ad271f42425bf410b9"
+        },
+        {
+          "role": "motor",
+          "path": "motors/2025.12.25 54-2800 ST2.0.ric",
+          "sha256": "45eb618280711fc492d77c5d92b8e690e46c5b64b24fd51aad89bc8bf2ff2631"
+        },
+        {
+          "role": "transport",
+          "path": "motors/2025.12.25 54-2800 ST2.0.transport.yaml",
+          "sha256": "812093800f34b680e7259728d8d288ec306f503781cc7b232630a023b0f87640"
+        },
+        {
+          "role": "expected_measurement_csv",
+          "path": "static_fire_data/2026.01.03 54-2800 ST2.0.csv",
+          "available": false
+        }
+      ],
+      "measurement": {
+        "kind": "missing"
+      },
+      "quality_flags": [
+        "missing_measurement",
+        "runner_path_broken",
+        "no_independent_burn_rate"
+      ],
+      "notes": "The runner contains a wrong-depth absolute Windows path and the named CSV is absent."
+    },
+    {
+      "id": "hlbl_test",
+      "label": "HLBL Test Motor",
+      "readiness": "blocked",
+      "runner": "examples.run_hlbltest",
+      "files": [
+        {
+          "role": "runner",
+          "path": "examples/run_hlbltest.py",
+          "sha256": "9f83f7623f9bfe56d97a9f1cdaf162a9ddde9340a38813a3ab7d1d358c15af72"
+        },
+        {
+          "role": "motor",
+          "path": "motors/hlbltest.ric",
+          "sha256": "a7cbde5937de100495d1fc9bc746d752ea9462d8d0e3920758f15858364f759d"
+        },
+        {
+          "role": "transport",
+          "path": "motors/hlbltest.transport.yaml",
+          "sha256": "826c22fc564597cdb5d93d6dbd69632a956b4d6c60a37e5024e7115af2abaae5"
+        }
+      ],
+      "measurement": {
+        "kind": "none"
+      },
+      "quality_flags": [
+        "no_measured_trace",
+        "no_independent_burn_rate"
+      ],
+      "notes": "Runnable input exists, but no measured trace is registered."
+    },
+    {
+      "id": "fat_boy_76_8000",
+      "label": "76/8000 Fat Boy",
+      "readiness": "blocked",
+      "runner": "examples.run_76_8000FatBoy_Monolithic_ForwardFinocyl_Aft_Conical",
+      "files": [
+        {
+          "role": "runner",
+          "path": "examples/run_76_8000FatBoy_Monolithic_ForwardFinocyl_Aft_Conical.py",
+          "sha256": "87569590b9fdc1641782bd8b230983574b4d28f6b5d8e2942a10fe97603f6e17"
+        },
+        {
+          "role": "motor",
+          "path": "motors/76_8000FatBoy_Monolithic_ForwardFinocyl_Aft_Conical.ric",
+          "sha256": "d14712c8ba33dc3b6cae89da41bbb61697270ae533033fcb7922f119a92897e4"
+        },
+        {
+          "role": "transport",
+          "path": "motors/76_8000FatBoy_Monolithic_ForwardFinocyl_Aft_Conical.transport.yaml",
+          "sha256": "4921ef0e1123d33337f7b83e89abe80f1b281fe1533f603e00f035132e42ad1a"
+        }
+      ],
+      "measurement": {
+        "kind": "none"
+      },
+      "quality_flags": [
+        "no_measured_trace",
+        "no_independent_burn_rate"
+      ],
+      "notes": "Runnable input exists, but no measured trace is registered."
+    }
+  ]
+}
