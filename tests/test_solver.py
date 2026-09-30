@@ -75,7 +75,8 @@ class TestCFL:
 
 class TestPisoSources:
     def _single_cell_source_step(self, A_port_value, mass_rate, source_temperature,
-                                 dt=1.0e-4, diagnostics=False):
+                                 dt=1.0e-4, diagnostics=False,
+                                 limit_arrays=None):
         """Closed one-cell source step used by conservative energy tests.
 
         v0.7.1 (Phase 3): thermal_source carries W/m and PISO takes
@@ -106,12 +107,15 @@ class TestPisoSources:
         T_ceiling_arr = np.full(N, T_flame * 1.01)
 
         step_func = _piso_step_with_energy_diagnostics if diagnostics else piso_step
-        return step_func(
+        args = (
             rho, u, P, T, A_port, D_hyd,
             mass_source, thermal_source, momentum_source, f_darcy,
             0.01, dt, gamma_arr, R_arr, Cp_arr, T_ceiling_arr,
             0.0, P_initial, T_initial, N,
         )
+        if diagnostics and limit_arrays is not None:
+            return step_func(*args, 0.0, *limit_arrays)
+        return step_func(*args)
 
     def test_single_cell_thermal_source_matches_conservative_temperature(self):
         """No-flow source update should conserve rho*T scalar content."""
@@ -155,6 +159,23 @@ class TestPisoSources:
 
         assert out[10] == pytest.approx(0.0)
         assert out[11] == pytest.approx(0.0, abs=1.0e-8)
+
+    def test_temperature_ceiling_clip_is_localized(self):
+        counts = np.zeros((3, 1), dtype=np.int64)
+        durations = np.zeros((3, 1))
+        energies = np.zeros((3, 1))
+        dt = 1.0e-4
+
+        self._single_cell_source_step(
+            1.0e-3, 100.0, 10_000.0, dt,
+            diagnostics=True,
+            limit_arrays=(counts, durations, energies),
+        )
+
+        assert counts[1, 0] == 1
+        assert durations[1, 0] == pytest.approx(dt)
+        assert energies[1, 0] > 0.0
+        assert counts[0, 0] == 0
 
     def test_thermal_source_controls_injection_temperature(self):
         """Same mass source with hotter thermal source should heat more.

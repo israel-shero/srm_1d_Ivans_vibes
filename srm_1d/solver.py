@@ -163,6 +163,11 @@ NOZZLE_STATE_BALANCED = 0
 NOZZLE_STATE_SUBSONIC_OUT = 1
 NOZZLE_STATE_CHOKED_OUT = 2
 
+LIMIT_TEMPERATURE_FLOOR = 0
+LIMIT_TEMPERATURE_CEILING = 1
+LIMIT_PRESSURE_FLOOR = 2
+N_LIMIT_DIAGNOSTICS = 3
+
 
 @njit(cache=True, fastmath=True)
 def _critical_pressure_ratio(gamma):
@@ -280,6 +285,9 @@ def _piso_step_with_energy_diagnostics(
     dx, dt, gamma_arr, R_arr, Cp_arr, T_ceiling_arr,
     A_throat, P_ambient, T_ambient, N,
     port_mach_cap=0.0,
+    limit_activation_counts=None,
+    limit_duration_s=None,
+    limit_abs_energy_j=None,
 ):
     """
     One complete PISO time step on a staggered grid.
@@ -671,13 +679,19 @@ def _piso_step_with_energy_diagnostics(
         T_floor = max(1.0, T_ambient)
         T_ceiling_i = T_ceiling_arr[i]
         T_clipped = T_raw
+        limit_index = -1
         if T_clipped < T_floor:
             T_clipped = T_floor
+            limit_index = LIMIT_TEMPERATURE_FLOOR
         if T_clipped > T_ceiling_i:
             T_clipped = T_ceiling_i
-        clipping_correction_power += (
-            (T_clipped - T_raw) * new_mass * Cp_i / dt
-        )
+            limit_index = LIMIT_TEMPERATURE_CEILING
+        correction_power_i = (T_clipped - T_raw) * new_mass * Cp_i / dt
+        clipping_correction_power += correction_power_i
+        if limit_index >= 0 and limit_activation_counts is not None:
+            limit_activation_counts[limit_index, i] += 1
+            limit_duration_s[limit_index, i] += dt
+            limit_abs_energy_j[limit_index, i] += abs(correction_power_i) * dt
         T_new[i] = T_clipped
         gas_energy_after += new_mass * Cp_i * T_new[i]
 
@@ -686,7 +700,11 @@ def _piso_step_with_energy_diagnostics(
     # -------------------------------------------------------
     pressure_floor = 1.0e3
     for i in range(N):
-        P_new[i] = max(P_new[i], pressure_floor)
+        if P_new[i] < pressure_floor:
+            if limit_activation_counts is not None:
+                limit_activation_counts[LIMIT_PRESSURE_FLOOR, i] += 1
+                limit_duration_s[LIMIT_PRESSURE_FLOOR, i] += dt
+            P_new[i] = pressure_floor
     rho_new = np.zeros(N)
     for i in range(N):
         rho_new[i] = P_new[i] / (R_arr[i] * T_new[i])

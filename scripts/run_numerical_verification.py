@@ -55,6 +55,36 @@ def _write_json(path: Path, payload: dict) -> None:
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
 
 
+def _write_limit_csv(path: Path, result: dict) -> None:
+    limits = result["numerical_limits"]
+    names = ("temperature_floor", "temperature_ceiling", "pressure_floor")
+    fieldnames = ["cell_index", "x_m"]
+    for name in names:
+        fieldnames.extend((
+            f"{name}_activations",
+            f"{name}_duration_s",
+            f"{name}_absolute_correction_energy_j",
+        ))
+    with path.open("w", newline="", encoding="utf-8") as stream:
+        writer = csv.DictWriter(stream, fieldnames=fieldnames)
+        writer.writeheader()
+        for index, x_m in enumerate(limits["x_m"]):
+            row = {"cell_index": index, "x_m": float(x_m)}
+            for name in names:
+                diagnostic = limits[name]
+                row[f"{name}_activations"] = int(
+                    diagnostic["activation_count_by_cell"][index]
+                )
+                row[f"{name}_duration_s"] = float(
+                    diagnostic["duration_s_by_cell"][index]
+                )
+                energy = diagnostic.get("absolute_correction_energy_j_by_cell")
+                row[f"{name}_absolute_correction_energy_j"] = (
+                    float(energy[index]) if energy is not None else 0.0
+                )
+            writer.writerow(row)
+
+
 def _extract_metrics(result: dict, performance: dict | None = None) -> dict:
     time = np.asarray(result["time"], dtype=float)
     pressure = np.asarray(result["P_head"], dtype=float)
@@ -105,6 +135,26 @@ def _extract_metrics(result: dict, performance: dict | None = None) -> dict:
             "performance_burn_time_s": performance.get("burn_time"),
             "average_isp_s": performance.get("average_Isp"),
         })
+    limits = result.get("numerical_limits")
+    if limits is not None:
+        x_m = np.asarray(limits["x_m"], dtype=float)
+        for name in ("temperature_floor", "temperature_ceiling", "pressure_floor"):
+            diagnostic = limits[name]
+            counts = np.asarray(diagnostic["activation_count_by_cell"], dtype=np.int64)
+            durations = np.asarray(diagnostic["duration_s_by_cell"], dtype=float)
+            max_index = int(np.argmax(durations))
+            prefix = f"limit_{name}"
+            metrics[f"{prefix}_active_cells"] = int(np.count_nonzero(counts))
+            metrics[f"{prefix}_total_activations"] = int(np.sum(counts))
+            metrics[f"{prefix}_total_cell_duration_s"] = float(np.sum(durations))
+            metrics[f"{prefix}_max_cell_duration_s"] = float(durations[max_index])
+            metrics[f"{prefix}_max_duration_x_m"] = float(x_m[max_index])
+            energy = diagnostic.get("absolute_correction_energy_j_by_cell")
+            if energy is not None:
+                energy = np.asarray(energy, dtype=float)
+                energy_index = int(np.argmax(energy))
+                metrics[f"{prefix}_total_abs_energy_j"] = float(np.sum(energy))
+                metrics[f"{prefix}_max_energy_x_m"] = float(x_m[energy_index])
     return metrics
 
 
@@ -193,6 +243,11 @@ def run_single_point(
         payload["status"] = "complete"
         payload["completed_utc"] = datetime.now(timezone.utc).isoformat()
         payload["metrics"] = _extract_metrics(result, performance)
+        limit_path = output / "numerical_limits_by_cell.csv"
+        _write_limit_csv(limit_path, result)
+        payload["outputs"] = {
+            limit_path.name: _sha256(limit_path),
+        }
         _write_json(point_path, payload)
         return output
     except Exception as exc:

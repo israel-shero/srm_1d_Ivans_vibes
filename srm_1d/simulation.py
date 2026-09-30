@@ -37,6 +37,10 @@ from .solver import (
     compute_dt_cfl,
     compute_dt_source_cap,
     _nozzle_boundary_flow,
+    LIMIT_TEMPERATURE_FLOOR,
+    LIMIT_TEMPERATURE_CEILING,
+    LIMIT_PRESSURE_FLOOR,
+    N_LIMIT_DIAGNOSTICS,
 )
 from .burn_rate import compute_burn_rates, haaland_friction, gnielinski_nusselt
 from .igniter_plenum import (
@@ -1388,6 +1392,7 @@ def _run_time_loop(
     Y_species, species_params_arr, mass_source_by_species,
     gamma_mix_arr, Cp_mix_arr, R_mix_arr, M_mix_arr,
     T_ceiling_arr,
+    limit_activation_counts, limit_duration_s, limit_abs_energy_j,
     # --- v0.7.2 Phase A: pyrogen axial distribution ---
     pyrogen_axial_weights,
     # --- v0.7.2 Phase B-v2: flame-front h_c augmentation ---
@@ -1995,6 +2000,7 @@ def _run_time_loop(
             dx, dt, gamma_mix_arr, R_mix_arr, Cp_mix_arr, T_ceiling_arr,
             A_throat, P_ambient, ambient_temperature, N,
             port_mach_cap,
+            limit_activation_counts, limit_duration_s, limit_abs_energy_j,
         )
 
         # ============================================
@@ -2492,6 +2498,11 @@ def run_simulation(
     # by ``_compute_T_ceiling_arr`` from species_params; consumed by the
     # PISO energy equation's T_raw clip.
     T_ceiling_arr = np.empty(N)
+    limit_activation_counts = np.zeros(
+        (N_LIMIT_DIAGNOSTICS, N), dtype=np.int64
+    )
+    limit_duration_s = np.zeros((N_LIMIT_DIAGNOSTICS, N))
+    limit_abs_energy_j = np.zeros((N_LIMIT_DIAGNOSTICS, N))
 
     # Ignition state
     is_burning = np.zeros(N, dtype=np.bool_)
@@ -2797,6 +2808,7 @@ def run_simulation(
         Y_species, species_params_arr, mass_source_by_species,
         gamma_mix_arr, Cp_mix_arr, R_mix_arr, M_mix_arr,
         T_ceiling_arr,
+        limit_activation_counts, limit_duration_s, limit_abs_energy_j,
         # v0.7.2 Phase A: pyrogen axial distribution
         pyrogen_axial_weights,
         # v0.7.2 Phase B-v2: flame-front h_c augmentation
@@ -3122,6 +3134,42 @@ def run_simulation(
         'snapshots': snapshots, 'grains': grain_data,
         'summary': summary,
         'P_ambient': P_ambient,
+        'numerical_limits': {
+            'x_m': x_centers.copy(),
+            'temperature_floor': {
+                'threshold_k': max(1.0, float(T_ambient)),
+                'activation_count_by_cell': limit_activation_counts[
+                    LIMIT_TEMPERATURE_FLOOR
+                ].copy(),
+                'duration_s_by_cell': limit_duration_s[
+                    LIMIT_TEMPERATURE_FLOOR
+                ].copy(),
+                'absolute_correction_energy_j_by_cell': limit_abs_energy_j[
+                    LIMIT_TEMPERATURE_FLOOR
+                ].copy(),
+            },
+            'temperature_ceiling': {
+                'final_threshold_k_by_cell': T_ceiling_arr.copy(),
+                'activation_count_by_cell': limit_activation_counts[
+                    LIMIT_TEMPERATURE_CEILING
+                ].copy(),
+                'duration_s_by_cell': limit_duration_s[
+                    LIMIT_TEMPERATURE_CEILING
+                ].copy(),
+                'absolute_correction_energy_j_by_cell': limit_abs_energy_j[
+                    LIMIT_TEMPERATURE_CEILING
+                ].copy(),
+            },
+            'pressure_floor': {
+                'threshold_pa': 1.0e3,
+                'activation_count_by_cell': limit_activation_counts[
+                    LIMIT_PRESSURE_FLOOR
+                ].copy(),
+                'duration_s_by_cell': limit_duration_s[
+                    LIMIT_PRESSURE_FLOOR
+                ].copy(),
+            },
+        },
         # v0.7.1: N-species final state and species registry
         'Y_species_final': Y_species.copy(),
         'species_params': species_params_arr.copy(),

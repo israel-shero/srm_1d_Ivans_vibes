@@ -156,6 +156,10 @@ or load named motors from `srm_1d/motors/*.ric`.)
 - `compute_motor_performance(result, nozzle, propellant, P_ambient=...)` —
   Post-processing. Uses simulation's D_throat history when available
   (in-loop coupling).
+- `result['numerical_limits']` — per-cell activation counts and accumulated
+  active duration for the temperature floor, temperature ceiling, and pressure
+  floor; temperature limits also report absolute correction energy by cell.
+  These are diagnostics only and do not alter the limiter equations.
 - `print_performance_summary(perf, nozzle)` — Formatted output with
   divergence/throat/skin loss factors and throat change.
 

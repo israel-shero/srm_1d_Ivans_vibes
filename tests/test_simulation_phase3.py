@@ -292,6 +292,25 @@ def test_explicit_history_capacity_must_be_positive():
         )
 
 
+def test_run_exposes_per_cell_numerical_limit_diagnostics():
+    geo, prop, nozzle = _small_motor()
+    result = run_simulation(
+        geo, prop, nozzle, _test_chamber(),
+        T_ignition=294.0,
+        t_max=0.001,
+        P_cutoff=1.0,
+        snapshot_interval=0.001,
+        verbose=False,
+    )
+
+    limits = result['numerical_limits']
+    assert limits['x_m'].shape == (geo.N_cells,)
+    for name in ('temperature_floor', 'temperature_ceiling', 'pressure_floor'):
+        assert limits[name]['activation_count_by_cell'].shape == (geo.N_cells,)
+        assert limits[name]['duration_s_by_cell'].shape == (geo.N_cells,)
+        assert np.all(limits[name]['activation_count_by_cell'] >= 0)
+
+
 def test_pyrogen_driven_run_reports_ignition_and_pyrogen_state():
     geo, prop, nozzle = _small_motor()
     result = run_simulation(
