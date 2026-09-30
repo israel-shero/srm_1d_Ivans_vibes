@@ -2242,6 +2242,7 @@ def run_simulation(
     diagnostic_disable_pyrogen_surface_heating=False,
     diagnostic_disable_adjacent_radiation=False,
     diagnostic_disable_radiation_gas_sink=False,
+    history_capacity=None,
     diagnostic_history_capacity=None,
     igniter_axial_momentum_fraction=1.0,
     # --- Termination ---
@@ -2310,6 +2311,10 @@ def run_simulation(
     diagnostic_disable_radiation_gas_sink : bool
         If True, keep adjacent-radiation Goodman receiver heating but do
         not debit the emitting gas cell. Diagnostic isolation only.
+    history_capacity : int or None
+        Exact number of preallocated scalar-history rows. ``None`` preserves
+        the automatic estimate and five-million-row minimum. This is an output
+        allocation control only; it does not alter equations or time stepping.
     diagnostic_history_capacity : int or None
         Optional diagnostic-only cap for preallocated history rows. This
         does not change equations or time stepping; it only allows probe
@@ -2615,6 +2620,11 @@ def run_simulation(
     # Conservative estimate: dt_min ~ cfl * dx / 1000 m/s
     est_steps = int(t_max / max(cfl_target * dx / 1000.0, 1e-8)) + 1000
     max_hist = max(est_steps, 5_000_000)
+    if history_capacity is not None:
+        history_capacity = int(history_capacity)
+        if history_capacity < 1:
+            raise ValueError("history_capacity must be positive")
+        max_hist = history_capacity
     if diagnostic_history_capacity is not None:
         diagnostic_history_capacity = int(diagnostic_history_capacity)
         if diagnostic_history_capacity < 1:

@@ -19,13 +19,24 @@ firing — ignition transient, plateau, erosive lift, and tail-off.
 
 ## Install
 
+For the tested Python 3.10 Intel-macOS environment, use the checked-in
+constraints so pip does not select incompatible current releases:
+
 ```bash
-pip install -e .            # core
-pip install -e ".[fmm,dev]" # + FMM grains (scikit-fmm) and pytest
+python3.10 -m venv ../.venv-srm
+../.venv-srm/bin/python -m pip install \
+  pip==26.0.1 setuptools==70.3.0 wheel==0.46.3
+../.venv-srm/bin/python -m pip install \
+  -c requirements/py310-macos-x86_64.lock.txt -e ".[fmm,dev]"
+../.venv-srm/bin/python -m pip check
 ```
 
-Requires Python ≥ 3.10 (developed on 3.10.5). Core deps: numpy, scipy,
-numba, pyyaml, matplotlib.
+The generic editable install remains `pip install -e ".[fmm,dev]"`, but it is
+not a reproducible environment. See `requirements/README.md` for the validated
+versions, compatible openMotor setup, and repository-pin verifier.
+
+Requires Python >= 3.10 (developed and currently locked on 3.10). Core deps:
+numpy, scipy, numba, pyyaml, matplotlib.
 
 ## Quick start
 
@@ -34,6 +45,11 @@ Run from the repo root:
 ```bash
 python -m examples.hasegawa_motor_a   # runs motors/hasegawa_a.ric
 python -m pytest tests/               # test suite
+python -m cases.baseline_runner --case hasegawa_a --dry-run
+python scripts/run_numerical_verification.py  # Chunc startup grid/CFL study
+python scripts/run_numerical_verification.py --profile full
+python scripts/run_numerical_verification.py --profile full \
+  --single-cells 100 --single-cfl 0.075 --history-capacity 6500000
 ```
 
 ```python
@@ -52,6 +68,7 @@ print(result["summary"]["P_peak"], perf["total_impulse"])
 | `srm_1d/` | the importable package (ships): solver core, `tools/`, `pyrogens/` |
 | `motors/` | motor data — `<motor>.ric` (transport embedded per-tab) |
 | `examples/` | runnable studies (`python -m examples.<name>`) |
+| `cases/` | checksummed validation-case registry and safe measurement loaders |
 | `tests/` | pytest suite |
 | `docs/` | design packages and development narrative |
 

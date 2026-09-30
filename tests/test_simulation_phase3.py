@@ -266,6 +266,32 @@ def test_numerical_collapse_trip_aborts_with_termination_code_4():
     assert early['termination_code'] == 4
 
 
+def test_explicit_history_capacity_is_reported_without_changing_termination():
+    geo, prop, nozzle = _small_motor()
+    result = run_simulation(
+        geo, prop, nozzle, _test_chamber(),
+        T_ignition=294.0,
+        t_max=0.001,
+        P_cutoff=1.0,
+        history_capacity=20_000,
+        snapshot_interval=0.001,
+        verbose=False,
+    )
+
+    assert result['summary']['history_capacity'] == 20_000
+    assert result['summary']['termination'] != 'history array full'
+
+
+def test_explicit_history_capacity_must_be_positive():
+    geo, prop, nozzle = _small_motor()
+    with pytest.raises(ValueError, match="history_capacity must be positive"):
+        run_simulation(
+            geo, prop, nozzle, _test_chamber(),
+            history_capacity=0,
+            verbose=False,
+        )
+
+
 def test_pyrogen_driven_run_reports_ignition_and_pyrogen_state():
     geo, prop, nozzle = _small_motor()
     result = run_simulation(

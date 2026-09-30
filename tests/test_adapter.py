@@ -382,6 +382,12 @@ class TestNozzleConversion:
         noz = convert_nozzle(SAMPLE_RIC_NOZZLE)
         assert noz.slag_coeff == 0.0
 
+    def test_slag_unit_conversion(self):
+        """2e-3 (m*Pa)/s should become 2e-9 (m*MPa)/s."""
+        ric_nozzle = dict(SAMPLE_RIC_NOZZLE, slagCoeff=2e-3)
+        noz = convert_nozzle(ric_nozzle)
+        assert noz.slag_coeff == pytest.approx(2e-9)
+
     def test_divergence_angle(self):
         noz = convert_nozzle(SAMPLE_RIC_NOZZLE)
         assert noz.div_angle == pytest.approx(15.0)
