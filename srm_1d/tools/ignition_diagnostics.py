@@ -415,6 +415,7 @@ def energy_momentum_timeseries(result: dict) -> dict[str, np.ndarray]:
         "gas_surface_heat_sink_power",
         "radiation_heat_power",
         "radiation_sink_power",
+        "convective_wall_heat_sink_power",
         "convective_scalar_flux_power",
         "nozzle_scalar_flux_power",
         "nozzle_enthalpy_power",
@@ -432,6 +433,43 @@ def energy_momentum_timeseries(result: dict) -> dict[str, np.ndarray]:
             values = np.zeros_like(times)
         out[key] = values
     return out
+
+
+def sensible_enthalpy_audit(result: dict) -> dict[str, np.ndarray]:
+    """Reconstruct the model's transported ``Cp*T`` ledger.
+
+    The solver does not carry thermodynamic total energy. The between-step
+    storage jump is separate because mixture properties and geometry may be
+    refreshed between one PISO storage sample and the next.
+    """
+    energy = energy_momentum_timeseries(result)
+    source_reconstructed = (
+        energy["normal_sidewall_thermal_power"]
+        + energy["erosive_sidewall_thermal_power"]
+        + energy["endface_thermal_power"]
+        + energy["pyrogen_enthalpy_power"]
+        - energy["gas_surface_heat_sink_power"]
+        - energy["radiation_sink_power"]
+        - energy["convective_wall_heat_sink_power"]
+    )
+    storage_jump = np.zeros_like(energy["times_s"])
+    if storage_jump.size > 1:
+        storage_jump[1:] = (
+            energy["gas_sensible_energy_before"][1:]
+            - energy["gas_sensible_energy"][:-1]
+        )
+    return {
+        **energy,
+        "source_reconstructed_power": source_reconstructed,
+        "source_ledger_mismatch_power": (
+            energy["thermal_source_power"] - source_reconstructed
+        ),
+        "nozzle_boundary_mismatch_power": (
+            energy["convective_scalar_flux_power"]
+            + energy["nozzle_enthalpy_power"]
+        ),
+        "between_step_storage_jump": storage_jump,
+    }
 
 
 def step_diagnostics_timeseries(result: dict) -> dict[str, np.ndarray]:

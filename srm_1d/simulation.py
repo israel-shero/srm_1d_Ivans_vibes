@@ -1073,6 +1073,7 @@ def _goodman_ignition_sources_and_mass(
     pyrogen_surface_heat_power = 0.0
     radiation_heat_power = 0.0
     radiation_sink_total_power = 0.0
+    convective_wall_heat_sink_power = 0.0
     normal_sidewall_thermal_power = 0.0
     erosive_sidewall_thermal_power = 0.0
     endface_thermal_power = 0.0
@@ -1257,7 +1258,9 @@ def _goodman_ignition_sources_and_mass(
                 # advected gas but no local source (a net energy sink) — PISO
                 # handles this and the bore gas cools correctly.
                 if h_conv > 0.0 and dT_conv > 0.0 and C_burn[i] > 0.0:
-                    thermal_source[i] -= h_conv * dT_conv * C_burn[i]
+                    convective_sink_per_length = h_conv * dT_conv * C_burn[i]
+                    thermal_source[i] -= convective_sink_per_length
+                    convective_wall_heat_sink_power += convective_sink_per_length * dx
 
                 if _surface_has_ignited(T_surf[i], T_ignition):
                     has_ignited[i] = True
@@ -1310,7 +1313,7 @@ def _goodman_ignition_sources_and_mass(
             pyrogen_surface_heat_power, radiation_heat_power,
             radiation_sink_total_power,
             normal_sidewall_thermal_power, erosive_sidewall_thermal_power,
-            endface_thermal_power)
+            endface_thermal_power, convective_wall_heat_sink_power)
 
 
 # ================================================================
@@ -1375,6 +1378,7 @@ def _run_time_loop(
     clipping_correction_power_hist, pyrogen_enthalpy_power_hist,
     pyrogen_surface_heat_power_hist, gas_surface_heat_sink_power_hist,
     radiation_heat_power_hist, radiation_sink_power_hist,
+    convective_wall_heat_sink_power_hist,
     nozzle_enthalpy_power_hist, thermal_source_power_hist,
     energy_residual_hist,
     pyrogen_momentum_expected_hist, pyrogen_momentum_deposited_hist,
@@ -1852,7 +1856,8 @@ def _run_time_loop(
          pyrogen_surface_heat_power, radiation_heat_power,
          radiation_sink_total_power,
          normal_sidewall_thermal_power, erosive_sidewall_thermal_power,
-         endface_thermal_power) = _goodman_ignition_sources_and_mass(
+         endface_thermal_power,
+         convective_wall_heat_sink_power) = _goodman_ignition_sources_and_mass(
             P, T, T_surf, delta, has_ignited, is_burning, is_grain,
             ignition_time, r_total, r_erosive,
             mass_source, thermal_source,
@@ -2128,6 +2133,7 @@ def _run_time_loop(
         gas_surface_heat_sink_power_hist[hist_idx] = pyrogen_surface_heat_sink_power
         radiation_heat_power_hist[hist_idx] = radiation_heat_power
         radiation_sink_power_hist[hist_idx] = radiation_sink_total_power
+        convective_wall_heat_sink_power_hist[hist_idx] = convective_wall_heat_sink_power
         nozzle_enthalpy_power_hist[hist_idx] = nozzle_enthalpy_power
         thermal_source_power_hist[hist_idx] = thermal_power_before_piso
         energy_residual_hist[hist_idx] = energy_residual
@@ -2688,6 +2694,7 @@ def run_simulation(
     gas_surface_heat_sink_power_hist = np.empty(max_hist)
     radiation_heat_power_hist = np.empty(max_hist)
     radiation_sink_power_hist = np.empty(max_hist)
+    convective_wall_heat_sink_power_hist = np.empty(max_hist)
     nozzle_enthalpy_power_hist = np.empty(max_hist)
     thermal_source_power_hist = np.empty(max_hist)
     energy_residual_hist = np.empty(max_hist)
@@ -2815,6 +2822,7 @@ def run_simulation(
         pyrogen_enthalpy_power_hist,
         pyrogen_surface_heat_power_hist, gas_surface_heat_sink_power_hist,
         radiation_heat_power_hist, radiation_sink_power_hist,
+        convective_wall_heat_sink_power_hist,
         nozzle_enthalpy_power_hist, thermal_source_power_hist,
         energy_residual_hist,
         pyrogen_momentum_expected_hist, pyrogen_momentum_deposited_hist,
@@ -2883,6 +2891,9 @@ def run_simulation(
     gas_surface_heat_sink_power_arr = gas_surface_heat_sink_power_hist[:n_steps].copy()
     radiation_heat_power_arr = radiation_heat_power_hist[:n_steps].copy()
     radiation_sink_power_arr = radiation_sink_power_hist[:n_steps].copy()
+    convective_wall_heat_sink_power_arr = (
+        convective_wall_heat_sink_power_hist[:n_steps].copy()
+    )
     nozzle_enthalpy_power_arr = nozzle_enthalpy_power_hist[:n_steps].copy()
     thermal_source_power_arr = thermal_source_power_hist[:n_steps].copy()
     energy_residual_arr = energy_residual_hist[:n_steps].copy()
@@ -3047,6 +3058,16 @@ def run_simulation(
             'thermal_source_power - clipping_correction_power; '
             'convective power is positive into the gas'
         ),
+        'energy_convention': {
+            'stored_scalar': 'sum(rho * A_port * dx * Cp_mix * T)',
+            'face_flux': 'mass_flow * Cp_upwind * T_upwind',
+            'source': 'sum(thermal_source * dx)',
+            'classification': 'sensible-enthalpy scalar transport balance',
+            'excluded': (
+                'kinetic energy, explicit pressure work, chemical formation '
+                'energy, solid stored energy, and nozzle kinetic power'
+            ),
+        },
     }
 
     # Per-grain summary from snapshots
@@ -3110,6 +3131,7 @@ def run_simulation(
         'gas_surface_heat_sink_power': gas_surface_heat_sink_power_arr,
         'radiation_heat_power': radiation_heat_power_arr,
         'radiation_sink_power': radiation_sink_power_arr,
+        'convective_wall_heat_sink_power': convective_wall_heat_sink_power_arr,
         'nozzle_enthalpy_power': nozzle_enthalpy_power_arr,
         'thermal_source_power': thermal_source_power_arr,
         'energy_residual': energy_residual_arr,

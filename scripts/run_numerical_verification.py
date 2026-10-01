@@ -22,6 +22,7 @@ if str(SCRIPT_ROOT) not in sys.path:
 from cases.loader import PROJECT_ROOT
 from srm_1d.openmotor_adapter import run_from_ric
 from srm_1d.run_artifacts import artifact_dir, verify_run_health
+from srm_1d.tools.ignition_diagnostics import sensible_enthalpy_audit
 
 
 CONFIG_PATH = PROJECT_ROOT / "cases" / "baseline_configs.json"
@@ -147,6 +148,10 @@ def _extract_metrics(result: dict, performance: dict | None = None) -> dict:
     clipping_integral = float(np.trapz(np.abs(clipping), time))
     clipping_steps = int(np.count_nonzero(clipping))
     summary = result["summary"]
+    energy_audit = sensible_enthalpy_audit(result)
+    source_mismatch = energy_audit["source_ledger_mismatch_power"]
+    nozzle_mismatch = energy_audit["nozzle_boundary_mismatch_power"]
+    storage_jump = energy_audit["between_step_storage_jump"]
     metrics = {
         "actual_cells": int(summary["cells"]),
         "steps": int(summary["steps"]),
@@ -168,6 +173,19 @@ def _extract_metrics(result: dict, performance: dict | None = None) -> dict:
         "integrated_abs_residual_over_thermal_source": (
             residual_integral / thermal_integral if thermal_integral > 0.0 else None
         ),
+        "energy_balance_classification": summary.get("energy_convention", {}).get(
+            "classification", "sensible-enthalpy scalar transport balance"
+        ),
+        "max_abs_source_ledger_mismatch_w": float(np.max(np.abs(source_mismatch))),
+        "integrated_abs_source_ledger_mismatch_j": float(
+            np.trapz(np.abs(source_mismatch), time)
+        ),
+        "max_abs_nozzle_boundary_mismatch_w": float(np.max(np.abs(nozzle_mismatch))),
+        "integrated_abs_nozzle_boundary_mismatch_j": float(
+            np.trapz(np.abs(nozzle_mismatch), time)
+        ),
+        "max_abs_between_step_storage_jump_j": float(np.max(np.abs(storage_jump))),
+        "sum_abs_between_step_storage_jump_j": float(np.sum(np.abs(storage_jump))),
         "mass_balance_error_fraction": float(summary["mass_balance_error"]),
         "dt_min_s": float(summary["dt_min"]),
         "dt_median_s": float(summary["dt_median"]),

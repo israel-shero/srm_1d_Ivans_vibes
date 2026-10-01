@@ -412,6 +412,7 @@ def test_pyrogen_driven_run_reports_ignition_and_pyrogen_state():
     assert 'nozzle_scalar_flux_power' in result
     assert 'clipping_correction_power' in result
     assert 'gas_surface_heat_sink_power' in result
+    assert 'convective_wall_heat_sink_power' in result
     assert 'energy_residual' in result
     assert 'pyrogen_momentum_residual' in result
     assert 'dt' in result
@@ -428,3 +429,6 @@ def test_pyrogen_driven_run_reports_ignition_and_pyrogen_state():
     assert 'first_ignition_time_s' in summary
     assert 'first_ignition_cell' in summary
     assert 'energy_residual_convention' in summary
+    assert summary['energy_convention']['classification'] == (
+        'sensible-enthalpy scalar transport balance'
+    )

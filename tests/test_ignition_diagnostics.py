@@ -29,6 +29,7 @@ from srm_1d.tools.ignition_diagnostics import (
     energy_momentum_timeseries,
     ignition_spread_metrics,
     pressure_landmarks,
+    sensible_enthalpy_audit,
     step_diagnostics_timeseries,
     source_timeseries,
 )
@@ -552,6 +553,31 @@ def test_energy_momentum_timeseries_preserves_result_ledgers():
     np.testing.assert_allclose(audit["gas_sensible_dE_dt"], [0.0, 400.0])
     np.testing.assert_allclose(audit["pyrogen_momentum_residual"], [0.0, 1.0e-12])
     np.testing.assert_allclose(audit["energy_residual"], [0.0, 0.0])
+
+
+def test_sensible_enthalpy_audit_reconstructs_source_and_storage_jumps():
+    result = _synthetic_result([0.0, 0.1], [101325.0, 2.0e6], [0.0, 1.0])
+    result.update({
+        "normal_sidewall_thermal_power": np.array([10.0, 20.0]),
+        "erosive_sidewall_thermal_power": np.array([1.0, 2.0]),
+        "endface_thermal_power": np.array([3.0, 4.0]),
+        "pyrogen_enthalpy_power": np.array([5.0, 6.0]),
+        "gas_surface_heat_sink_power": np.array([2.0, 3.0]),
+        "radiation_sink_power": np.array([1.0, 1.0]),
+        "convective_wall_heat_sink_power": np.array([4.0, 5.0]),
+        "thermal_source_power": np.array([12.0, 23.0]),
+        "convective_scalar_flux_power": np.array([-7.0, -8.0]),
+        "nozzle_enthalpy_power": np.array([7.0, 8.0]),
+        "gas_sensible_energy_before": np.array([100.0, 131.0]),
+        "gas_sensible_energy": np.array([130.0, 150.0]),
+    })
+
+    audit = sensible_enthalpy_audit(result)
+
+    np.testing.assert_allclose(audit["source_reconstructed_power"], [12.0, 23.0])
+    np.testing.assert_allclose(audit["source_ledger_mismatch_power"], [0.0, 0.0])
+    np.testing.assert_allclose(audit["nozzle_boundary_mismatch_power"], [0.0, 0.0])
+    np.testing.assert_allclose(audit["between_step_storage_jump"], [0.0, 1.0])
 
 
 def test_ambient_initial_gas_ignites_from_pyrogen_surface_heating():
