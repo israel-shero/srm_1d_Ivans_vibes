@@ -1347,7 +1347,7 @@ def _run_time_loop(
     tab_min_p, tab_max_p, tab_a, tab_n, n_tabs,
         # --- Simulation parameters ---
     roughness, kappa,
-    cfl_target, dt_max, burn_update_interval,
+    cfl_target, dt_max, burn_update_interval, geometry_update_interval,
     source_cfl_factor, port_mach_cap,
     T_ignition, P_ambient, ambient_temperature,
     diagnostic_disable_erosive, diagnostic_disable_endfaces,
@@ -1644,7 +1644,7 @@ def _run_time_loop(
             cell_wall_web, cell_segment_id,
         )
 
-        if step % burn_update_interval == 0:
+        if step % geometry_update_interval == 0:
             update_cell_geometry(
                 regress, D_port, x_centers, dx, N, N_seg, cell_D_outer,
                 seg_x_start, seg_length,
@@ -2267,6 +2267,8 @@ def run_simulation(
     verbose=True,
     # --- v0.8.0 Phase 6: live progress / cooperative cancel ---
     progress_state=None,
+    # Diagnostic cadence override. None preserves burn_update_interval coupling.
+    geometry_update_interval=None,
 ):
     """
     Run a complete transient simulation.
@@ -2299,6 +2301,9 @@ def run_simulation(
         Maximum allowed time step [s]. Default: 0.002.
     burn_update_interval : int or None
         Recompute burn rates every N flow steps. If None, auto-set.
+    geometry_update_interval : int or None
+        Recompute port geometry every N flow steps. ``None`` preserves the
+        historical behavior by using the resolved burn-update interval.
     T_ignition : float
         Per-cell solid surface ignition threshold [K]. Default: 850 K.
     initial_gas_temperature : float or None
@@ -2412,6 +2417,12 @@ def run_simulation(
 
     if burn_update_interval is None:
         burn_update_interval = max(10, N // 5)
+    if burn_update_interval <= 0:
+        raise ValueError("burn_update_interval must be positive")
+    if geometry_update_interval is None:
+        geometry_update_interval = burn_update_interval
+    if geometry_update_interval <= 0:
+        raise ValueError("geometry_update_interval must be positive")
 
     # ============================================================
     # SETUP — extract everything into scalars and arrays
@@ -2771,7 +2782,7 @@ def run_simulation(
         tab_min_p, tab_max_p, tab_a, tab_n, n_tabs,
         # Simulation parameters
         roughness, kappa,
-        cfl_target, dt_max, burn_update_interval,
+        cfl_target, dt_max, burn_update_interval, geometry_update_interval,
         source_cfl_factor, float(port_mach_cap),
         T_ignition, P_ambient, T_ambient,
         bool(diagnostic_disable_erosive), bool(diagnostic_disable_endfaces),
@@ -2997,6 +3008,8 @@ def run_simulation(
         'steps': n_steps,
         'cells': N,
         'history_capacity': int(max_hist),
+        'burn_update_interval': int(burn_update_interval),
+        'geometry_update_interval': int(geometry_update_interval),
         'termination_code': int(termination_code),
         'history_cap_reached': bool(termination_code == 3),
         'dt_min': float(np.min(dt_arr)) if len(dt_arr) > 0 else float("nan"),

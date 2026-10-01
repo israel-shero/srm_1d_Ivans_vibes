@@ -205,6 +205,20 @@ or load named motors from `srm_1d/motors/*.ric`.)
   Returns: n_steps, n_snaps, mass_produced, mass_nozzle, burnthrough_time,
   D_throat_final, termination_code.
 
+The step uses beginning-of-step flow state. Bore and end-face regression first
+advance with the previously held burn rate; geometry and quasi-steady burn
+rates then refresh at their configured cadences before current-step source
+assembly. A cell ignited during source assembly receives its first recomputed
+burn rate at the next burn-rate cadence boundary. PISO consumes the assembled
+sources in the same step. Species-derived mixture properties and the
+source-aware time-step cap refresh after PISO for use by the next step.
+
+`burn_update_interval=None` resolves to `max(10, N_cells // 5)`. By default,
+geometry uses that same cadence for historical compatibility. The optional
+`geometry_update_interval` keyword separates geometry cadence for diagnostic
+studies without changing the default ordering or equations. Both resolved
+intervals are included in `result['summary']`.
+
 ### Public API
 - `run_simulation(geo, propellant, nozzle, pyrogen_chamber,
   P_ambient=101325, ambient_temperature=None, roughness=..., kappa=...,

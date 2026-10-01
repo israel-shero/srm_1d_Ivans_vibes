@@ -8,6 +8,7 @@ from scripts.run_numerical_verification import (
     STARTUP_CFL_LEVELS,
     _adjacent_changes,
     _extract_metrics,
+    _ignition_refresh_delays,
     _write_limit_csv,
     _write_mach_limit_csv,
 )
@@ -86,6 +87,17 @@ def test_extract_metrics_counts_clipping_and_fill_window():
     assert metrics["clipping_active_steps"] == 1
     assert metrics["clipping_active_fraction"] == pytest.approx(1 / 3)
     assert metrics["integrated_abs_clipping_energy_j"] > 0.0
+
+
+def test_ignition_refresh_delays_use_next_strict_cadence_boundary():
+    result = {
+        "time": np.array([0.0, 0.1, 0.2, 0.3, 0.4]),
+        "ignition_time_by_cell": np.array([0.0, 0.1, 0.2, 1.0e10]),
+    }
+
+    delays = _ignition_refresh_delays(result, interval=2)
+
+    np.testing.assert_allclose(delays, [0.2, 0.1, 0.2])
 
 
 def test_extract_metrics_includes_full_burn_performance():

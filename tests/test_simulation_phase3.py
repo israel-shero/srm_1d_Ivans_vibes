@@ -292,6 +292,28 @@ def test_explicit_history_capacity_must_be_positive():
         )
 
 
+def test_burn_update_interval_must_be_positive():
+    geo, prop, nozzle = _small_motor()
+    with pytest.raises(ValueError, match="burn_update_interval must be positive"):
+        run_simulation(
+            geo, prop, nozzle, _test_chamber(),
+            burn_update_interval=0,
+            verbose=False,
+        )
+
+
+def test_geometry_update_interval_must_be_positive():
+    geo, prop, nozzle = _small_motor()
+    with pytest.raises(
+        ValueError, match="geometry_update_interval must be positive"
+    ):
+        run_simulation(
+            geo, prop, nozzle, _test_chamber(),
+            geometry_update_interval=0,
+            verbose=False,
+        )
+
+
 def test_run_exposes_per_cell_numerical_limit_diagnostics():
     geo, prop, nozzle = _small_motor()
     result = run_simulation(
@@ -304,6 +326,12 @@ def test_run_exposes_per_cell_numerical_limit_diagnostics():
     )
 
     limits = result['numerical_limits']
+    assert result['summary']['burn_update_interval'] == max(
+        10, geo.N_cells // 5
+    )
+    assert result['summary']['geometry_update_interval'] == (
+        result['summary']['burn_update_interval']
+    )
     assert limits['x_m'].shape == (geo.N_cells,)
     for name in ('temperature_floor', 'temperature_ceiling', 'pressure_floor'):
         assert limits[name]['activation_count_by_cell'].shape == (geo.N_cells,)

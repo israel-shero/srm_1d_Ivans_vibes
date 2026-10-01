@@ -117,6 +117,22 @@ def _write_mach_limit_csv(path: Path, result: dict) -> None:
             })
 
 
+def _ignition_refresh_delays(result: dict, interval: int) -> np.ndarray:
+    """Return each observed ignition's delay to the next rate refresh."""
+    time = np.asarray(result["time"], dtype=float)
+    ignition_times = np.asarray(result["ignition_time_by_cell"], dtype=float)
+    finite = ignition_times[
+        np.isfinite(ignition_times) & (ignition_times < 1.0e9)
+    ]
+    delays = []
+    for ignition_time in finite:
+        ignition_step = int(np.searchsorted(time, ignition_time, side="left"))
+        next_refresh_step = (ignition_step // interval + 1) * interval
+        if next_refresh_step < len(time):
+            delays.append(max(0.0, float(time[next_refresh_step] - ignition_time)))
+    return np.asarray(delays, dtype=float)
+
+
 def _extract_metrics(result: dict, performance: dict | None = None) -> dict:
     time = np.asarray(result["time"], dtype=float)
     pressure = np.asarray(result["P_head"], dtype=float)
@@ -159,6 +175,23 @@ def _extract_metrics(result: dict, performance: dict | None = None) -> dict:
         "first_burnout_time_s": summary.get("t_first_burnout"),
         "final_throat_diameter_m": summary.get("D_throat_final"),
     }
+    burn_update_interval = summary.get("burn_update_interval")
+    if burn_update_interval is not None:
+        burn_update_interval = int(burn_update_interval)
+        delays = _ignition_refresh_delays(result, burn_update_interval)
+        metrics["burn_update_interval_steps"] = burn_update_interval
+        metrics["ignition_rate_refresh_delay_count"] = int(len(delays))
+        metrics["ignition_rate_refresh_delay_max_s"] = (
+            float(np.max(delays)) if len(delays) else None
+        )
+        metrics["ignition_rate_refresh_delay_median_s"] = (
+            float(np.median(delays)) if len(delays) else None
+        )
+    geometry_update_interval = summary.get("geometry_update_interval")
+    if geometry_update_interval is not None:
+        metrics["geometry_update_interval_steps"] = int(
+            geometry_update_interval
+        )
     if performance is not None:
         metrics.update({
             "total_impulse_ns": performance.get("total_impulse"),
@@ -249,6 +282,8 @@ def run_single_point(
     history_capacity: int | None = None,
     output_root: Path | None = None,
     port_mach_cap: float | None = None,
+    burn_update_interval: int | None = None,
+    geometry_update_interval: int | None = None,
 ) -> Path:
     if profile not in {"startup", "full"}:
         raise ValueError(f"Unknown verification profile: {profile!r}")
@@ -273,6 +308,10 @@ def run_single_point(
         options["history_capacity"] = history_capacity
     if port_mach_cap is not None:
         options["port_mach_cap"] = port_mach_cap
+    if burn_update_interval is not None:
+        options["burn_update_interval"] = burn_update_interval
+    if geometry_update_interval is not None:
+        options["geometry_update_interval"] = geometry_update_interval
 
     output = artifact_dir(
         f"verification_chunc_{profile}_point",
@@ -511,6 +550,8 @@ def main() -> int:
     parser.add_argument("--single-cfl", type=float)
     parser.add_argument("--history-capacity", type=int)
     parser.add_argument("--single-port-mach-cap", type=float)
+    parser.add_argument("--single-burn-update-interval", type=int)
+    parser.add_argument("--single-geometry-update-interval", type=int)
     args = parser.parse_args()
     single_requested = args.single_cells is not None or args.single_cfl is not None
     if single_requested:
@@ -523,12 +564,16 @@ def main() -> int:
             args.history_capacity,
             args.output_root,
             args.single_port_mach_cap,
+            args.single_burn_update_interval,
+            args.single_geometry_update_interval,
         )
     else:
-        if args.history_capacity is not None or args.single_port_mach_cap is not None:
+        if (args.history_capacity is not None
+                or args.single_port_mach_cap is not None
+                or args.single_burn_update_interval is not None
+                or args.single_geometry_update_interval is not None):
             parser.error(
-                "--history-capacity and --single-port-mach-cap require "
-                "single-point mode"
+                "single-point overrides require --single-cells and --single-cfl"
             )
         output = run_study(args.profile, args.output_root)
     print(f"Verification artifacts: {output}")
