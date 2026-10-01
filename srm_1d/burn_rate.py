@@ -340,6 +340,19 @@ def saint_robert_from_tabs(P, tab_min_p, tab_max_p, tab_a, tab_n, n_tabs):
 
 
 @njit(cache=True, fastmath=True)
+def _burn_rate_closure_residual(r, r0, alpha, ebf, h0):
+    """Residual of the implicit Ma burn-rate closure at candidate ``r``."""
+    beta = alpha * r
+    if beta < 1e-6:
+        h = h0 * (1.0 - beta / 2.0)
+    elif beta > 500.0:
+        h = 0.0
+    else:
+        h = h0 * beta / (np.exp(beta) - 1.0)
+    return r - r0 - ebf * h
+
+
+@njit(cache=True, fastmath=True)
 def burn_rate_cell(
     P, Re_local, D_hyd, x_from_head, roughness,
     Pr, k_thermal, Cp_gas, T_flame, T_surface,
@@ -427,6 +440,8 @@ def burn_rate_cell(
 
     if Re_local < 100.0:
         return r0, 0.0
+    if D_hyd <= 0.0:
+        return r0, 0.0
 
     # Friction factor
     f = haaland_friction(Re_local, roughness, D_hyd)
@@ -461,36 +476,34 @@ def burn_rate_cell(
     # F is monotonically increasing in r.
     # -----------------------------------------------------------
 
-    # Bisection bounds
+    # Preserve the historical 20x bracket when it contains the root. Expand
+    # only when its upper residual is still negative.
     r_lo = r0
-    r_hi = r0 * 20.0  # Upper bound: 20× normal rate (generous)
+    r_hi = r0 * 20.0
+    if r_hi <= r_lo:
+        r_hi = r_lo + max(ebf * h0, 1e-12)
 
-    # Verify bracket: F(r_lo) should be negative
-    beta_lo = alpha * r_lo
-    if beta_lo < 1e-6:
-        h_lo = h0
-    elif beta_lo > 500.0:
-        h_lo = 0.0
-    else:
-        h_lo = h0 * beta_lo / (np.exp(beta_lo) - 1.0)
-    F_lo = r_lo - r0 - ebf * h_lo
+    F_lo = _burn_rate_closure_residual(r_lo, r0, alpha, ebf, h0)
 
     # If F_lo >= 0, no erosive burning possible (transpiration too strong)
     if F_lo >= 0.0:
         return r0, 0.0
 
+    F_hi = _burn_rate_closure_residual(r_hi, r0, alpha, ebf, h0)
+    for _ in range(60):
+        if F_hi >= 0.0:
+            break
+        r_hi = r_hi * 2.0
+        F_hi = _burn_rate_closure_residual(r_hi, r0, alpha, ebf, h0)
+
+    # h/h0 is bounded by one, so this is a guaranteed physical upper bound.
+    if F_hi < 0.0:
+        r_hi = r0 + max(ebf * h0, 0.0)
+
     # Bisection: 30 iterations gives precision of r_range / 2^30 ≈ 1e-9
     for _ in range(30):
         r_mid = 0.5 * (r_lo + r_hi)
-        beta_mid = alpha * r_mid
-        if beta_mid < 1e-6:
-            h_mid = h0 * (1.0 - beta_mid / 2.0)
-        elif beta_mid > 500.0:
-            h_mid = 0.0
-        else:
-            h_mid = h0 * beta_mid / (np.exp(beta_mid) - 1.0)
-
-        F_mid = r_mid - r0 - ebf * h_mid
+        F_mid = _burn_rate_closure_residual(r_mid, r0, alpha, ebf, h0)
 
         if F_mid < 0.0:
             r_lo = r_mid

@@ -3,7 +3,8 @@ import numpy as np
 import pytest
 from srm_1d.burn_rate import (
     haaland_friction, gnielinski_nusselt, transpiration_correction,
-    burn_rate_cell, compute_burn_rates,
+    burn_rate_cell, compute_burn_rates, select_tab_idx,
+    saint_robert_from_tabs, _burn_rate_closure_residual,
 )
 
 
@@ -89,6 +90,27 @@ class TestTranspirationCorrection:
 
 # ---- Single-cell burn rate ----
 
+
+class TestPressureTabs:
+    def test_strict_boundaries_and_closest_fallback_match_openmotor(self):
+        minimum = np.array([0.0, 3.0])
+        maximum = np.array([1.0, 4.0])
+
+        assert select_tab_idx(0.5, minimum, maximum, 2) == 0
+        assert select_tab_idx(3.5, minimum, maximum, 2) == 1
+        assert select_tab_idx(2.0, minimum, maximum, 2) == 0
+        assert select_tab_idx(-1.0, minimum, maximum, 2) == 0
+        assert select_tab_idx(5.0, minimum, maximum, 2) == 1
+
+    def test_saint_robert_uses_selected_boundary_tab(self):
+        rate = saint_robert_from_tabs(
+            2.0, np.array([0.0, 3.0]), np.array([1.0, 4.0]),
+            np.array([1.0e-3, 2.0e-3]), np.zeros(2), 2,
+        )
+
+        assert rate == pytest.approx(1.0e-3)
+
+
 class TestBurnRateCell:
     """Test burn_rate_cell with Hasegawa Propellant 1 parameters."""
 
@@ -146,6 +168,42 @@ class TestBurnRateCell:
         r_total, _ = self._call(5e6, 500000.0)
         r0 = self.A_SR * 5e6**self.N_SR
         assert r_total / r0 < 5.0
+
+    def test_nonpositive_hydraulic_diameter_disables_erosive_term(self):
+        r_total, r_erosive = self._call(5e6, 500000.0, D=0.0)
+        r0 = self.A_SR * 5e6**self.N_SR
+
+        assert r_total == pytest.approx(r0)
+        assert r_erosive == 0.0
+
+    @pytest.mark.parametrize(
+        "pressure,reynolds,diameter",
+        [(5.0e6, 1.0e6, 0.01), (1.0e6, 1.0e7, 5.0e-4)],
+    )
+    def test_bisection_expands_upper_bracket_and_closes_residual(
+        self, pressure, reynolds, diameter,
+    ):
+        x_from_head = 0.01
+        r_total, _ = self._call(
+            pressure, reynolds, D=diameter, x=x_from_head,
+        )
+        r0 = self.A_SR * pressure**self.N_SR
+        friction = haaland_friction(reynolds, 20e-6, diameter)
+        nusselt = gnielinski_nusselt(
+            reynolds, self.PR, diameter, x_from_head, friction,
+            self.T_FLAME, self.T_SURFACE, self.KAPPA,
+        )
+        h0 = nusselt * self.K_THERMAL / diameter
+        alpha = self.RHO_P * self.CP_GAS / h0
+        ebf = (self.T_FLAME - self.T_SURFACE) / (
+            self.RHO_P * self.CPS * (self.T_SURFACE - self.T_INITIAL)
+        )
+        residual = _burn_rate_closure_residual(
+            r_total, r0, alpha, ebf, h0,
+        )
+
+        assert r_total > 20.0 * r0
+        assert abs(residual) < 1.0e-7
 
 
 # ---- Vectorized wrapper ----

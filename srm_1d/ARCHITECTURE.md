@@ -46,7 +46,10 @@ changes to verify nothing is lost or silently modified.
 - `saint_robert_from_tabs(P, tab_min_p, tab_max_p, tab_a, tab_n, n_tabs)` —
   r₀ = a(P)·P^n(P) using tab lookup.
 - `burn_rate_cell(P, Re, D_hyd, x, ..., tab_min_p, tab_max_p, tab_a, tab_n, n_tabs, kappa)` —
-  Single-cell total burn rate via bisection; uses tab lookup for r₀.
+  Single-cell total burn rate via bisection; uses tab lookup for r₀. The
+  historical 20× normal-rate upper bracket is retained when valid and expanded
+  when its closure residual remains negative. A nonpositive hydraulic diameter
+  returns normal burning with no erosive increment.
 - `compute_burn_rates(P, Re, D_hyd, x, is_burning, ..., tab_arrays, kappa, N)` —
   Vectorized wrapper.
 
