@@ -50,6 +50,7 @@ python scripts/run_numerical_verification.py  # Chunc startup grid/CFL study
 python scripts/run_numerical_verification.py --profile full
 python scripts/run_numerical_verification.py --profile full \
   --single-cells 100 --single-cfl 0.075 --history-capacity 6500000
+python scripts/run_limiting_case_verification.py  # Full-duration limiting cases
 ```
 
 ```python
