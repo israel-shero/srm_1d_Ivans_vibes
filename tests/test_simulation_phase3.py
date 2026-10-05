@@ -314,6 +314,19 @@ def test_geometry_update_interval_must_be_positive():
         )
 
 
+@pytest.mark.parametrize("pressure_floor_pa", [0.0, -1.0, np.nan, np.inf])
+def test_pressure_floor_must_be_finite_and_positive(pressure_floor_pa):
+    geo, prop, nozzle = _small_motor()
+    with pytest.raises(
+        ValueError, match="pressure_floor_pa must be finite and positive"
+    ):
+        run_simulation(
+            geo, prop, nozzle, _test_chamber(),
+            pressure_floor_pa=pressure_floor_pa,
+            verbose=False,
+        )
+
+
 def test_run_exposes_per_cell_numerical_limit_diagnostics():
     geo, prop, nozzle = _small_motor()
     result = run_simulation(
@@ -343,6 +356,13 @@ def test_run_exposes_per_cell_numerical_limit_diagnostics():
             geo.N_cells,
         )
         assert np.all(limits[name]['activation_count_by_cell'] >= 0)
+    pressure_floor = limits['pressure_floor']
+    assert result['summary']['pressure_floor_pa'] == 1.0e3
+    assert pressure_floor['threshold_pa'] == 1.0e3
+    assert pressure_floor['maximum_raw_deficit_pa_by_cell'].shape == (
+        geo.N_cells,
+    )
+    assert np.all(pressure_floor['maximum_raw_deficit_pa_by_cell'] >= 0.0)
     mach_limit = limits['port_mach_cap']
     assert mach_limit['threshold_mach'] == 0.0
     assert mach_limit['x_m'].shape == (geo.N_cells - 1,)

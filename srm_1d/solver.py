@@ -290,11 +290,13 @@ def _piso_step_with_energy_diagnostics(
     limit_abs_energy_j=None,
     limit_first_time_s=None,
     limit_last_time_s=None,
+    pressure_floor_max_deficit_pa=None,
     mach_limit_activation_counts=None,
     mach_limit_duration_s=None,
     mach_limit_first_time_s=None,
     mach_limit_last_time_s=None,
     step_start_time_s=0.0,
+    pressure_floor_pa=1.0e3,
 ):
     """
     One complete PISO time step on a staggered grid.
@@ -722,16 +724,19 @@ def _piso_step_with_energy_diagnostics(
     # -------------------------------------------------------
     # STEP 4: UPDATE DENSITY
     # -------------------------------------------------------
-    pressure_floor = 1.0e3
     for i in range(N):
-        if P_new[i] < pressure_floor:
+        if P_new[i] < pressure_floor_pa:
+            deficit = pressure_floor_pa - P_new[i]
+            if (pressure_floor_max_deficit_pa is not None
+                    and deficit > pressure_floor_max_deficit_pa[i]):
+                pressure_floor_max_deficit_pa[i] = deficit
             if limit_activation_counts is not None:
                 limit_activation_counts[LIMIT_PRESSURE_FLOOR, i] += 1
                 limit_duration_s[LIMIT_PRESSURE_FLOOR, i] += dt
                 if limit_first_time_s[LIMIT_PRESSURE_FLOOR, i] < 0.0:
                     limit_first_time_s[LIMIT_PRESSURE_FLOOR, i] = step_start_time_s
                 limit_last_time_s[LIMIT_PRESSURE_FLOOR, i] = step_start_time_s + dt
-            P_new[i] = pressure_floor
+            P_new[i] = pressure_floor_pa
     rho_new = np.zeros(N)
     for i in range(N):
         rho_new[i] = P_new[i] / (R_arr[i] * T_new[i])

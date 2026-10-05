@@ -68,6 +68,7 @@ def _write_limit_csv(path: Path, result: dict) -> None:
             f"{name}_last_activation_time_s",
             f"{name}_absolute_correction_energy_j",
         ))
+    fieldnames.append("pressure_floor_maximum_raw_deficit_pa")
     with path.open("w", newline="", encoding="utf-8") as stream:
         writer = csv.DictWriter(stream, fieldnames=fieldnames)
         writer.writeheader()
@@ -91,6 +92,12 @@ def _write_limit_csv(path: Path, result: dict) -> None:
                 row[f"{name}_absolute_correction_energy_j"] = (
                     float(energy[index]) if energy is not None else 0.0
                 )
+            deficit = limits["pressure_floor"].get(
+                "maximum_raw_deficit_pa_by_cell"
+            )
+            row["pressure_floor_maximum_raw_deficit_pa"] = (
+                float(deficit[index]) if deficit is not None else 0.0
+            )
             writer.writerow(row)
 
 
@@ -244,12 +251,27 @@ def _extract_metrics(result: dict, performance: dict | None = None) -> dict:
             metrics[f"{prefix}_last_activation_time_s"] = (
                 float(np.nanmax(last_times)) if np.any(np.isfinite(last_times)) else None
             )
+            if name == "pressure_floor":
+                metrics[f"{prefix}_threshold_pa"] = float(
+                    diagnostic["threshold_pa"]
+                )
             energy = diagnostic.get("absolute_correction_energy_j_by_cell")
             if energy is not None:
                 energy = np.asarray(energy, dtype=float)
                 energy_index = int(np.argmax(energy))
                 metrics[f"{prefix}_total_abs_energy_j"] = float(np.sum(energy))
                 metrics[f"{prefix}_max_energy_x_m"] = float(x_m[energy_index])
+            deficit = diagnostic.get("maximum_raw_deficit_pa_by_cell")
+            if deficit is not None:
+                deficit = np.asarray(deficit, dtype=float)
+                deficit_index = int(np.argmax(deficit))
+                metrics[f"{prefix}_maximum_raw_deficit_pa"] = float(
+                    deficit[deficit_index]
+                )
+                metrics[f"{prefix}_maximum_raw_deficit_x_m"] = (
+                    float(x_m[deficit_index])
+                    if deficit[deficit_index] > 0.0 else None
+                )
         diagnostic = limits["port_mach_cap"]
         counts = np.asarray(diagnostic["activation_count_by_face"], dtype=np.int64)
         durations = np.asarray(diagnostic["duration_s_by_face"], dtype=float)

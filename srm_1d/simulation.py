@@ -1351,7 +1351,7 @@ def _run_time_loop(
         # --- Simulation parameters ---
     roughness, kappa,
     cfl_target, dt_max, burn_update_interval, geometry_update_interval,
-    source_cfl_factor, port_mach_cap,
+    source_cfl_factor, port_mach_cap, pressure_floor_pa,
     T_ignition, P_ambient, ambient_temperature,
     diagnostic_disable_erosive, diagnostic_disable_endfaces,
     diagnostic_disable_momentum, diagnostic_disable_pyrogen_surface_heating,
@@ -1398,6 +1398,7 @@ def _run_time_loop(
     T_ceiling_arr,
     limit_activation_counts, limit_duration_s, limit_abs_energy_j,
     limit_first_time_s, limit_last_time_s,
+    pressure_floor_max_deficit_pa,
     mach_limit_activation_counts, mach_limit_duration_s,
     mach_limit_first_time_s, mach_limit_last_time_s,
     # --- v0.7.2 Phase A: pyrogen axial distribution ---
@@ -2010,9 +2011,11 @@ def _run_time_loop(
             port_mach_cap,
             limit_activation_counts, limit_duration_s, limit_abs_energy_j,
             limit_first_time_s, limit_last_time_s,
+            pressure_floor_max_deficit_pa,
             mach_limit_activation_counts, mach_limit_duration_s,
             mach_limit_first_time_s, mach_limit_last_time_s,
             t,
+            pressure_floor_pa,
         )
 
         # ============================================
@@ -2275,6 +2278,10 @@ def run_simulation(
     progress_state=None,
     # Diagnostic cadence override. None preserves burn_update_interval coupling.
     geometry_update_interval=None,
+    # Diagnostic override for limiter-sensitivity studies. The historical
+    # production threshold remains the default. Kept last for positional API
+    # compatibility.
+    pressure_floor_pa=1.0e3,
 ):
     """
     Run a complete transient simulation.
@@ -2316,6 +2323,9 @@ def run_simulation(
         Optional diagnostic override for the initial bore gas temperature
         [K]. ``None`` preserves the historical behavior: fill the bore
         gas at propellant flame temperature.
+    pressure_floor_pa : float
+        Diagnostic override for the pressure floor [Pa]. The default
+        preserves the historical 1000 Pa threshold.
     diagnostic_disable_erosive : bool
         If True, remove the Ma erosive increment from burn rates while
         preserving the Saint-Robert normal rate. Diagnostic only.
@@ -2368,6 +2378,8 @@ def run_simulation(
         raise ValueError("ambient_temperature must be positive")
     if initial_gas_temperature is not None and initial_gas_temperature <= 0.0:
         raise ValueError("initial_gas_temperature must be positive")
+    if not np.isfinite(pressure_floor_pa) or pressure_floor_pa <= 0.0:
+        raise ValueError("pressure_floor_pa must be finite and positive")
     if not 0.0 <= igniter_axial_momentum_fraction <= 1.0:
         raise ValueError("igniter_axial_momentum_fraction must be between 0 and 1")
     pyrogen_heat_flux = pyrogen_chamber.pyrogen.heat_flux_cal_cm2_s
@@ -2529,6 +2541,7 @@ def run_simulation(
     limit_abs_energy_j = np.zeros((N_LIMIT_DIAGNOSTICS, N))
     limit_first_time_s = np.full((N_LIMIT_DIAGNOSTICS, N), -1.0)
     limit_last_time_s = np.full((N_LIMIT_DIAGNOSTICS, N), -1.0)
+    pressure_floor_max_deficit_pa = np.zeros(N)
     mach_limit_activation_counts = np.zeros(max(N - 1, 0), dtype=np.int64)
     mach_limit_duration_s = np.zeros(max(N - 1, 0))
     mach_limit_first_time_s = np.full(max(N - 1, 0), -1.0)
@@ -2790,7 +2803,7 @@ def run_simulation(
         # Simulation parameters
         roughness, kappa,
         cfl_target, dt_max, burn_update_interval, geometry_update_interval,
-        source_cfl_factor, float(port_mach_cap),
+        source_cfl_factor, float(port_mach_cap), float(pressure_floor_pa),
         T_ignition, P_ambient, T_ambient,
         bool(diagnostic_disable_erosive), bool(diagnostic_disable_endfaces),
         bool(diagnostic_disable_momentum),
@@ -2842,6 +2855,7 @@ def run_simulation(
         T_ceiling_arr,
         limit_activation_counts, limit_duration_s, limit_abs_energy_j,
         limit_first_time_s, limit_last_time_s,
+        pressure_floor_max_deficit_pa,
         mach_limit_activation_counts, mach_limit_duration_s,
         mach_limit_first_time_s, mach_limit_last_time_s,
         # v0.7.2 Phase A: pyrogen axial distribution
@@ -3039,6 +3053,7 @@ def run_simulation(
         'pyrogen_peak_P': float(pyrogen_peak_P),
         'initial_gas_temperature': float(T_initial_gas),
         'ambient_temperature': float(T_ambient),
+        'pressure_floor_pa': float(pressure_floor_pa),
         'diagnostic_disable_erosive': bool(diagnostic_disable_erosive),
         'diagnostic_disable_endfaces': bool(diagnostic_disable_endfaces),
         'diagnostic_disable_momentum': bool(diagnostic_disable_momentum),
@@ -3228,7 +3243,7 @@ def run_simulation(
                 ].copy(),
             },
             'pressure_floor': {
-                'threshold_pa': 1.0e3,
+                'threshold_pa': float(pressure_floor_pa),
                 'activation_count_by_cell': limit_activation_counts[
                     LIMIT_PRESSURE_FLOOR
                 ].copy(),
@@ -3242,6 +3257,9 @@ def run_simulation(
                 'last_activation_time_s_by_cell': np.where(
                     limit_last_time_s[LIMIT_PRESSURE_FLOOR] >= 0.0,
                     limit_last_time_s[LIMIT_PRESSURE_FLOOR], np.nan,
+                ),
+                'maximum_raw_deficit_pa_by_cell': (
+                    pressure_floor_max_deficit_pa.copy()
                 ),
             },
             'port_mach_cap': {

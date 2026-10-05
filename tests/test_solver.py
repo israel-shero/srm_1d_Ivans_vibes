@@ -181,6 +181,33 @@ class TestPisoSources:
         assert last_times[1, 0] == pytest.approx(dt)
         assert counts[0, 0] == 0
 
+    def test_pressure_floor_override_records_pre_clamp_deficit(self):
+        counts = np.zeros((3, 1), dtype=np.int64)
+        durations = np.zeros((3, 1))
+        energies = np.zeros((3, 1))
+        first_times = np.full((3, 1), -1.0)
+        last_times = np.full((3, 1), -1.0)
+        max_deficit = np.zeros(1)
+        pressure = 500.0
+        temperature = 300.0
+        gas_constant = 300.0
+
+        out = _piso_step_with_energy_diagnostics(
+            np.array([pressure / (gas_constant * temperature)]),
+            np.zeros(2), np.array([pressure]), np.array([temperature]),
+            np.array([1.0e-3]), np.array([0.035]),
+            np.zeros(1), np.zeros(1), np.zeros(2), np.zeros(1),
+            0.01, 1.0e-5, np.array([1.2]), np.array([gas_constant]),
+            np.array([2000.0]), np.array([3030.0]),
+            0.0, 101325.0, temperature, 1, 0.0,
+            counts, durations, energies, first_times, last_times, max_deficit,
+            pressure_floor_pa=750.0,
+        )
+
+        assert out[2][0] == pytest.approx(750.0)
+        assert counts[2, 0] == 1
+        assert max_deficit[0] == pytest.approx(250.0)
+
     def test_thermal_source_controls_injection_temperature(self):
         """Same mass source with hotter thermal source should heat more.
 

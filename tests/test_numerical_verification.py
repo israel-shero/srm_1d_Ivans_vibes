@@ -46,10 +46,12 @@ def _localized_result():
                 "absolute_correction_energy_j_by_cell": np.array([3.0, 5.0]),
             },
             "pressure_floor": {
+                "threshold_pa": 1000.0,
                 "activation_count_by_cell": np.array([0, 0]),
                 "duration_s_by_cell": np.array([0.0, 0.0]),
                 "first_activation_time_s_by_cell": np.array([np.nan, np.nan]),
                 "last_activation_time_s_by_cell": np.array([np.nan, np.nan]),
+                "maximum_raw_deficit_pa_by_cell": np.array([0.0, 2500.0]),
             },
             "port_mach_cap": {
                 "threshold_mach": 1.0,
@@ -140,6 +142,21 @@ def test_extract_metrics_localizes_numerical_limits():
     assert metrics["limit_temperature_ceiling_last_activation_time_s"] == 0.04
     assert metrics["limit_port_mach_cap_active_faces"] == 1
     assert metrics["limit_port_mach_cap_total_activations"] == 3
+    assert metrics["limit_pressure_floor_threshold_pa"] == 1000.0
+    assert metrics["limit_pressure_floor_maximum_raw_deficit_pa"] == 2500.0
+    assert metrics["limit_pressure_floor_maximum_raw_deficit_x_m"] == 0.2
+
+
+def test_extract_metrics_omits_pressure_deficit_location_when_inactive():
+    result = _localized_result()
+    result["numerical_limits"]["pressure_floor"][
+        "maximum_raw_deficit_pa_by_cell"
+    ] = np.zeros(2)
+
+    metrics = _extract_metrics(result)
+
+    assert metrics["limit_pressure_floor_maximum_raw_deficit_pa"] == 0.0
+    assert metrics["limit_pressure_floor_maximum_raw_deficit_x_m"] is None
 
 
 def test_limit_csv_preserves_each_cell(tmp_path):
@@ -153,6 +170,7 @@ def test_limit_csv_preserves_each_cell(tmp_path):
     assert rows[1]["x_m"] == "0.2"
     assert rows[1]["temperature_ceiling_activations"] == "1"
     assert rows[1]["temperature_ceiling_absolute_correction_energy_j"] == "5.0"
+    assert rows[1]["pressure_floor_maximum_raw_deficit_pa"] == "2500.0"
 
 
 def test_mach_limit_csv_preserves_each_interior_face(tmp_path):
