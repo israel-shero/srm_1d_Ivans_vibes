@@ -69,6 +69,13 @@ def _write_limit_csv(path: Path, result: dict) -> None:
             f"{name}_absolute_correction_energy_j",
         ))
     fieldnames.append("pressure_floor_maximum_raw_deficit_pa")
+    pressure_floor_events = limits["pressure_floor"].get(
+        "maximum_deficit_event", {}
+    )
+    fieldnames.extend(
+        f"pressure_floor_maximum_deficit_event_{field}"
+        for field in pressure_floor_events
+    )
     with path.open("w", newline="", encoding="utf-8") as stream:
         writer = csv.DictWriter(stream, fieldnames=fieldnames)
         writer.writeheader()
@@ -98,6 +105,10 @@ def _write_limit_csv(path: Path, result: dict) -> None:
             row["pressure_floor_maximum_raw_deficit_pa"] = (
                 float(deficit[index]) if deficit is not None else 0.0
             )
+            for field, values in pressure_floor_events.items():
+                row[f"pressure_floor_maximum_deficit_event_{field}"] = (
+                    np.asarray(values)[index].item()
+                )
             writer.writerow(row)
 
 
@@ -272,6 +283,12 @@ def _extract_metrics(result: dict, performance: dict | None = None) -> dict:
                     float(x_m[deficit_index])
                     if deficit[deficit_index] > 0.0 else None
                 )
+                event = diagnostic.get("maximum_deficit_event", {})
+                for field, values in event.items():
+                    value = np.asarray(values)[deficit_index].item()
+                    metrics[
+                        f"{prefix}_maximum_deficit_event_{field}"
+                    ] = value if deficit[deficit_index] > 0.0 else None
         diagnostic = limits["port_mach_cap"]
         counts = np.asarray(diagnostic["activation_count_by_face"], dtype=np.int64)
         durations = np.asarray(diagnostic["duration_s_by_face"], dtype=float)

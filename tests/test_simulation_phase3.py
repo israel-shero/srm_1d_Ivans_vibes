@@ -363,6 +363,12 @@ def test_run_exposes_per_cell_numerical_limit_diagnostics():
         geo.N_cells,
     )
     assert np.all(pressure_floor['maximum_raw_deficit_pa_by_cell'] >= 0.0)
+    event = pressure_floor['maximum_deficit_event']
+    assert event['deficit_pa'].shape == (geo.N_cells,)
+    assert event['pressure_after_first_correction_pa'].shape == (
+        geo.N_cells,
+    )
+    assert event['second_continuity_rhs_kg_s'].shape == (geo.N_cells,)
     mach_limit = limits['port_mach_cap']
     assert mach_limit['threshold_mach'] == 0.0
     assert mach_limit['x_m'].shape == (geo.N_cells - 1,)

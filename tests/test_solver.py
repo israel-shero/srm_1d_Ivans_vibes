@@ -6,6 +6,8 @@ from srm_1d.solver import (
     NOZZLE_STATE_CHOKED_OUT,
     NOZZLE_STATE_SUBSONIC_IN,
     NOZZLE_STATE_SUBSONIC_OUT,
+    N_PRESSURE_FLOOR_EVENT_FIELDS,
+    PRESSURE_FLOOR_EVENT_FIELDS,
     _piso_step_with_energy_diagnostics,
     thomas_solve,
     compute_dt_cfl,
@@ -188,6 +190,7 @@ class TestPisoSources:
         first_times = np.full((3, 1), -1.0)
         last_times = np.full((3, 1), -1.0)
         max_deficit = np.zeros(1)
+        event = np.zeros((N_PRESSURE_FLOOR_EVENT_FIELDS, 1))
         pressure = 500.0
         temperature = 300.0
         gas_constant = 300.0
@@ -202,11 +205,22 @@ class TestPisoSources:
             0.0, 101325.0, temperature, 1, 0.0,
             counts, durations, energies, first_times, last_times, max_deficit,
             pressure_floor_pa=750.0,
+            pressure_floor_event_diagnostics=event,
         )
 
+        fields = {
+            name: index for index, name in enumerate(PRESSURE_FLOOR_EVENT_FIELDS)
+        }
         assert out[2][0] == pytest.approx(750.0)
         assert counts[2, 0] == 1
         assert max_deficit[0] == pytest.approx(250.0)
+        assert event[fields["deficit_pa"], 0] == pytest.approx(250.0)
+        assert event[fields["pressure_before_step_pa"], 0] == pressure
+        assert event[fields["pressure_after_first_correction_pa"], 0] == pressure
+        assert event[fields["pressure_correction_2_pa"], 0] == 0.0
+        assert event[fields["pressure_pre_clamp_pa"], 0] == pressure
+        assert event[fields["first_continuity_rhs_kg_s"], 0] == 0.0
+        assert event[fields["second_continuity_rhs_kg_s"], 0] == 0.0
 
     def test_thermal_source_controls_injection_temperature(self):
         """Same mass source with hotter thermal source should heat more.

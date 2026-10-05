@@ -168,6 +168,71 @@ LIMIT_TEMPERATURE_CEILING = 1
 LIMIT_PRESSURE_FLOOR = 2
 N_LIMIT_DIAGNOSTICS = 3
 
+PRESSURE_FLOOR_EVENT_FIELDS = (
+    "deficit_pa",
+    "step_start_time_s",
+    "dt_s",
+    "pressure_before_step_pa",
+    "pressure_after_first_correction_pa",
+    "pressure_correction_1_pa",
+    "pressure_correction_2_pa",
+    "pressure_pre_clamp_pa",
+    "mass_source_kg_s",
+    "first_west_mass_flow_kg_s",
+    "first_east_mass_flow_kg_s",
+    "first_continuity_rhs_kg_s",
+    "second_west_mass_flow_kg_s",
+    "second_east_mass_flow_kg_s",
+    "second_continuity_rhs_kg_s",
+    "first_local_pressure_diagonal_kg_per_s_pa",
+    "second_local_pressure_diagonal_kg_per_s_pa",
+    "nozzle_mass_flow_before_first_kg_s",
+    "nozzle_state_before_first",
+    "nozzle_mass_flow_before_second_kg_s",
+    "nozzle_state_before_second",
+    "west_face_predictor_velocity_m_s",
+    "east_face_predictor_velocity_m_s",
+    "west_face_first_corrected_velocity_m_s",
+    "east_face_first_corrected_velocity_m_s",
+    "port_area_m2",
+    "hydraulic_diameter_m",
+    "density_before_kg_m3",
+    "density_after_first_correction_kg_m3",
+    "temperature_before_k",
+)
+N_PRESSURE_FLOOR_EVENT_FIELDS = len(PRESSURE_FLOOR_EVENT_FIELDS)
+
+PF_EVENT_DEFICIT = 0
+PF_EVENT_STEP_START_TIME = 1
+PF_EVENT_DT = 2
+PF_EVENT_PRESSURE_BEFORE = 3
+PF_EVENT_PRESSURE_AFTER_FIRST = 4
+PF_EVENT_PRESSURE_CORRECTION_1 = 5
+PF_EVENT_PRESSURE_CORRECTION_2 = 6
+PF_EVENT_PRESSURE_PRE_CLAMP = 7
+PF_EVENT_MASS_SOURCE = 8
+PF_EVENT_FIRST_WEST_MASS_FLOW = 9
+PF_EVENT_FIRST_EAST_MASS_FLOW = 10
+PF_EVENT_FIRST_CONTINUITY_RHS = 11
+PF_EVENT_SECOND_WEST_MASS_FLOW = 12
+PF_EVENT_SECOND_EAST_MASS_FLOW = 13
+PF_EVENT_SECOND_CONTINUITY_RHS = 14
+PF_EVENT_FIRST_LOCAL_DIAGONAL = 15
+PF_EVENT_SECOND_LOCAL_DIAGONAL = 16
+PF_EVENT_NOZZLE_MASS_FLOW_BEFORE_FIRST = 17
+PF_EVENT_NOZZLE_STATE_BEFORE_FIRST = 18
+PF_EVENT_NOZZLE_MASS_FLOW_BEFORE_SECOND = 19
+PF_EVENT_NOZZLE_STATE_BEFORE_SECOND = 20
+PF_EVENT_WEST_PREDICTOR_VELOCITY = 21
+PF_EVENT_EAST_PREDICTOR_VELOCITY = 22
+PF_EVENT_WEST_FIRST_CORRECTED_VELOCITY = 23
+PF_EVENT_EAST_FIRST_CORRECTED_VELOCITY = 24
+PF_EVENT_PORT_AREA = 25
+PF_EVENT_HYDRAULIC_DIAMETER = 26
+PF_EVENT_DENSITY_BEFORE = 27
+PF_EVENT_DENSITY_AFTER_FIRST = 28
+PF_EVENT_TEMPERATURE_BEFORE = 29
+
 
 @njit(cache=True, fastmath=True)
 def _critical_pressure_ratio(gamma):
@@ -297,6 +362,7 @@ def _piso_step_with_energy_diagnostics(
     mach_limit_last_time_s=None,
     step_start_time_s=0.0,
     pressure_floor_pa=1.0e3,
+    pressure_floor_event_diagnostics=None,
 ):
     """
     One complete PISO time step on a staggered grid.
@@ -727,6 +793,165 @@ def _piso_step_with_energy_diagnostics(
     for i in range(N):
         if P_new[i] < pressure_floor_pa:
             deficit = pressure_floor_pa - P_new[i]
+            if (pressure_floor_event_diagnostics is not None
+                    and deficit > pressure_floor_event_diagnostics[
+                        PF_EVENT_DEFICIT, i
+                    ]):
+                pressure_after_first = P[i] + P_prime[i]
+                local_mass_source = mass_source[i] * dx
+
+                first_west_velocity = 0.0
+                first_west_mdot = 0.0
+                first_coeff_w = 0.0
+                if i > 0:
+                    rho_w = 0.5 * (rho[i - 1] + rho[i])
+                    d_w_first = dt / max(rho_w, 1.0e-6)
+                    first_west_velocity = (
+                        u_star[i]
+                        - d_w_first * (P_prime[i] - P_prime[i - 1]) / dx
+                    )
+                    first_west_mdot = (
+                        rho_w * u_star[i] * A_face[i]
+                    )
+                    first_coeff_w = A_face[i] * A_face[i] * d_w_first / dx
+
+                first_east_velocity = u_star[N]
+                first_east_mdot = 0.0
+                first_coeff_e = 0.0
+                if i < N - 1:
+                    rho_e = 0.5 * (rho[i] + rho[i + 1])
+                    d_e_first = dt / max(rho_e, 1.0e-6)
+                    first_east_velocity = (
+                        u_star[i + 1]
+                        - d_e_first * (
+                            P_prime[i + 1] - P_prime[i]
+                        ) / dx
+                    )
+                    first_east_mdot = (
+                        rho_e * u_star[i + 1] * A_face[i + 1]
+                    )
+                    first_coeff_e = (
+                        A_face[i + 1] * A_face[i + 1] * d_e_first / dx
+                    )
+                else:
+                    first_east_mdot, _dmdp, _T_bc, _state = (
+                        _nozzle_boundary_flow(
+                            P[i], T[i], A_throat, gamma_bnd, R_bnd,
+                            P_ambient, T_ambient,
+                        )
+                    )
+
+                second_west_mdot = 0.0
+                second_coeff_w = 0.0
+                if i > 0:
+                    rho_w_1 = 0.5 * (
+                        rho_new_1[i - 1] + rho_new_1[i]
+                    )
+                    second_west_mdot = (
+                        rho_w_1 * first_west_velocity * A_face[i]
+                    )
+                    second_coeff_w = (
+                        A_face[i] * A_face[i] * d_face[i] / dx
+                    )
+
+                second_east_mdot = 0.0
+                second_coeff_e = 0.0
+                if i < N - 1:
+                    rho_e_1 = 0.5 * (
+                        rho_new_1[i] + rho_new_1[i + 1]
+                    )
+                    second_east_mdot = (
+                        rho_e_1 * first_east_velocity * A_face[i + 1]
+                    )
+                    second_coeff_e = (
+                        A_face[i + 1] * A_face[i + 1]
+                        * d_face[i + 1] / dx
+                    )
+                else:
+                    second_east_mdot, _dmdp, _T_bc, _state = (
+                        _nozzle_boundary_flow(
+                            pressure_after_first, T[i], A_throat,
+                            gamma_bnd, R_bnd, P_ambient, T_ambient,
+                        )
+                    )
+
+                first_nozzle_mdot, _dmdp_1, _T_bc_1, first_nozzle_state = (
+                    _nozzle_boundary_flow(
+                        P[N - 1], T[N - 1], A_throat, gamma_bnd, R_bnd,
+                        P_ambient, T_ambient,
+                    )
+                )
+                second_nozzle_mdot, _dmdp_2, _T_bc_2, second_nozzle_state = (
+                    _nozzle_boundary_flow(
+                        P[N - 1] + P_prime[N - 1], T[N - 1],
+                        A_throat, gamma_bnd, R_bnd, P_ambient, T_ambient,
+                    )
+                )
+
+                local_dmdp_first = 0.0
+                local_dmdp_second = 0.0
+                if i == N - 1:
+                    local_dmdp_first = _dmdp_1
+                    local_dmdp_second = _dmdp_2
+                local_a_t = A_port[i] * dx / (
+                    R_arr[i] * T[i] * dt
+                )
+                first_rhs = local_mass_source - (
+                    first_east_mdot - first_west_mdot
+                )
+                second_rhs = local_mass_source - (
+                    second_east_mdot - second_west_mdot
+                )
+
+                event = pressure_floor_event_diagnostics
+                event[PF_EVENT_DEFICIT, i] = deficit
+                event[PF_EVENT_STEP_START_TIME, i] = step_start_time_s
+                event[PF_EVENT_DT, i] = dt
+                event[PF_EVENT_PRESSURE_BEFORE, i] = P[i]
+                event[PF_EVENT_PRESSURE_AFTER_FIRST, i] = pressure_after_first
+                event[PF_EVENT_PRESSURE_CORRECTION_1, i] = P_prime[i]
+                event[PF_EVENT_PRESSURE_CORRECTION_2, i] = P_prime2[i]
+                event[PF_EVENT_PRESSURE_PRE_CLAMP, i] = P_new[i]
+                event[PF_EVENT_MASS_SOURCE, i] = local_mass_source
+                event[PF_EVENT_FIRST_WEST_MASS_FLOW, i] = first_west_mdot
+                event[PF_EVENT_FIRST_EAST_MASS_FLOW, i] = first_east_mdot
+                event[PF_EVENT_FIRST_CONTINUITY_RHS, i] = first_rhs
+                event[PF_EVENT_SECOND_WEST_MASS_FLOW, i] = second_west_mdot
+                event[PF_EVENT_SECOND_EAST_MASS_FLOW, i] = second_east_mdot
+                event[PF_EVENT_SECOND_CONTINUITY_RHS, i] = second_rhs
+                event[PF_EVENT_FIRST_LOCAL_DIAGONAL, i] = (
+                    local_a_t + first_coeff_w + first_coeff_e
+                    + local_dmdp_first
+                )
+                event[PF_EVENT_SECOND_LOCAL_DIAGONAL, i] = (
+                    local_a_t + second_coeff_w + second_coeff_e
+                    + local_dmdp_second
+                )
+                event[PF_EVENT_NOZZLE_MASS_FLOW_BEFORE_FIRST, i] = (
+                    first_nozzle_mdot
+                )
+                event[PF_EVENT_NOZZLE_STATE_BEFORE_FIRST, i] = (
+                    first_nozzle_state
+                )
+                event[PF_EVENT_NOZZLE_MASS_FLOW_BEFORE_SECOND, i] = (
+                    second_nozzle_mdot
+                )
+                event[PF_EVENT_NOZZLE_STATE_BEFORE_SECOND, i] = (
+                    second_nozzle_state
+                )
+                event[PF_EVENT_WEST_PREDICTOR_VELOCITY, i] = u_star[i]
+                event[PF_EVENT_EAST_PREDICTOR_VELOCITY, i] = u_star[i + 1]
+                event[PF_EVENT_WEST_FIRST_CORRECTED_VELOCITY, i] = (
+                    first_west_velocity
+                )
+                event[PF_EVENT_EAST_FIRST_CORRECTED_VELOCITY, i] = (
+                    first_east_velocity
+                )
+                event[PF_EVENT_PORT_AREA, i] = A_port[i]
+                event[PF_EVENT_HYDRAULIC_DIAMETER, i] = D_hyd[i]
+                event[PF_EVENT_DENSITY_BEFORE, i] = rho[i]
+                event[PF_EVENT_DENSITY_AFTER_FIRST, i] = rho_new_1[i]
+                event[PF_EVENT_TEMPERATURE_BEFORE, i] = T[i]
             if (pressure_floor_max_deficit_pa is not None
                     and deficit > pressure_floor_max_deficit_pa[i]):
                 pressure_floor_max_deficit_pa[i] = deficit

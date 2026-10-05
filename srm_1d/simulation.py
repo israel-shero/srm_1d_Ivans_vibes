@@ -41,6 +41,8 @@ from .solver import (
     LIMIT_TEMPERATURE_CEILING,
     LIMIT_PRESSURE_FLOOR,
     N_LIMIT_DIAGNOSTICS,
+    PRESSURE_FLOOR_EVENT_FIELDS,
+    N_PRESSURE_FLOOR_EVENT_FIELDS,
 )
 from .burn_rate import compute_burn_rates, haaland_friction, gnielinski_nusselt
 from .igniter_plenum import (
@@ -1399,6 +1401,7 @@ def _run_time_loop(
     limit_activation_counts, limit_duration_s, limit_abs_energy_j,
     limit_first_time_s, limit_last_time_s,
     pressure_floor_max_deficit_pa,
+    pressure_floor_event_diagnostics,
     mach_limit_activation_counts, mach_limit_duration_s,
     mach_limit_first_time_s, mach_limit_last_time_s,
     # --- v0.7.2 Phase A: pyrogen axial distribution ---
@@ -2016,6 +2019,7 @@ def _run_time_loop(
             mach_limit_first_time_s, mach_limit_last_time_s,
             t,
             pressure_floor_pa,
+            pressure_floor_event_diagnostics,
         )
 
         # ============================================
@@ -2542,6 +2546,9 @@ def run_simulation(
     limit_first_time_s = np.full((N_LIMIT_DIAGNOSTICS, N), -1.0)
     limit_last_time_s = np.full((N_LIMIT_DIAGNOSTICS, N), -1.0)
     pressure_floor_max_deficit_pa = np.zeros(N)
+    pressure_floor_event_diagnostics = np.zeros(
+        (N_PRESSURE_FLOOR_EVENT_FIELDS, N)
+    )
     mach_limit_activation_counts = np.zeros(max(N - 1, 0), dtype=np.int64)
     mach_limit_duration_s = np.zeros(max(N - 1, 0))
     mach_limit_first_time_s = np.full(max(N - 1, 0), -1.0)
@@ -2856,6 +2863,7 @@ def run_simulation(
         limit_activation_counts, limit_duration_s, limit_abs_energy_j,
         limit_first_time_s, limit_last_time_s,
         pressure_floor_max_deficit_pa,
+        pressure_floor_event_diagnostics,
         mach_limit_activation_counts, mach_limit_duration_s,
         mach_limit_first_time_s, mach_limit_last_time_s,
         # v0.7.2 Phase A: pyrogen axial distribution
@@ -3261,6 +3269,10 @@ def run_simulation(
                 'maximum_raw_deficit_pa_by_cell': (
                     pressure_floor_max_deficit_pa.copy()
                 ),
+                'maximum_deficit_event': {
+                    field: pressure_floor_event_diagnostics[index].copy()
+                    for index, field in enumerate(PRESSURE_FLOOR_EVENT_FIELDS)
+                },
             },
             'port_mach_cap': {
                 'threshold_mach': float(port_mach_cap),

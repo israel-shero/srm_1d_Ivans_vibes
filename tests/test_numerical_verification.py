@@ -52,6 +52,11 @@ def _localized_result():
                 "first_activation_time_s_by_cell": np.array([np.nan, np.nan]),
                 "last_activation_time_s_by_cell": np.array([np.nan, np.nan]),
                 "maximum_raw_deficit_pa_by_cell": np.array([0.0, 2500.0]),
+                "maximum_deficit_event": {
+                    "deficit_pa": np.array([0.0, 2500.0]),
+                    "step_start_time_s": np.array([0.0, 0.012]),
+                    "nozzle_state_before_first": np.array([0, 2]),
+                },
             },
             "port_mach_cap": {
                 "threshold_mach": 1.0,
@@ -145,6 +150,15 @@ def test_extract_metrics_localizes_numerical_limits():
     assert metrics["limit_pressure_floor_threshold_pa"] == 1000.0
     assert metrics["limit_pressure_floor_maximum_raw_deficit_pa"] == 2500.0
     assert metrics["limit_pressure_floor_maximum_raw_deficit_x_m"] == 0.2
+    assert metrics[
+        "limit_pressure_floor_maximum_deficit_event_deficit_pa"
+    ] == 2500.0
+    assert metrics[
+        "limit_pressure_floor_maximum_deficit_event_step_start_time_s"
+    ] == 0.012
+    assert metrics[
+        "limit_pressure_floor_maximum_deficit_event_nozzle_state_before_first"
+    ] == 2
 
 
 def test_extract_metrics_omits_pressure_deficit_location_when_inactive():
@@ -157,6 +171,15 @@ def test_extract_metrics_omits_pressure_deficit_location_when_inactive():
 
     assert metrics["limit_pressure_floor_maximum_raw_deficit_pa"] == 0.0
     assert metrics["limit_pressure_floor_maximum_raw_deficit_x_m"] is None
+    assert metrics[
+        "limit_pressure_floor_maximum_deficit_event_deficit_pa"
+    ] is None
+    assert metrics[
+        "limit_pressure_floor_maximum_deficit_event_step_start_time_s"
+    ] is None
+    assert metrics[
+        "limit_pressure_floor_maximum_deficit_event_nozzle_state_before_first"
+    ] is None
 
 
 def test_limit_csv_preserves_each_cell(tmp_path):
@@ -171,6 +194,9 @@ def test_limit_csv_preserves_each_cell(tmp_path):
     assert rows[1]["temperature_ceiling_activations"] == "1"
     assert rows[1]["temperature_ceiling_absolute_correction_energy_j"] == "5.0"
     assert rows[1]["pressure_floor_maximum_raw_deficit_pa"] == "2500.0"
+    assert rows[1]["pressure_floor_maximum_deficit_event_deficit_pa"] == "2500.0"
+    assert rows[1]["pressure_floor_maximum_deficit_event_step_start_time_s"] == "0.012"
+    assert rows[1]["pressure_floor_maximum_deficit_event_nozzle_state_before_first"] == "2"
 
 
 def test_mach_limit_csv_preserves_each_interior_face(tmp_path):
