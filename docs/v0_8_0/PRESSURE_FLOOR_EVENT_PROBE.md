@@ -161,6 +161,38 @@ their manifest hashes and the four point-manifest hashes. This is one interval
 halving at one grid and CFL, not formal cadence or spatial convergence, physics
 validation, or reproduction of a research-note or experimental result.
 
+## Full-duration spatial comparison
+
+The clean 106- and 206-cell full-duration points at CFL 0.075 are compared in
+`docs/v0_8_0/data/chunc_full_spatial_comparison_106_206.json` (SHA-256
+`2289621834a3d7bc5f0a7b4d5cb8fa930cf75cd7152ca1371ec97cf493806098`).
+Both reached the configured 3.0 s duration, passed the health gate, and had zero
+pressure-floor activations. The finer point completed 12,340,792 steps in
+490.93 s with a 4,368,000,000-byte exact-history mapping.
+
+| Actual cells | Peak pressure | Peak time | Minimum pressure | Max fill Mach | Total impulse | Perf. burn time |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 106 | 12.164137 MPa | 26.2496 ms | 30.8507 kPa | 0.497526 | 4941.364587 N s | 2.144310 s |
+| 206 | 12.291737 MPa | 24.7797 ms | 21.6450 kPa | 0.479342 | 4938.427474 N s | 2.134665 s |
+
+From 106 to 206 cells, peak pressure changes by +1.049%, total impulse by
+-0.0594%, performance burn time by -0.4498%, first burnout by -0.9469%, final
+throat diameter by -0.00890%, and mass-balance error by -0.4723%. Those selected
+outputs remain within the provisional 2% screen. Peak time changes by -5.600%,
+transient minimum pressure by -29.839%, first-3-ms maximum Mach by -3.655%, and
+integrated absolute clipping energy by -24.449%, all outside that screen. The
+minimum-pressure comparison is not floor-censored because neither run activated
+the pressure floor.
+
+The solver's existing grid-dependent default scales burn/source and geometry
+updates from 21/21 steps at 106 cells to 41/41 at 206 cells. The corresponding
+median time step approximately halves, but this pair does not isolate cadence
+from spatial resolution. It also provides only two grid levels, so no observed
+order or formal convergence is claimed. The result narrows the stable full-burn
+outputs while leaving peak timing, transient minimum pressure, early Mach, and
+clipping as numerical limitations. It is not physics validation or reproduction
+of a research-note or experimental result.
+
 ## Exact-history storage
 
 Commit `1a2aac1` adds opt-in disk-backed scalar histories without changing the
