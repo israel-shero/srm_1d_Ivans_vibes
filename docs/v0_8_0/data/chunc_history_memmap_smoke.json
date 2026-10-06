@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "study": "chunc_exact_history_memmap_smoke",
+  "status": "complete",
+  "scope": "Output-storage verification only; not a numerical or physical baseline.",
+  "claims": {
+    "physics_changed": false,
+    "numerical_convergence_established": false,
+    "physics_validated": false,
+    "research_note_results_reproduced": false
+  },
+  "provenance": {
+    "git_commit": "f8362efafbee4cb25944c27d02abadc5e764b8e4",
+    "git_status": "",
+    "artifact_path": "artifacts/verification_chunc_startup_point/2026-10-06T01-06-03_f8362ef",
+    "point_json_sha256": "6312b8c8d4b58417637eaf7aaf880ce22206193a8bfe599956b572c9ac6a0171",
+    "scalar_history_sha256": "155a4d85ce36962c1cf58d45d35b096991357fa5c21433bf98ccea2a7c00973f",
+    "motor_sha256": "4a7163cf24d68a2cc4604a1f99e6a806d55aaae6f7ce61ee3077d96a1535d378",
+    "baseline_config_sha256": "6e6a54b1135c5d6638fc10203666e6d56fb680a2e01132c83347d6aa8625d84d"
+  },
+  "configuration": {
+    "target_propellant_cells": 50,
+    "actual_cells": 56,
+    "cfl_target": 0.3,
+    "t_max_s": 0.05,
+    "history_capacity_rows": 25000,
+    "history_storage": "memmap",
+    "snapshot_storage": "memory"
+  },
+  "result": {
+    "health_check_passed": true,
+    "termination": "t_max reached",
+    "stored_history_rows": 15001,
+    "history_storage_bytes": 8400000,
+    "peak_pressure_mpa": 11.887805433551458
+  }
+}

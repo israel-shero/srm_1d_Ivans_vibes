@@ -127,13 +127,14 @@ full-solution convergence, full-burn cadence convergence, or physics validity.
 ## Exact-history storage
 
 Commit `1a2aac1` adds opt-in disk-backed scalar histories without changing the
-default storage path or any solver equation. A manifested 56-cell startup smoke
-run completed with 15,001 full-resolution rows using:
+default storage path or any solver equation. The clean manifested smoke result
+is committed in `docs/v0_8_0/data/chunc_history_memmap_smoke.json`. Its 56-cell
+startup completed with 15,001 full-resolution rows using:
 
-`python scripts/run_numerical_verification.py --profile startup --single-cells 50 --single-cfl 0.3 --history-capacity 500000 --history-memmap`
+`python scripts/run_numerical_verification.py --profile startup --single-cells 50 --single-cfl 0.3 --history-capacity 25000 --history-memmap`
 
 The run reached 0.05 s, passed the existing health gate, and recorded the
-168,000,000-byte backing file checksum in `point.json`. This verifies the
+8,400,000-byte backing file checksum in `point.json`. This verifies the
 adapter, compiled loop, returned mapped arrays, downstream performance
 calculation, and artifact manifest together. It is storage verification only;
 the coarse case is not a numerical or physical baseline. Snapshot arrays remain
