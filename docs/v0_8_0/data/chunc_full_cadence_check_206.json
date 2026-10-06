@@ -1,0 +1,205 @@
+{
+  "schema_version": 1,
+  "study": "chunc_full_duration_combined_cadence_check_206",
+  "status": "complete",
+  "claims": {
+    "combined_half_cadence_screen_completed": true,
+    "selected_physical_metrics_within_provisional_screen": true,
+    "burn_and_geometry_effects_separated": false,
+    "cadence_convergence_established": false,
+    "spatial_convergence_established": false,
+    "physics_validated": false,
+    "research_note_results_reproduced": false,
+    "experimental_result_reproduced": false
+  },
+  "common_configuration": {
+    "target_propellant_cells": 200,
+    "actual_cells": 206,
+    "cfl_target": 0.075,
+    "t_max_s": 3.0,
+    "history_capacity_rows": 13000000,
+    "history_storage": "memmap",
+    "history_storage_bytes": 4368000000,
+    "snapshot_interval_s": 0.2,
+    "pressure_floor_pa": 1000.0,
+    "pyrogen": "mtv",
+    "roughness_m": 0.000035,
+    "kappa": 0.45,
+    "ignition_temperature_k": 900.0,
+    "solid_conductivity_w_m_k": 0.4,
+    "cutoff_pressure_pa": 50000.0,
+    "physics_defaults_changed": false
+  },
+  "method": {
+    "reference_case": "burn_41_geometry_41",
+    "refined_case": "burn_20_geometry_20",
+    "signed_relative_change_percent_formula": "(refined - reference) / abs(reference) * 100",
+    "absolute_relative_change_percent_formula": "abs(signed_relative_change_percent)",
+    "provisional_screen_percent": 2.0,
+    "step_count_is_physical_screen_metric": false,
+    "wall_time_is_physical_screen_metric": false,
+    "ignition_refresh_delay_is_physical_screen_metric": false,
+    "ignition_refresh_delay_note": "The approximately halved delay is the intended numerical consequence of doubling update frequency.",
+    "health_gate_basis": "Both commands emitted a PASS health line, and the point runner writes status complete only after verify_run_health passes.",
+    "simulation_code_changed_between_point_commits": false,
+    "code_diff_scope_checked": "srm_1d, scripts, cases, motors, pyproject.toml, requirements"
+  },
+  "provenance": {
+    "motor_path": "motors/machbusterNew.ric",
+    "motor_sha256": "4a7163cf24d68a2cc4604a1f99e6a806d55aaae6f7ce61ee3077d96a1535d378",
+    "baseline_config_sha256": "6e6a54b1135c5d6638fc10203666e6d56fb680a2e01132c83347d6aa8625d84d",
+    "python": "3.10.10",
+    "openmotor_path": "/Users/israelshero/Development/MotorDevelopment/openMotor-compatible",
+    "openmotor_git_commit": "92e425f7832ed3f3e926ff985117649e3c77881a",
+    "refined_point_command": "MPLCONFIGDIR=/private/tmp SRM1D_OPENMOTOR_PATH=/Users/israelshero/Development/MotorDevelopment/openMotor-compatible ../.venv-srm/bin/python scripts/run_numerical_verification.py --profile full --single-cells 200 --single-cfl 0.075 --history-capacity 13000000 --history-memmap --single-burn-update-interval 20 --single-geometry-update-interval 20"
+  },
+  "points": [
+    {
+      "id": "burn_41_geometry_41",
+      "burn_update_interval_steps": 41,
+      "geometry_update_interval_steps": 41,
+      "status": "complete",
+      "health_check_passed": true,
+      "artifact_path": "artifacts/verification_chunc_full_point/2026-10-06T13-28-35_d3cce27",
+      "git_commit": "d3cce275c53d31b9483409fbe98cf5a95abf15bf",
+      "git_status": "",
+      "point_json_sha256": "77789beabe5df8d87a9dd66ff954b6b8f2f340dd07cefd89d72f99ee89a97733",
+      "outputs_sha256": {
+        "mach_limit_by_face.csv": "6240da736671b5a20e21cd15375917d855cd9c4cf5b09b0fafb73f927381ffeb",
+        "numerical_limits_by_cell.csv": "4d3f651aad666a7fe9bdbeee28d5b374c835b219479951ffbec4facc75754636",
+        "scalar_history.bin": "c99948aaa022356543cb64ac960a2dc6cac5f1e2c7e67b19566c9bfc45428615"
+      },
+      "metrics": {
+        "steps": 12340792,
+        "dt_median_s": 2.4585404721181976e-7,
+        "ignition_rate_refresh_delay_max_s": 0.000008941790945504562,
+        "ignition_rate_refresh_delay_median_s": 0.000002828893697764956,
+        "peak_pressure_mpa": 12.291736708686484,
+        "peak_time_s": 0.024779688794149116,
+        "minimum_pressure_pa": 21645.007055182738,
+        "max_fill_mach": 0.4793424131556041,
+        "total_impulse_ns": 4938.427474412065,
+        "performance_burn_time_s": 2.1346649939062017,
+        "first_burnout_time_s": 1.3415828331378574,
+        "final_throat_diameter_m": 0.02124134890559152,
+        "integrated_abs_clipping_energy_j": 234.2880053841978,
+        "mass_balance_error_fraction": 0.0018586161451413165,
+        "pressure_floor_active_cells": 0,
+        "pressure_floor_total_activations": 0,
+        "wall_time_s": 490.93339014053345
+      }
+    },
+    {
+      "id": "burn_20_geometry_20",
+      "burn_update_interval_steps": 20,
+      "geometry_update_interval_steps": 20,
+      "status": "complete",
+      "health_check_passed": true,
+      "artifact_path": "artifacts/verification_chunc_full_point/2026-10-06T13-49-35_4771db3",
+      "git_commit": "4771db3a13ff41ee8ccd3d5819085a5d3767f5f9",
+      "git_status": "",
+      "point_json_sha256": "785806a9622dde02b956fc1a8de895b6c4f2abfb5be45cb062e5c3802590676e",
+      "outputs_sha256": {
+        "mach_limit_by_face.csv": "6240da736671b5a20e21cd15375917d855cd9c4cf5b09b0fafb73f927381ffeb",
+        "numerical_limits_by_cell.csv": "6c5bcf0ce0bb8a541aa432715f00fd827d5832eea85191db39fb5b2f6336e4f9",
+        "scalar_history.bin": "9bf500b2bd6b6f625859e8f56bc0f7fee59a4a663b48d71c30e49ccd0fffc8fc"
+      },
+      "metrics": {
+        "steps": 12340747,
+        "dt_median_s": 2.4585406033124235e-7,
+        "ignition_rate_refresh_delay_max_s": 0.000004368542586333755,
+        "ignition_rate_refresh_delay_median_s": 0.000001471615758129232,
+        "peak_pressure_mpa": 12.292820799045517,
+        "peak_time_s": 0.024753025635543165,
+        "minimum_pressure_pa": 21623.335593292246,
+        "max_fill_mach": 0.4793424131556041,
+        "total_impulse_ns": 4938.425929330881,
+        "performance_burn_time_s": 2.1346414479236726,
+        "first_burnout_time_s": 1.3415657756271229,
+        "final_throat_diameter_m": 0.02124134893518946,
+        "integrated_abs_clipping_energy_j": 235.37121221437914,
+        "mass_balance_error_fraction": 0.0018585531512844526,
+        "pressure_floor_active_cells": 0,
+        "pressure_floor_total_activations": 0,
+        "wall_time_s": 600.1871101856232
+      }
+    }
+  ],
+  "comparison_20_20_to_41_41": {
+    "metrics": {
+      "steps": {
+        "signed_relative_change_percent": -0.000364644343734178,
+        "absolute_relative_change_percent": 0.000364644343734178,
+        "exceeds_screen": null
+      },
+      "peak_pressure_mpa": {
+        "signed_relative_change_percent": 0.00881966791777179,
+        "absolute_relative_change_percent": 0.00881966791777179,
+        "exceeds_screen": false
+      },
+      "peak_time_s": {
+        "signed_relative_change_percent": -0.107600861445228,
+        "absolute_relative_change_percent": 0.107600861445228,
+        "exceeds_screen": false
+      },
+      "minimum_pressure_pa": {
+        "signed_relative_change_percent": -0.100122221421512,
+        "absolute_relative_change_percent": 0.100122221421512,
+        "exceeds_screen": false
+      },
+      "max_fill_mach": {
+        "signed_relative_change_percent": 0.0,
+        "absolute_relative_change_percent": 0.0,
+        "exceeds_screen": false
+      },
+      "total_impulse_ns": {
+        "signed_relative_change_percent": -0.0000312869064495869,
+        "absolute_relative_change_percent": 0.0000312869064495869,
+        "exceeds_screen": false
+      },
+      "performance_burn_time_s": {
+        "signed_relative_change_percent": -0.00110302940256745,
+        "absolute_relative_change_percent": 0.00110302940256745,
+        "exceeds_screen": false
+      },
+      "first_burnout_time_s": {
+        "signed_relative_change_percent": -0.00127144670557567,
+        "absolute_relative_change_percent": 0.00127144670557567,
+        "exceeds_screen": false
+      },
+      "final_throat_diameter_m": {
+        "signed_relative_change_percent": 1.39341150750594e-7,
+        "absolute_relative_change_percent": 1.39341150750594e-7,
+        "exceeds_screen": false
+      },
+      "integrated_abs_clipping_energy_j": {
+        "signed_relative_change_percent": 0.462339857477996,
+        "absolute_relative_change_percent": 0.462339857477996,
+        "exceeds_screen": false
+      },
+      "mass_balance_error_fraction": {
+        "signed_relative_change_percent": -0.00338928815552231,
+        "absolute_relative_change_percent": 0.00338928815552231,
+        "exceeds_screen": false
+      },
+      "ignition_rate_refresh_delay_max_s": {
+        "signed_relative_change_percent": -51.1446575640418,
+        "absolute_relative_change_percent": 51.1446575640418,
+        "exceeds_screen": null
+      }
+    },
+    "maximum_selected_physical_metric_change_percent": 0.462339857477996,
+    "maximum_selected_physical_metric": "integrated_abs_clipping_energy_j",
+    "all_selected_physical_metrics_below_screen": true
+  },
+  "decision": {
+    "separated_20_41_and_41_20_runs_deferred": true,
+    "reason": "The combined half-cadence point changes every selected physical metric by less than the provisional 2 percent screen. Separate points would refine attribution but are not required for the current materiality decision.",
+    "conditions_requiring_separated_runs": "Run the separated points before attributing an effect specifically to burn/source cadence or geometry cadence, quantifying their interaction at 206 cells, or making a formal cadence-convergence claim."
+  },
+  "interpretation": {
+    "bounded_result": "Combined 20/20 refinement has a small effect on the reported 206-cell full-duration physical metrics relative to 41/41 and does not explain the much larger 106-to-206 changes in peak time, minimum pressure, early Mach, or clipping energy.",
+    "pressure_floor_note": "Both points have zero pressure-floor activations, so neither reported minimum pressure is floor-censored.",
+    "limits": "This is one combined interval refinement for one motor, grid, CFL, and duration. It does not separate burn and geometry effects, establish cadence or spatial convergence, validate physics, or reproduce a research-note or experimental result."
+  }
+}

@@ -193,6 +193,37 @@ outputs while leaving peak timing, transient minimum pressure, early Mach, and
 clipping as numerical limitations. It is not physics validation or reproduction
 of a research-note or experimental result.
 
+## Finer-grid full-duration cadence check
+
+The combined half-cadence check at 206 cells is committed in
+`docs/v0_8_0/data/chunc_full_cadence_check_206.json` (SHA-256
+`4e388d4080f1d2559ba231cfadb102b3188212d7594c8ab2d4b2eb79f88f5ce9`).
+It compares the default 41/41 burn/source and geometry update intervals with
+20/20 while retaining CFL 0.075, the 3.0 s duration, exact-history storage, and
+every physics default. Both cases passed the health gate and had zero pressure-
+floor activations.
+
+| Burn / geometry steps | Peak pressure | Peak time | Minimum pressure | Total impulse | Clipping energy |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 41 / 41 | 12.291737 MPa | 24.7797 ms | 21.6450 kPa | 4938.427474 N s | 234.288 J |
+| 20 / 20 | 12.292821 MPa | 24.7530 ms | 21.6233 kPa | 4938.425929 N s | 235.371 J |
+
+Relative to 41/41, combined refinement changes peak pressure by +0.00882%,
+peak time by -0.1076%, minimum pressure by -0.1001%, maximum fill Mach by 0%,
+total impulse by -0.0000313%, performance burn time by -0.00110%, first burnout
+by -0.00127%, final throat diameter by less than 0.000001%, clipping energy by
++0.4623%, and mass-balance error by -0.00339%. Every selected physical metric
+is below the provisional 2% screen. Maximum ignition-to-refresh delay decreases
+by 51.14%, the intended consequence of the more frequent source update.
+
+This combined check does not explain the larger 106-to-206 changes in peak
+time, minimum pressure, early Mach, or clipping energy. Separate 20/41 and
+41/20 points are therefore deferred for the present materiality decision; they
+remain necessary before attributing an effect specifically to burn/source or
+geometry cadence or quantifying their interaction at 206 cells. This is not a
+formal cadence- or spatial-convergence claim, physics validation, or
+reproduction of a research-note or experimental result.
+
 ## Exact-history storage
 
 Commit `1a2aac1` adds opt-in disk-backed scalar histories without changing the
