@@ -44,13 +44,13 @@ associated with the aft bore-to-gap expansion, zero local source, and strong
 eastward flux divergence. No physics default, floor threshold, or solver
 equation was changed.
 
-The next discriminating experiment was a matching 806-cell, CFL 0.15 event
-probe, completed below. CFL 0.075 remains required before testing source cadence
-or a counterfactual boundary condition.
+The next discriminating experiments were matching 806-cell CFL 0.15 and 0.075
+probes, completed below. Cadence and broader-grid testing remain required before
+a counterfactual boundary-condition experiment.
 
 ## CFL sensitivity
 
-The matching CFL 0.15 run is committed in
+The matching CFL runs are committed in
 `docs/v0_8_0/data/chunc_pressure_floor_cfl_probe_806.json`. It reached the
 same configured 0.05 s duration and retained every setting except CFL.
 
@@ -58,8 +58,14 @@ same configured 0.05 s duration and retained every setting except CFL.
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 0.30 | 2 | 110 | 1.000 kPa | 12.415426 MPa | 23.7352 ms | 0.4463842 |
 | 0.15 | 0 | 0 | 10.096875 kPa | 12.419761 MPa | 23.6210 ms | 0.4463722 |
+| 0.075 | 0 | 0 | 12.080966 kPa | 12.421929 MPa | 23.5637 ms | 0.4463780 |
 
 The no-floor result at CFL 0.15 means the aft undershoot is timestep-sensitive.
 The corresponding changes in peak pressure, peak time, and first-3-ms maximum
-Mach are 0.0349%, 0.4836%, and 0.00267%, respectively. This is not a
-floor-free convergence claim: CFL 0.075 remains the next required matched run.
+Mach are 0.0349%, 0.4836%, and 0.00267%, respectively. The floor also remains
+inactive at CFL 0.075; relative to CFL 0.075, the CFL 0.15 changes are
+0.0174%, 0.2429%, and 0.00130%. This is limited evidence that these selected
+startup aggregates have stabilized after the floor disappears. It is not a
+full-solution convergence claim, a physics validation, or a reproduction of a
+research-note result. The next baseline work is cadence and broader-grid tests
+from the floor-free CFL 0.075 configuration.

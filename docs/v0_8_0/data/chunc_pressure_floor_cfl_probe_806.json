@@ -29,6 +29,12 @@
       "path": "artifacts/verification_chunc_startup_point/2026-10-06T00-05-34_2d664ff",
       "point_json_sha256": "6d282f937a983d8dc9cd7d27c070defda7bee6fc87540a4ceac17fd11d743543",
       "numerical_limits_csv_sha256": "0c65e070f1828a5563ee2ef59ca13c74dfa5e9f05395e1ea28bd46bc1b6f348e"
+    },
+    "cfl_0_075_artifact": {
+      "path": "artifacts/verification_chunc_startup_point/2026-10-06T00-10-57_32d9230",
+      "point_json_sha256": "c84010c49ff5e160077e328a34e13137fd5a3983a4cbb50e2fe04ed5844d719a",
+      "numerical_limits_csv_sha256": "9a3b1dbcd7068e73b196a0c8490780805a79800e81518db8f441857f103ff0c7",
+      "mach_limit_csv_sha256": "a5a07060949986ea5fe2f90608bf79744971f8fd93abb7f8a04c3d28ce520001"
     }
   },
   "runs": [
@@ -59,6 +65,20 @@
       "pressure_floor_maximum_raw_deficit_pa": 0.0,
       "pressure_floor_first_activation_time_s": null,
       "pressure_floor_last_activation_time_s": null
+    },
+    {
+      "cfl_target": 0.075,
+      "status": "complete",
+      "termination": "t_max reached",
+      "peak_pressure_mpa": 12.4219285302596,
+      "peak_time_s": 0.023563707328702194,
+      "max_fill_mach": 0.4463780282787001,
+      "minimum_pressure_pa": 12080.96639555316,
+      "pressure_floor_active_cells": 0,
+      "pressure_floor_total_activations": 0,
+      "pressure_floor_maximum_raw_deficit_pa": 0.0,
+      "pressure_floor_first_activation_time_s": null,
+      "pressure_floor_last_activation_time_s": null
     }
   ],
   "relative_change_percent_cfl_0_3_to_0_15": {
@@ -66,10 +86,16 @@
     "peak_time_s": 0.48360076562087156,
     "max_fill_mach": 0.0026729862949420964
   },
+  "relative_change_percent_cfl_0_15_to_0_075": {
+    "peak_pressure_mpa": 0.017446783502707626,
+    "peak_time_s": 0.2429274719597569,
+    "max_fill_mach": 0.001297556777389318
+  },
   "interpretation": {
     "pressure_floor_activation_is_timestep_sensitive": true,
     "selected_aggregate_metrics_below_two_percent": true,
+    "cfl_0_15_and_cfl_0_075_are_floor_free": true,
     "floor_free_solution_established": false,
-    "next_test": "Run the matching CFL 0.075 probe before testing cadence or changing any numerical/physics model."
+    "next_test": "Use the floor-free CFL 0.075 case as the baseline for cadence and broader-grid tests before changing any numerical or physics model."
   }
 }
