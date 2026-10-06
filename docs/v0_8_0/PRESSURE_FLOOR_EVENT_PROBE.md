@@ -69,3 +69,25 @@ startup aggregates have stabilized after the floor disappears. It is not a
 full-solution convergence claim, a physics validation, or a reproduction of a
 research-note result. The next baseline work is cadence and broader-grid tests
 from the floor-free CFL 0.075 configuration.
+
+## Floor-free spatial probe
+
+The 406-, 806-, and 1606-cell CFL 0.075 runs are recorded in
+`docs/v0_8_0/data/chunc_floor_free_spatial_probe.json`. All three reached the
+configured 0.05 s duration with no pressure-floor activation. Burn-rate and
+geometry update intervals followed the existing solver default, which scales
+as `max(10, actual_cells // 5)`.
+
+| Actual cells | Peak pressure | Peak time | Max fill Mach | Minimum pressure |
+| ---: | ---: | ---: | ---: | ---: |
+| 406 | 12.377546 MPa | 23.5142 ms | 0.4588228 | 15.5386 kPa |
+| 806 | 12.421929 MPa | 23.5637 ms | 0.4463780 | 12.0810 kPa |
+| 1606 | 12.440641 MPa | 23.8922 ms | 0.4402303 | 9.9656 kPa |
+
+From 806 to 1606 cells, peak pressure, peak time, and first-3-ms maximum Mach
+change by 0.150%, 1.375%, and 1.396%. These pass the provisional 2% screen.
+Minimum pressure changes by 21.23%, however, despite remaining above the floor,
+and therefore is not spatially converged. The peak-time differences also grow
+between the last two refinements, so no formal order or extrapolated value is
+claimed. This study remains startup-only numerical evidence, not physics
+validation or reproduction of a research-note result.

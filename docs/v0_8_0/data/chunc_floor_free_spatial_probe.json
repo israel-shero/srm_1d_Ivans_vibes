@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "study": "chunc_floor_free_startup_spatial_probe",
+  "status": "complete",
+  "claims": {
+    "spatial_convergence_established": false,
+    "minimum_pressure_converged": false,
+    "physics_validated": false,
+    "research_note_results_reproduced": false
+  },
+  "common_configuration": {
+    "target_propellant_cells": [400, 800, 1600],
+    "t_max_s": 0.05,
+    "cfl_target": 0.075,
+    "pressure_floor_pa": 1000.0,
+    "pyrogen": "mtv",
+    "roughness_m": 0.000035,
+    "kappa": 0.45,
+    "T_ignition_k": 900.0,
+    "k_solid_w_m_k": 0.4,
+    "cadence_policy": "solver default: max(10, actual_cells // 5) for burn and geometry updates"
+  },
+  "screening": {
+    "successive_change_percent": 2.0,
+    "qualification": "Provisional numerical screen only; passing selected metrics is not a convergence or physics-validation claim."
+  },
+  "provenance": {
+    "motor_path": "motors/machbusterNew.ric",
+    "motor_sha256": "4a7163cf24d68a2cc4604a1f99e6a806d55aaae6f7ce61ee3077d96a1535d378",
+    "baseline_config_sha256": "6e6a54b1135c5d6638fc10203666e6d56fb680a2e01132c83347d6aa8625d84d",
+    "runs": [
+      {
+        "target_propellant_cells": 400,
+        "artifact_path": "artifacts/verification_chunc_startup_point/2026-10-06T00-27-03_9ee1a91",
+        "git_commit": "9ee1a913c54a56142a4faa2b953dde8d1164ff81",
+        "git_status": "",
+        "point_json_sha256": "97b13816774372511686fb08a3a1eef6a1cb8224d54967ff132797a66320f1a1",
+        "numerical_limits_csv_sha256": "3a3f8bb65de395d5eb14d18d51c77cc1d83b02ac174ea96656b55799a5800e22",
+        "mach_limit_csv_sha256": "7a09049923c12053b69496fabf9237e7e42246b7e77a308b26194d616d5f83e0"
+      },
+      {
+        "target_propellant_cells": 800,
+        "artifact_path": "artifacts/verification_chunc_startup_point/2026-10-06T00-10-57_32d9230",
+        "git_commit": "32d92304abd1a4c049d4919f418b956c9b433520",
+        "git_status": "",
+        "point_json_sha256": "c84010c49ff5e160077e328a34e13137fd5a3983a4cbb50e2fe04ed5844d719a",
+        "numerical_limits_csv_sha256": "9a3b1dbcd7068e73b196a0c8490780805a79800e81518db8f441857f103ff0c7",
+        "mach_limit_csv_sha256": "a5a07060949986ea5fe2f90608bf79744971f8fd93abb7f8a04c3d28ce520001"
+      },
+      {
+        "target_propellant_cells": 1600,
+        "artifact_path": "artifacts/verification_chunc_startup_point/2026-10-06T00-28-13_9ee1a91-dirty",
+        "git_commit": "9ee1a913c54a56142a4faa2b953dde8d1164ff81",
+        "git_status": "?? scripts/run_cadence_sensitivity.py\n?? tests/test_cadence_sensitivity.py",
+        "dirty_status_qualification": "Only the new, untracked cadence harness and its tests were present; the single-point runner and simulation sources were unchanged during this run.",
+        "point_json_sha256": "c5b5ad3d248f2081b0c2f54d63a2d6e7cf4b2917990529167a728bdcef66dede",
+        "numerical_limits_csv_sha256": "b312356ff7008c638cc4a7360fed4219f76a03921171e7a10bfee4007819d96d",
+        "mach_limit_csv_sha256": "b153261f2c950d77c52d15f59aa246bcb0098db81110fe2c3f8b44b651f3514a"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "target_propellant_cells": 400,
+      "actual_cells": 406,
+      "steps": 478803,
+      "burn_update_interval_steps": 81,
+      "geometry_update_interval_steps": 81,
+      "peak_pressure_mpa": 12.3775455026855,
+      "peak_time_s": 0.023514204269230607,
+      "max_fill_mach": 0.45882284586840183,
+      "minimum_pressure_pa": 15538.559460561723,
+      "pressure_floor_active_cells": 0,
+      "pressure_floor_total_activations": 0,
+      "wall_time_s": 47.09125208854675
+    },
+    {
+      "target_propellant_cells": 800,
+      "actual_cells": 806,
+      "steps": 956871,
+      "burn_update_interval_steps": 161,
+      "geometry_update_interval_steps": 161,
+      "peak_pressure_mpa": 12.4219285302596,
+      "peak_time_s": 0.023563707328702194,
+      "max_fill_mach": 0.4463780282787001,
+      "minimum_pressure_pa": 12080.96639555316,
+      "pressure_floor_active_cells": 0,
+      "pressure_floor_total_activations": 0,
+      "wall_time_s": 158.815425157547
+    },
+    {
+      "target_propellant_cells": 1600,
+      "actual_cells": 1606,
+      "steps": 1911948,
+      "burn_update_interval_steps": 321,
+      "geometry_update_interval_steps": 321,
+      "peak_pressure_mpa": 12.440640762346726,
+      "peak_time_s": 0.02389223666347751,
+      "max_fill_mach": 0.44023025177222797,
+      "minimum_pressure_pa": 9965.580393680932,
+      "pressure_floor_active_cells": 0,
+      "pressure_floor_total_activations": 0,
+      "wall_time_s": 682.068962097168
+    }
+  ],
+  "successive_relative_change_percent": [
+    {
+      "from_actual_cells": 406,
+      "to_actual_cells": 806,
+      "peak_pressure_mpa": 0.35729578918428817,
+      "peak_time_s": 0.2100817956234274,
+      "max_fill_mach": 2.787954783009995,
+      "minimum_pressure_pa": 28.62016954439387
+    },
+    {
+      "from_actual_cells": 806,
+      "to_actual_cells": 1606,
+      "peak_pressure_mpa": 0.15041212462112258,
+      "peak_time_s": 1.3750463776274127,
+      "max_fill_mach": 1.3964911501931385,
+      "minimum_pressure_pa": 21.226922249441404
+    }
+  ],
+  "interpretation": {
+    "all_runs_floor_free": true,
+    "finest_selected_aggregate_changes_below_two_percent": true,
+    "minimum_pressure_change_below_two_percent": false,
+    "peak_time_extrapolation_supported": false,
+    "next_test": "Complete the separated burn-rate and geometry cadence sensitivity at 806 actual cells and CFL 0.075 before selecting a reference startup configuration."
+  }
+}
