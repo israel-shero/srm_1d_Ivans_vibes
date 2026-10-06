@@ -228,6 +228,13 @@ def _extract_metrics(result: dict, performance: dict | None = None) -> dict:
         metrics["geometry_update_interval_steps"] = int(
             geometry_update_interval
         )
+    history_capacity = summary.get("history_capacity")
+    if history_capacity is not None:
+        metrics["history_capacity_rows"] = int(history_capacity)
+    metrics["history_storage"] = summary.get("history_storage", "memory")
+    history_storage_bytes = summary.get("history_storage_bytes")
+    if history_storage_bytes is not None:
+        metrics["history_storage_bytes"] = int(history_storage_bytes)
     if performance is not None:
         metrics.update({
             "total_impulse_ns": performance.get("total_impulse"),
@@ -341,6 +348,7 @@ def run_single_point(
     port_mach_cap: float | None = None,
     burn_update_interval: int | None = None,
     geometry_update_interval: int | None = None,
+    history_memmap: bool = False,
 ) -> Path:
     if profile not in {"startup", "full"}:
         raise ValueError(f"Unknown verification profile: {profile!r}")
@@ -374,6 +382,10 @@ def run_single_point(
         f"verification_chunc_{profile}_point",
         root=output_root if output_root is not None else PROJECT_ROOT,
     )
+    history_memmap_path = None
+    if history_memmap:
+        history_memmap_path = (output / "scalar_history.bin").resolve()
+        options["history_memmap_path"] = str(history_memmap_path)
     point_path = output / "point.json"
     payload = {
         "schema_version": 1,
@@ -417,6 +429,17 @@ def run_single_point(
             limit_path.name: _sha256(limit_path),
             mach_limit_path.name: _sha256(mach_limit_path),
         }
+        if history_memmap_path is not None:
+            payload["outputs"][history_memmap_path.name] = _sha256(
+                history_memmap_path
+            )
+            payload["history_storage"] = {
+                "mode": "memmap",
+                "path": history_memmap_path.name,
+                "size_bytes": history_memmap_path.stat().st_size,
+                "caller_owned": True,
+                "snapshots_disk_backed": False,
+            }
         _write_json(point_path, payload)
         return output
     except Exception as exc:
@@ -609,6 +632,10 @@ def main() -> int:
     parser.add_argument("--single-port-mach-cap", type=float)
     parser.add_argument("--single-burn-update-interval", type=int)
     parser.add_argument("--single-geometry-update-interval", type=int)
+    parser.add_argument(
+        "--history-memmap", action="store_true",
+        help="store exact scalar histories in the point artifact directory",
+    )
     args = parser.parse_args()
     single_requested = args.single_cells is not None or args.single_cfl is not None
     if single_requested:
@@ -623,12 +650,14 @@ def main() -> int:
             args.single_port_mach_cap,
             args.single_burn_update_interval,
             args.single_geometry_update_interval,
+            args.history_memmap,
         )
     else:
         if (args.history_capacity is not None
                 or args.single_port_mach_cap is not None
                 or args.single_burn_update_interval is not None
-                or args.single_geometry_update_interval is not None):
+                or args.single_geometry_update_interval is not None
+                or args.history_memmap):
             parser.error(
                 "single-point overrides require --single-cells and --single-cfl"
             )

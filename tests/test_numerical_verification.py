@@ -135,6 +135,21 @@ def test_extract_metrics_includes_full_burn_performance():
     assert metrics["first_burnout_time_s"] == pytest.approx(1.2)
 
 
+def test_extract_metrics_includes_history_storage_provenance():
+    result = _localized_result()
+    result["summary"].update({
+        "history_capacity": 1234,
+        "history_storage": "memmap",
+        "history_storage_bytes": 414624,
+    })
+
+    metrics = _extract_metrics(result)
+
+    assert metrics["history_capacity_rows"] == 1234
+    assert metrics["history_storage"] == "memmap"
+    assert metrics["history_storage_bytes"] == 414624
+
+
 def test_extract_metrics_localizes_numerical_limits():
     result = _localized_result()
 

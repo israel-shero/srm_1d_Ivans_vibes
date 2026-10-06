@@ -140,6 +140,18 @@ options — a "disabled" run is deliberately non-physical.
 diagnostic-only overrides (early-terminate a probe run; override the initial
 bore-gas temperature) — they don't change the equations.
 
+`history_memmap_path` is an opt-in output-storage override for long or tightly
+stepped runs. It keeps every scalar-history row at full float64 resolution but
+backs the 42 preallocated channels with one caller-owned disk file instead of
+RAM. The default remains in-memory storage. The target file must not already
+exist, persists after the run, and must remain available while returned mapped
+arrays are in use. Axial snapshots remain in memory and are still controlled by
+`snapshot_interval`.
+
+The numerical-verification single-point CLI creates and manifests this file in
+its timestamped artifact directory when passed `--history-memmap`; use an
+explicit `--history-capacity` when the required row count is already bounded.
+
 ---
 
 ## Also technically optional: throat erosion
