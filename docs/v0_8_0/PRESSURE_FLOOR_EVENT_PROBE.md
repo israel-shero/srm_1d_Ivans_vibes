@@ -91,3 +91,35 @@ and therefore is not spatially converged. The peak-time differences also grow
 between the last two refinements, so no formal order or extrapolated value is
 claimed. This study remains startup-only numerical evidence, not physics
 validation or reproduction of a research-note result.
+
+## Floor-free cadence probe
+
+The complete four-point result is committed as
+`docs/v0_8_0/data/chunc_cadence_sensitivity_806.json` (SHA-256
+`8ac6a260fd9d77a26bfda46c4fbb19cc87f65e4893c24520d9438355754789e6`).
+Every point used 806 actual cells, CFL 0.075, and the same 0.05 s startup
+configuration. The only changes were explicit burn-rate/source and geometry
+update intervals. All four runs passed the health gate and had zero pressure-
+floor activations.
+
+| Burn steps | Geometry steps | Peak pressure | Peak time | Minimum pressure | Max ignition refresh delay |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 161 | 161 | 12.421929 MPa | 23.5637 ms | 12.0810 kPa | 8.827 us |
+| 80 | 161 | 12.423295 MPa | 23.5379 ms | 12.4893 kPa | 4.358 us |
+| 161 | 80 | 12.422284 MPa | 23.5643 ms | 12.0810 kPa | 8.827 us |
+| 80 | 80 | 12.422979 MPa | 23.5386 ms | 12.4893 kPa | 4.358 us |
+
+Halving only the burn/source interval changes peak pressure by 0.0110%, peak
+time by 0.109%, clipping-correction energy by 0.532%, and first-3-ms maximum
+Mach by 0%. Minimum pressure changes by 3.380%, exceeding the provisional 2%
+screen. Halving only the geometry interval changes every reported physical
+metric by less than 0.003%. The combined result closely follows the burn/source
+refinement, so no material cadence interaction appears in these startup
+metrics. The approximately halved ignition refresh delay is the intended
+numerical consequence of the finer burn/source interval, not a physical
+validation result.
+
+Together with the spatial probe, this supports using the CFL 0.075 default-
+cadence case as a bounded startup reference for peak pressure, peak time, and
+early Mach. It does not establish convergence of transient minimum pressure,
+full-solution convergence, full-burn cadence convergence, or physics validity.
