@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "study": "chunc_full_duration_exact_history_reproduction_106",
+  "status": "complete",
+  "claims": {
+    "prior_local_verification_point_reproduced": true,
+    "full_burn_numerically_converged": false,
+    "physics_validated": false,
+    "research_note_results_reproduced": false,
+    "experimental_result_reproduced": false
+  },
+  "configuration": {
+    "target_propellant_cells": 100,
+    "actual_cells": 106,
+    "cfl_target": 0.075,
+    "t_max_s": 3.0,
+    "history_capacity_rows": 6500000,
+    "history_storage": "memmap",
+    "snapshot_interval_s": 0.2,
+    "pressure_floor_pa": 1000.0,
+    "physics_defaults_changed": false
+  },
+  "provenance": {
+    "current": {
+      "git_commit": "11bdd7da658ad3aed012a41028e45056e79a0971",
+      "git_status": "",
+      "artifact_path": "artifacts/verification_chunc_full_point/2026-10-06T01-07-22_11bdd7d",
+      "point_json_sha256": "0a2f03bd15efc8bd20797efaa0c97eb41f4045098e7226d5406405832c7ea21b",
+      "numerical_limits_csv_sha256": "8764a8bef556cfd98c5cb39989561eb3da9f1f22299632f09ecc4f1c877a83b0",
+      "mach_limit_csv_sha256": "6f7165c5e20ac4e5eebf6921c0c6fe80252440635a71d852b550e1de3dfb8d04",
+      "scalar_history_sha256": "5b0cd671d33d0d5acfea476d31b6546498fc0e952ea5cedb3817984e677c2321",
+      "scalar_history_size_bytes": 2184000000
+    },
+    "comparison": {
+      "git_commit": "db0a980ebae4cc9cdc29c841afa8ffff3f240fdb",
+      "git_status": "dirty; exact paths retained in the source point manifest",
+      "artifact_path": "artifacts/verification_chunc_full_point/2026-09-30T16-30-25_db0a980-dirty",
+      "point_json_sha256": "407d3339372c083d413166c6410ff13895610759b66ecb3590c74e407e224e22"
+    },
+    "motor_path": "motors/machbusterNew.ric",
+    "motor_sha256": "4a7163cf24d68a2cc4604a1f99e6a806d55aaae6f7ce61ee3077d96a1535d378",
+    "baseline_config_sha256": "6e6a54b1135c5d6638fc10203666e6d56fb680a2e01132c83347d6aa8625d84d",
+    "python": "3.10.10",
+    "openmotor_git_commit": "92e425f7832ed3f3e926ff985117649e3c77881a"
+  },
+  "result": {
+    "health_check_passed": true,
+    "termination": "t_max reached",
+    "steps": 6169839,
+    "peak_pressure_mpa": 12.164136694132969,
+    "peak_time_s": 0.026249623418813393,
+    "minimum_pressure_pa": 30850.68330020811,
+    "max_fill_mach": 0.4975261274237115,
+    "total_impulse_ns": 4941.364586804849,
+    "performance_burn_time_s": 2.1443104383018814,
+    "first_burnout_time_s": 1.3544076698276923,
+    "final_throat_diameter_m": 0.021243240257838726,
+    "mass_balance_error_fraction": 0.001867435495654297,
+    "pressure_floor_active_cells": 0,
+    "pressure_floor_total_activations": 0,
+    "wall_time_s": 177.88105130195618
+  },
+  "comparison_to_prior_local_point": {
+    "metrics_compared": [
+      "steps",
+      "peak_pressure_mpa",
+      "peak_time_s",
+      "minimum_pressure_pa",
+      "max_fill_mach",
+      "total_impulse_ns",
+      "performance_burn_time_s",
+      "first_burnout_time_s",
+      "final_throat_diameter_m",
+      "mass_balance_error_fraction"
+    ],
+    "all_values_exactly_equal": true,
+    "maximum_relative_change_percent": 0.0,
+    "qualification": "This reproduces a prior local verification artifact, not a research-note or experimental result."
+  }
+}

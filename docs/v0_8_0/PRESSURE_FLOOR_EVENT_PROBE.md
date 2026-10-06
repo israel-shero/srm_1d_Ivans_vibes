@@ -140,3 +140,14 @@ calculation, and artifact manifest together. It is storage verification only;
 the coarse case is not a numerical or physical baseline. Snapshot arrays remain
 in memory, so this removes the dominant scalar-history RAM and copy cost but is
 not a universal bound on every output allocation.
+
+The same path then completed the full 3.0 s, 106-cell, CFL 0.075 case with
+6,169,839 exact rows in a 2,184,000,000-byte mapping. The clean result is
+committed in `docs/v0_8_0/data/chunc_full_memmap_reproduction_106.json`. Ten
+primary metrics are exactly equal to the earlier dirty-provenance verification
+point, including step count, peak pressure/time, minimum pressure, early Mach,
+impulse, performance burn time, first burnout, final throat diameter, and mass
+balance error. The clean run also has zero pressure-floor activations. This
+establishes exact reproduction of that prior local verification artifact only;
+it does not reproduce a research-note or experimental result and does not
+establish full-burn numerical convergence.
