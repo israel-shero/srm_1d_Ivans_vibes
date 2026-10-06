@@ -44,9 +44,9 @@ associated with the aft bore-to-gap expansion, zero local source, and strong
 eastward flux divergence. No physics default, floor threshold, or solver
 equation was changed.
 
-The next discriminating experiments were matching 806-cell CFL 0.15 and 0.075
-probes, completed below. Cadence and broader-grid testing remain required before
-a counterfactual boundary-condition experiment.
+The subsequent probes below complete matching CFL, broader-grid, and separated
+cadence sensitivity checks before any counterfactual boundary-condition
+experiment.
 
 ## CFL sensitivity
 
@@ -67,8 +67,8 @@ inactive at CFL 0.075; relative to CFL 0.075, the CFL 0.15 changes are
 0.0174%, 0.2429%, and 0.00130%. This is limited evidence that these selected
 startup aggregates have stabilized after the floor disappears. It is not a
 full-solution convergence claim, a physics validation, or a reproduction of a
-research-note result. The next baseline work is cadence and broader-grid tests
-from the floor-free CFL 0.075 configuration.
+research-note result. The cadence and broader-grid follow-ups from this
+floor-free CFL 0.075 configuration are recorded below.
 
 ## Floor-free spatial probe
 
@@ -122,7 +122,44 @@ validation result.
 Together with the spatial probe, this supports using the CFL 0.075 default-
 cadence case as a bounded startup reference for peak pressure, peak time, and
 early Mach. It does not establish convergence of transient minimum pressure,
-full-solution convergence, full-burn cadence convergence, or physics validity.
+full-solution convergence, or physics validity. The full-duration test below
+measures the same separated cadence effects at 106 cells; neither test alone
+establishes formal cadence convergence.
+
+## Full-duration cadence probe
+
+The separated four-point full-duration result is committed in
+`docs/v0_8_0/data/chunc_full_cadence_sensitivity_106.json` (SHA-256
+`23da727c489bb921194b92a3069b2f15fcc45f9f6b9306805ae92620507bb5c4`).
+Every point used 106 actual cells, CFL 0.075, the configured 3.0 s duration,
+and exact disk-backed scalar histories. Only the burn-rate/source and geometry
+update intervals changed. All four runs passed the recorded health gate and
+had zero pressure-floor activations.
+
+| Burn steps | Geometry steps | Peak pressure | Peak time | Minimum pressure | Total impulse | Perf. burn time |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 21 | 21 | 12.164137 MPa | 26.2496 ms | 30.8507 kPa | 4941.364587 N s | 2.144310 s |
+| 10 | 21 | 12.165517 MPa | 26.2245 ms | 31.1078 kPa | 4941.363073 N s | 2.144279 s |
+| 21 | 10 | 12.164456 MPa | 26.2501 ms | 30.8507 kPa | 4941.363305 N s | 2.144302 s |
+| 10 | 10 | 12.165243 MPa | 26.2241 ms | 31.1078 kPa | 4941.363165 N s | 2.144285 s |
+
+Against the 21/21 reference, halving only the burn/source interval changes
+minimum pressure by 0.8334%, clipping-correction energy by 0.2318%, peak time
+by 0.0958%, and peak pressure by 0.0113%. Total impulse, performance burn time,
+first burnout, final throat diameter, and mass-balance error each change by
+less than 0.003%. Halving only the geometry interval changes every reported
+metric by at most 0.00263%. The combined case remains within 0.8335% of the
+reference and within 0.00226% of the burn-only case for the selected physical
+metrics, so no material cadence interaction is resolved at this setup.
+
+Every comparison is below the provisional 2% screen, including the transient
+minimum pressure that exceeded that screen in the finer-grid startup cadence
+probe. The combined run's recorded wall time is an outlier, so runtime is
+retained as provenance but excluded from the cadence comparison. The four
+2.184 GB histories remain ignored local artifacts; the committed record carries
+their manifest hashes and the four point-manifest hashes. This is one interval
+halving at one grid and CFL, not formal cadence or spatial convergence, physics
+validation, or reproduction of a research-note or experimental result.
 
 ## Exact-history storage
 

@@ -1,0 +1,249 @@
+{
+  "schema_version": 1,
+  "study": "chunc_full_duration_cadence_sensitivity_106",
+  "status": "complete",
+  "claims": {
+    "four_point_full_duration_cadence_matrix_completed": true,
+    "reported_metrics_within_provisional_screen": true,
+    "cadence_convergence_established": false,
+    "full_burn_numerically_converged": false,
+    "spatial_convergence_established": false,
+    "physics_validated": false,
+    "research_note_results_reproduced": false,
+    "experimental_result_reproduced": false
+  },
+  "configuration": {
+    "target_propellant_cells": 100,
+    "actual_cells": 106,
+    "cfl_target": 0.075,
+    "t_max_s": 3.0,
+    "reference_burn_update_interval_steps": 21,
+    "reference_geometry_update_interval_steps": 21,
+    "refined_burn_update_interval_steps": 10,
+    "refined_geometry_update_interval_steps": 10,
+    "history_capacity_rows": 6500000,
+    "history_storage": "memmap",
+    "history_storage_bytes_per_point": 2184000000,
+    "snapshot_interval_s": 0.2,
+    "pressure_floor_pa": 1000.0,
+    "pyrogen": "mtv",
+    "roughness_m": 0.000035,
+    "kappa": 0.45,
+    "ignition_temperature_k": 900.0,
+    "solid_conductivity_w_m_k": 0.4,
+    "cutoff_pressure_pa": 50000.0,
+    "physics_defaults_changed": false
+  },
+  "method": {
+    "reference_case": "burn_21_geometry_21",
+    "absolute_relative_change_percent_formula": "abs(case - reference) / abs(reference) * 100",
+    "provisional_screen_percent": 2.0,
+    "wall_time_compared": false,
+    "wall_time_exclusion_reason": "The combined run's recorded wall time is an outlier, so wall time is provenance rather than a cadence metric.",
+    "health_gate_basis": "The point runner writes status complete only after verify_run_health passes."
+  },
+  "provenance": {
+    "motor_path": "motors/machbusterNew.ric",
+    "motor_sha256": "4a7163cf24d68a2cc4604a1f99e6a806d55aaae6f7ce61ee3077d96a1535d378",
+    "baseline_config_sha256": "6e6a54b1135c5d6638fc10203666e6d56fb680a2e01132c83347d6aa8625d84d",
+    "python": "3.10.10",
+    "openmotor_path": "/Users/israelshero/Development/MotorDevelopment/openMotor-compatible",
+    "openmotor_git_commit": "92e425f7832ed3f3e926ff985117649e3c77881a",
+    "command_base": "MPLCONFIGDIR=/private/tmp SRM1D_OPENMOTOR_PATH=/Users/israelshero/Development/MotorDevelopment/openMotor-compatible ../.venv-srm/bin/python scripts/run_numerical_verification.py --profile full --single-cells 100 --single-cfl 0.075 --history-capacity 6500000 --history-memmap"
+  },
+  "points": [
+    {
+      "id": "burn_21_geometry_21",
+      "burn_update_interval_steps": 21,
+      "geometry_update_interval_steps": 21,
+      "status": "complete",
+      "health_check_passed": true,
+      "artifact_path": "artifacts/verification_chunc_full_point/2026-10-06T01-07-22_11bdd7d",
+      "git_commit": "11bdd7da658ad3aed012a41028e45056e79a0971",
+      "git_status": "",
+      "point_json_sha256": "0a2f03bd15efc8bd20797efaa0c97eb41f4045098e7226d5406405832c7ea21b",
+      "outputs_sha256": {
+        "mach_limit_by_face.csv": "6f7165c5e20ac4e5eebf6921c0c6fe80252440635a71d852b550e1de3dfb8d04",
+        "numerical_limits_by_cell.csv": "8764a8bef556cfd98c5cb39989561eb3da9f1f22299632f09ecc4f1c877a83b0",
+        "scalar_history.bin": "5b0cd671d33d0d5acfea476d31b6546498fc0e952ea5cedb3817984e677c2321"
+      },
+      "metrics": {
+        "steps": 6169839,
+        "peak_pressure_mpa": 12.164136694132969,
+        "peak_time_s": 0.026249623418813393,
+        "minimum_pressure_pa": 30850.68330020811,
+        "max_fill_mach": 0.4975261274237115,
+        "total_impulse_ns": 4941.364586804849,
+        "performance_burn_time_s": 2.1443104383018814,
+        "first_burnout_time_s": 1.3544076698276923,
+        "final_throat_diameter_m": 0.021243240257838726,
+        "integrated_abs_clipping_energy_j": 310.10602361657953,
+        "mass_balance_error_fraction": 0.001867435495654297,
+        "pressure_floor_total_activations": 0,
+        "wall_time_s": 177.88105130195618
+      }
+    },
+    {
+      "id": "burn_10_geometry_21",
+      "burn_update_interval_steps": 10,
+      "geometry_update_interval_steps": 21,
+      "status": "complete",
+      "health_check_passed": true,
+      "artifact_path": "artifacts/verification_chunc_full_point/2026-10-06T01-13-12_4864219",
+      "git_commit": "4864219eb4c078821285988f5e2ffca5bd53b57e",
+      "git_status": "",
+      "point_json_sha256": "5c79fed8052f10d1245e8a83fec87d68a6285c5a78ef4f2c23371301bdc923e1",
+      "outputs_sha256": {
+        "mach_limit_by_face.csv": "6f7165c5e20ac4e5eebf6921c0c6fe80252440635a71d852b550e1de3dfb8d04",
+        "numerical_limits_by_cell.csv": "6a9b0643ee05bae96eb4d3fb5d34655c60a1dfd28dd8f53136a1ede89a808efb",
+        "scalar_history.bin": "3e6d383265bdf52c4cfa0bbb9d269b5151e81ffd09ac78a2508bb35e6a41fe64"
+      },
+      "metrics": {
+        "steps": 6169815,
+        "peak_pressure_mpa": 12.165517253538791,
+        "peak_time_s": 0.026224487399382233,
+        "minimum_pressure_pa": 31107.785917329686,
+        "max_fill_mach": 0.4975261274237115,
+        "total_impulse_ns": 4941.363072599254,
+        "performance_burn_time_s": 2.1442786945727317,
+        "first_burnout_time_s": 1.3543988163103158,
+        "final_throat_diameter_m": 0.02124323993527032,
+        "integrated_abs_clipping_energy_j": 310.8248107891023,
+        "mass_balance_error_fraction": 0.0018673882555479834,
+        "pressure_floor_total_activations": 0,
+        "wall_time_s": 213.40042209625244
+      }
+    },
+    {
+      "id": "burn_21_geometry_10",
+      "burn_update_interval_steps": 21,
+      "geometry_update_interval_steps": 10,
+      "status": "complete",
+      "health_check_passed": true,
+      "artifact_path": "artifacts/verification_chunc_full_point/2026-10-06T01-17-42_4864219",
+      "git_commit": "4864219eb4c078821285988f5e2ffca5bd53b57e",
+      "git_status": "",
+      "point_json_sha256": "634d9345157a72eb749eba4b273a559c470a84be5d656aab690082f2b9d6cfeb",
+      "outputs_sha256": {
+        "mach_limit_by_face.csv": "6f7165c5e20ac4e5eebf6921c0c6fe80252440635a71d852b550e1de3dfb8d04",
+        "numerical_limits_by_cell.csv": "56525cc055a2c2404b4c3ef3901793e86ef5e9c65ecb34a2de713d8f17c29be8",
+        "scalar_history.bin": "026e2cab8c51e32a80995a44bf7914187d721ec1c9cbc12977e4c8f3b9eee453"
+      },
+      "metrics": {
+        "steps": 6169836,
+        "peak_pressure_mpa": 12.164455922577504,
+        "peak_time_s": 0.026250088844283953,
+        "minimum_pressure_pa": 30850.67040227409,
+        "max_fill_mach": 0.4975261274237115,
+        "total_impulse_ns": 4941.363304527142,
+        "performance_burn_time_s": 2.144301507997919,
+        "first_burnout_time_s": 1.3544046347607075,
+        "final_throat_diameter_m": 0.021243240458047475,
+        "integrated_abs_clipping_energy_j": 310.1072591332549,
+        "mass_balance_error_fraction": 0.0018674439583830568,
+        "pressure_floor_total_activations": 0,
+        "wall_time_s": 186.37258386611938
+      }
+    },
+    {
+      "id": "burn_10_geometry_10",
+      "burn_update_interval_steps": 10,
+      "geometry_update_interval_steps": 10,
+      "status": "complete",
+      "health_check_passed": true,
+      "artifact_path": "artifacts/verification_chunc_full_point/2026-10-06T01-53-07_4864219",
+      "git_commit": "4864219eb4c078821285988f5e2ffca5bd53b57e",
+      "git_status": "",
+      "point_json_sha256": "826ed9ed24fdaca12b4e822b101921b932843882603609c13bbc4feecfcdd0e4",
+      "outputs_sha256": {
+        "mach_limit_by_face.csv": "6f7165c5e20ac4e5eebf6921c0c6fe80252440635a71d852b550e1de3dfb8d04",
+        "numerical_limits_by_cell.csv": "a8a6c6b0c234aa7dbefb9ab371fc71206cc41d9192c14cf728f37196e7a49702",
+        "scalar_history.bin": "7a5cb307812c0d4e598534fc5decbb3b09485a594859833bdbbe17384b882e9b"
+      },
+      "metrics": {
+        "steps": 6169815,
+        "peak_pressure_mpa": 12.165242908276877,
+        "peak_time_s": 0.026224114292241894,
+        "minimum_pressure_pa": 31107.810943240547,
+        "max_fill_mach": 0.4975261274237115,
+        "total_impulse_ns": 4941.363164776101,
+        "performance_burn_time_s": 2.1442845376241078,
+        "first_burnout_time_s": 1.3544002460605946,
+        "final_throat_diameter_m": 0.021243240317872728,
+        "integrated_abs_clipping_energy_j": 310.8242298482159,
+        "mass_balance_error_fraction": 0.0018673838763742343,
+        "pressure_floor_total_activations": 0,
+        "wall_time_s": 32760.264258146286
+      }
+    }
+  ],
+  "comparisons_to_reference": [
+    {
+      "id": "burn_10_geometry_21",
+      "all_reported_metrics_below_screen": true,
+      "maximum_reported_change_percent": 0.8333773829892451,
+      "absolute_relative_change_percent": {
+        "steps": 0.00038898908059027145,
+        "peak_pressure_mpa": 0.011349423642108053,
+        "peak_time_s": 0.09575763823394434,
+        "minimum_pressure_pa": 0.8333773829892451,
+        "max_fill_mach": 0.0,
+        "total_impulse_ns": 0.0000306434703997938,
+        "performance_burn_time_s": 0.0014803700333078644,
+        "first_burnout_time_s": 0.0006536818694837806,
+        "final_throat_diameter_m": 0.0000015184519974287744,
+        "integrated_abs_clipping_energy_j": 0.2317875557978433,
+        "mass_balance_error_fraction": 0.0025296780758238243
+      }
+    },
+    {
+      "id": "burn_21_geometry_10",
+      "all_reported_metrics_below_screen": true,
+      "maximum_reported_change_percent": 0.0026243411477728596,
+      "absolute_relative_change_percent": {
+        "steps": 0.00004862363507378393,
+        "peak_pressure_mpa": 0.0026243411477728596,
+        "peak_time_s": 0.0017730748480989276,
+        "minimum_pressure_pa": 0.00004180761215875228,
+        "max_fill_mach": 0.0,
+        "total_impulse_ns": 0.000025949870416953644,
+        "performance_burn_time_s": 0.0004164650697504406,
+        "first_burnout_time_s": 0.00022408814217899403,
+        "final_throat_diameter_m": 0.0000009424586195656655,
+        "integrated_abs_clipping_energy_j": 0.00039841750281273094,
+        "mass_balance_error_fraction": 0.00045317381935952887
+      }
+    },
+    {
+      "id": "burn_10_geometry_10",
+      "all_reported_metrics_below_screen": true,
+      "maximum_reported_change_percent": 0.833458502,
+      "absolute_relative_change_percent": {
+        "steps": 0.000388989,
+        "peak_pressure_mpa": 0.009094062,
+        "peak_time_s": 0.097179019,
+        "minimum_pressure_pa": 0.833458502,
+        "max_fill_mach": 0.0,
+        "total_impulse_ns": 0.000028778,
+        "performance_burn_time_s": 0.001207879,
+        "first_burnout_time_s": 0.000548119,
+        "final_throat_diameter_m": 0.000000283,
+        "integrated_abs_clipping_energy_j": 0.231600220,
+        "mass_balance_error_fraction": 0.002764180
+      }
+    }
+  ],
+  "interaction_check": {
+    "comparison": "burn_10_geometry_10 relative to burn_10_geometry_21",
+    "maximum_selected_physical_metric_change_percent": 0.002255106,
+    "maximum_metric": "peak_pressure_mpa",
+    "peak_time_change_percent": 0.001422743,
+    "minimum_pressure_change_percent": 0.000080449,
+    "integrated_abs_clipping_energy_change_percent": 0.000186903,
+    "interpretation": "The combined refinement tracks burn/source-only refinement for the reported metrics; no material cadence interaction is resolved at this setup."
+  },
+  "interpretation": {
+    "bounded_result": "All four cases completed with zero pressure-floor activations. Every reported comparison to the 21/21 reference is below the provisional 2 percent screen at 106 cells and CFL 0.075.",
+    "limits": "This is one cadence halving at one grid and CFL. It does not establish formal cadence or spatial convergence, physics validity, or reproduction of a research-note or experimental result."
+  }
+}
