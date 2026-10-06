@@ -17,8 +17,10 @@ Architecture:
         → return
 """
 
-import numpy as np
+import os
 import time as clock
+
+import numpy as np
 
 try:
     from numba import njit
@@ -2286,6 +2288,7 @@ def run_simulation(
     # production threshold remains the default. Kept last for positional API
     # compatibility.
     pressure_floor_pa=1.0e3,
+    history_memmap_path=None,
 ):
     """
     Run a complete transient simulation.
@@ -2330,6 +2333,11 @@ def run_simulation(
     pressure_floor_pa : float
         Diagnostic override for the pressure floor [Pa]. The default
         preserves the historical 1000 Pa threshold.
+    history_memmap_path : str or os.PathLike or None
+        Optional path for disk-backed scalar history storage. The file is
+        caller-owned, persists after the simulation, and must remain present
+        while mapped result arrays are in use. Snapshot storage remains in
+        memory.
     diagnostic_disable_erosive : bool
         If True, remove the Ma erosive increment from burn rates while
         preserving the Saint-Robert normal rate. Diagnostic only.
@@ -2384,6 +2392,21 @@ def run_simulation(
         raise ValueError("initial_gas_temperature must be positive")
     if not np.isfinite(pressure_floor_pa) or pressure_floor_pa <= 0.0:
         raise ValueError("pressure_floor_pa must be finite and positive")
+    memmap_path = None
+    if history_memmap_path is not None:
+        try:
+            memmap_path = os.path.abspath(os.fspath(history_memmap_path))
+        except TypeError as exc:
+            raise TypeError("history_memmap_path must be str or PathLike") from exc
+        if not isinstance(memmap_path, str):
+            raise TypeError("history_memmap_path must resolve to a string path")
+        if not os.path.isdir(os.path.dirname(memmap_path)):
+            raise FileNotFoundError(
+                f"history_memmap_path parent directory does not exist: "
+                f"{os.path.dirname(memmap_path)}"
+            )
+        if os.path.exists(memmap_path):
+            raise FileExistsError(memmap_path)
     if not 0.0 <= igniter_axial_momentum_fraction <= 1.0:
         raise ValueError("igniter_axial_momentum_fraction must be between 0 and 1")
     pyrogen_heat_flux = pyrogen_chamber.pyrogen.heat_flux_cal_cm2_s
@@ -2691,48 +2714,99 @@ def run_simulation(
         if diagnostic_history_capacity < 1:
             raise ValueError("diagnostic_history_capacity must be positive")
         max_hist = min(max_hist, diagnostic_history_capacity)
-    time_hist = np.empty(max_hist)
-    P_head_hist = np.empty(max_hist)
-    P_exit_hist = np.empty(max_hist)
-    D_throat_hist = np.empty(max_hist)
-    Kn_hist = np.empty(max_hist)
-    massflow_hist = np.empty(max_hist)
-    P_ig_hist = np.empty(max_hist)
-    T_ig_hist = np.empty(max_hist)
-    mdot_ig_hist = np.empty(max_hist)
-    m_pyrogen_hist = np.empty(max_hist)
-    gas_sensible_energy_before_hist = np.empty(max_hist)
-    gas_sensible_energy_hist = np.empty(max_hist)
-    gas_sensible_dE_dt_hist = np.empty(max_hist)
-    normal_sidewall_thermal_power_hist = np.empty(max_hist)
-    erosive_sidewall_thermal_power_hist = np.empty(max_hist)
-    endface_thermal_power_hist = np.empty(max_hist)
-    convective_scalar_flux_power_hist = np.empty(max_hist)
-    clipping_correction_power_hist = np.empty(max_hist)
-    pyrogen_enthalpy_power_hist = np.empty(max_hist)
-    pyrogen_surface_heat_power_hist = np.empty(max_hist)
-    gas_surface_heat_sink_power_hist = np.empty(max_hist)
-    radiation_heat_power_hist = np.empty(max_hist)
-    radiation_sink_power_hist = np.empty(max_hist)
-    convective_wall_heat_sink_power_hist = np.empty(max_hist)
-    nozzle_enthalpy_power_hist = np.empty(max_hist)
-    thermal_source_power_hist = np.empty(max_hist)
-    energy_residual_hist = np.empty(max_hist)
-    pyrogen_momentum_expected_hist = np.empty(max_hist)
-    pyrogen_momentum_deposited_hist = np.empty(max_hist)
-    pyrogen_momentum_residual_hist = np.empty(max_hist)
-    dt_hist = np.empty(max_hist)
-    n_burning_hist = np.empty(max_hist)
-    n_ignited_hist = np.empty(max_hist)
-    radiation_emitter_count_hist = np.empty(max_hist)
-    radiation_receiver_count_hist = np.empty(max_hist)
-    min_gas_temperature_hist = np.empty(max_hist)
-    max_gas_temperature_hist = np.empty(max_hist)
-    min_surface_temperature_hist = np.empty(max_hist)
-    max_surface_temperature_hist = np.empty(max_hist)
-    min_pressure_hist = np.empty(max_hist)
-    max_pressure_hist = np.empty(max_hist)
-    max_mach_hist = np.empty(max_hist)
+    history_channel_names = (
+        'time_hist', 'P_head_hist', 'P_exit_hist', 'D_throat_hist', 'Kn_hist',
+        'massflow_hist', 'P_ig_hist', 'T_ig_hist', 'mdot_ig_hist',
+        'm_pyrogen_hist', 'gas_sensible_energy_before_hist',
+        'gas_sensible_energy_hist', 'gas_sensible_dE_dt_hist',
+        'normal_sidewall_thermal_power_hist', 'erosive_sidewall_thermal_power_hist',
+        'endface_thermal_power_hist', 'convective_scalar_flux_power_hist',
+        'clipping_correction_power_hist', 'pyrogen_enthalpy_power_hist',
+        'pyrogen_surface_heat_power_hist', 'gas_surface_heat_sink_power_hist',
+        'radiation_heat_power_hist', 'radiation_sink_power_hist',
+        'convective_wall_heat_sink_power_hist', 'nozzle_enthalpy_power_hist',
+        'thermal_source_power_hist', 'energy_residual_hist',
+        'pyrogen_momentum_expected_hist', 'pyrogen_momentum_deposited_hist',
+        'pyrogen_momentum_residual_hist', 'dt_hist', 'n_burning_hist',
+        'n_ignited_hist', 'radiation_emitter_count_hist',
+        'radiation_receiver_count_hist', 'min_gas_temperature_hist',
+        'max_gas_temperature_hist', 'min_surface_temperature_hist',
+        'max_surface_temperature_hist', 'min_pressure_hist', 'max_pressure_hist',
+        'max_mach_hist',
+    )
+    history_storage_bytes = (
+        len(history_channel_names) * max_hist * np.dtype(np.float64).itemsize
+    )
+    history_memmap = None
+    if memmap_path is None:
+        time_hist = np.empty(max_hist)
+        P_head_hist = np.empty(max_hist)
+        P_exit_hist = np.empty(max_hist)
+        D_throat_hist = np.empty(max_hist)
+        Kn_hist = np.empty(max_hist)
+        massflow_hist = np.empty(max_hist)
+        P_ig_hist = np.empty(max_hist)
+        T_ig_hist = np.empty(max_hist)
+        mdot_ig_hist = np.empty(max_hist)
+        m_pyrogen_hist = np.empty(max_hist)
+        gas_sensible_energy_before_hist = np.empty(max_hist)
+        gas_sensible_energy_hist = np.empty(max_hist)
+        gas_sensible_dE_dt_hist = np.empty(max_hist)
+        normal_sidewall_thermal_power_hist = np.empty(max_hist)
+        erosive_sidewall_thermal_power_hist = np.empty(max_hist)
+        endface_thermal_power_hist = np.empty(max_hist)
+        convective_scalar_flux_power_hist = np.empty(max_hist)
+        clipping_correction_power_hist = np.empty(max_hist)
+        pyrogen_enthalpy_power_hist = np.empty(max_hist)
+        pyrogen_surface_heat_power_hist = np.empty(max_hist)
+        gas_surface_heat_sink_power_hist = np.empty(max_hist)
+        radiation_heat_power_hist = np.empty(max_hist)
+        radiation_sink_power_hist = np.empty(max_hist)
+        convective_wall_heat_sink_power_hist = np.empty(max_hist)
+        nozzle_enthalpy_power_hist = np.empty(max_hist)
+        thermal_source_power_hist = np.empty(max_hist)
+        energy_residual_hist = np.empty(max_hist)
+        pyrogen_momentum_expected_hist = np.empty(max_hist)
+        pyrogen_momentum_deposited_hist = np.empty(max_hist)
+        pyrogen_momentum_residual_hist = np.empty(max_hist)
+        dt_hist = np.empty(max_hist)
+        n_burning_hist = np.empty(max_hist)
+        n_ignited_hist = np.empty(max_hist)
+        radiation_emitter_count_hist = np.empty(max_hist)
+        radiation_receiver_count_hist = np.empty(max_hist)
+        min_gas_temperature_hist = np.empty(max_hist)
+        max_gas_temperature_hist = np.empty(max_hist)
+        min_surface_temperature_hist = np.empty(max_hist)
+        max_surface_temperature_hist = np.empty(max_hist)
+        min_pressure_hist = np.empty(max_hist)
+        max_pressure_hist = np.empty(max_hist)
+        max_mach_hist = np.empty(max_hist)
+    else:
+        with open(memmap_path, 'x+b') as history_file:
+            history_file.truncate(history_storage_bytes)
+        history_memmap = np.memmap(
+            memmap_path, dtype=np.float64, mode='r+',
+            shape=(len(history_channel_names), max_hist),
+        )
+        (
+            time_hist, P_head_hist, P_exit_hist, D_throat_hist, Kn_hist,
+            massflow_hist, P_ig_hist, T_ig_hist, mdot_ig_hist, m_pyrogen_hist,
+            gas_sensible_energy_before_hist, gas_sensible_energy_hist,
+            gas_sensible_dE_dt_hist, normal_sidewall_thermal_power_hist,
+            erosive_sidewall_thermal_power_hist, endface_thermal_power_hist,
+            convective_scalar_flux_power_hist, clipping_correction_power_hist,
+            pyrogen_enthalpy_power_hist, pyrogen_surface_heat_power_hist,
+            gas_surface_heat_sink_power_hist, radiation_heat_power_hist,
+            radiation_sink_power_hist, convective_wall_heat_sink_power_hist,
+            nozzle_enthalpy_power_hist, thermal_source_power_hist,
+            energy_residual_hist, pyrogen_momentum_expected_hist,
+            pyrogen_momentum_deposited_hist, pyrogen_momentum_residual_hist,
+            dt_hist, n_burning_hist, n_ignited_hist,
+            radiation_emitter_count_hist, radiation_receiver_count_hist,
+            min_gas_temperature_hist, max_gas_temperature_hist,
+            min_surface_temperature_hist, max_surface_temperature_hist,
+            min_pressure_hist, max_pressure_hist, max_mach_hist,
+        ) = history_memmap
 
     # Pre-allocate snapshot storage
     max_snaps = int(t_max / snapshot_interval) + 10
@@ -2886,54 +2960,59 @@ def run_simulation(
     )
 
     wall_elapsed = clock.time() - wall_start
+    if history_memmap is not None:
+        history_memmap.flush()
 
     # ============================================================
     # TRIM AND WRAP RESULTS
     # ============================================================
-    time_arr = time_hist[:n_steps].copy()
-    P_head_arr = P_head_hist[:n_steps].copy()
-    P_exit_arr = P_exit_hist[:n_steps].copy()
-    D_throat_arr = D_throat_hist[:n_steps].copy()
-    Kn_arr = Kn_hist[:n_steps].copy()
-    massflow_arr = massflow_hist[:n_steps].copy()
-    P_ig_arr = P_ig_hist[:n_steps].copy()
-    T_ig_arr = T_ig_hist[:n_steps].copy()
-    mdot_ig_arr = mdot_ig_hist[:n_steps].copy()
-    m_pyrogen_arr = m_pyrogen_hist[:n_steps].copy()
-    gas_sensible_energy_before_arr = gas_sensible_energy_before_hist[:n_steps].copy()
-    gas_sensible_energy_arr = gas_sensible_energy_hist[:n_steps].copy()
-    gas_sensible_dE_dt_arr = gas_sensible_dE_dt_hist[:n_steps].copy()
-    normal_sidewall_thermal_power_arr = normal_sidewall_thermal_power_hist[:n_steps].copy()
-    erosive_sidewall_thermal_power_arr = erosive_sidewall_thermal_power_hist[:n_steps].copy()
-    endface_thermal_power_arr = endface_thermal_power_hist[:n_steps].copy()
-    convective_scalar_flux_power_arr = convective_scalar_flux_power_hist[:n_steps].copy()
-    clipping_correction_power_arr = clipping_correction_power_hist[:n_steps].copy()
-    pyrogen_enthalpy_power_arr = pyrogen_enthalpy_power_hist[:n_steps].copy()
-    pyrogen_surface_heat_power_arr = pyrogen_surface_heat_power_hist[:n_steps].copy()
-    gas_surface_heat_sink_power_arr = gas_surface_heat_sink_power_hist[:n_steps].copy()
-    radiation_heat_power_arr = radiation_heat_power_hist[:n_steps].copy()
-    radiation_sink_power_arr = radiation_sink_power_hist[:n_steps].copy()
-    convective_wall_heat_sink_power_arr = (
-        convective_wall_heat_sink_power_hist[:n_steps].copy()
+    history_trim = (lambda array: array[:n_steps]) if history_memmap is not None else (
+        lambda array: array[:n_steps].copy()
     )
-    nozzle_enthalpy_power_arr = nozzle_enthalpy_power_hist[:n_steps].copy()
-    thermal_source_power_arr = thermal_source_power_hist[:n_steps].copy()
-    energy_residual_arr = energy_residual_hist[:n_steps].copy()
-    pyrogen_momentum_expected_arr = pyrogen_momentum_expected_hist[:n_steps].copy()
-    pyrogen_momentum_deposited_arr = pyrogen_momentum_deposited_hist[:n_steps].copy()
-    pyrogen_momentum_residual_arr = pyrogen_momentum_residual_hist[:n_steps].copy()
-    dt_arr = dt_hist[:n_steps].copy()
-    n_burning_arr = n_burning_hist[:n_steps].copy()
-    n_ignited_arr = n_ignited_hist[:n_steps].copy()
-    radiation_emitter_count_arr = radiation_emitter_count_hist[:n_steps].copy()
-    radiation_receiver_count_arr = radiation_receiver_count_hist[:n_steps].copy()
-    min_gas_temperature_arr = min_gas_temperature_hist[:n_steps].copy()
-    max_gas_temperature_arr = max_gas_temperature_hist[:n_steps].copy()
-    min_surface_temperature_arr = min_surface_temperature_hist[:n_steps].copy()
-    max_surface_temperature_arr = max_surface_temperature_hist[:n_steps].copy()
-    min_pressure_arr = min_pressure_hist[:n_steps].copy()
-    max_pressure_arr = max_pressure_hist[:n_steps].copy()
-    max_mach_arr = max_mach_hist[:n_steps].copy()
+    time_arr = history_trim(time_hist)
+    P_head_arr = history_trim(P_head_hist)
+    P_exit_arr = history_trim(P_exit_hist)
+    D_throat_arr = history_trim(D_throat_hist)
+    Kn_arr = history_trim(Kn_hist)
+    massflow_arr = history_trim(massflow_hist)
+    P_ig_arr = history_trim(P_ig_hist)
+    T_ig_arr = history_trim(T_ig_hist)
+    mdot_ig_arr = history_trim(mdot_ig_hist)
+    m_pyrogen_arr = history_trim(m_pyrogen_hist)
+    gas_sensible_energy_before_arr = history_trim(gas_sensible_energy_before_hist)
+    gas_sensible_energy_arr = history_trim(gas_sensible_energy_hist)
+    gas_sensible_dE_dt_arr = history_trim(gas_sensible_dE_dt_hist)
+    normal_sidewall_thermal_power_arr = history_trim(normal_sidewall_thermal_power_hist)
+    erosive_sidewall_thermal_power_arr = history_trim(erosive_sidewall_thermal_power_hist)
+    endface_thermal_power_arr = history_trim(endface_thermal_power_hist)
+    convective_scalar_flux_power_arr = history_trim(convective_scalar_flux_power_hist)
+    clipping_correction_power_arr = history_trim(clipping_correction_power_hist)
+    pyrogen_enthalpy_power_arr = history_trim(pyrogen_enthalpy_power_hist)
+    pyrogen_surface_heat_power_arr = history_trim(pyrogen_surface_heat_power_hist)
+    gas_surface_heat_sink_power_arr = history_trim(gas_surface_heat_sink_power_hist)
+    radiation_heat_power_arr = history_trim(radiation_heat_power_hist)
+    radiation_sink_power_arr = history_trim(radiation_sink_power_hist)
+    convective_wall_heat_sink_power_arr = (
+        history_trim(convective_wall_heat_sink_power_hist)
+    )
+    nozzle_enthalpy_power_arr = history_trim(nozzle_enthalpy_power_hist)
+    thermal_source_power_arr = history_trim(thermal_source_power_hist)
+    energy_residual_arr = history_trim(energy_residual_hist)
+    pyrogen_momentum_expected_arr = history_trim(pyrogen_momentum_expected_hist)
+    pyrogen_momentum_deposited_arr = history_trim(pyrogen_momentum_deposited_hist)
+    pyrogen_momentum_residual_arr = history_trim(pyrogen_momentum_residual_hist)
+    dt_arr = history_trim(dt_hist)
+    n_burning_arr = history_trim(n_burning_hist)
+    n_ignited_arr = history_trim(n_ignited_hist)
+    radiation_emitter_count_arr = history_trim(radiation_emitter_count_hist)
+    radiation_receiver_count_arr = history_trim(radiation_receiver_count_hist)
+    min_gas_temperature_arr = history_trim(min_gas_temperature_hist)
+    max_gas_temperature_arr = history_trim(max_gas_temperature_hist)
+    min_surface_temperature_arr = history_trim(min_surface_temperature_hist)
+    max_surface_temperature_arr = history_trim(max_surface_temperature_hist)
+    min_pressure_arr = history_trim(min_pressure_hist)
+    max_pressure_arr = history_trim(max_pressure_hist)
+    max_mach_arr = history_trim(max_mach_hist)
 
     # Convert snapshot 3D array back to list of dicts for compatibility
     snapshots = []
@@ -3041,6 +3120,9 @@ def run_simulation(
         'steps': n_steps,
         'cells': N,
         'history_capacity': int(max_hist),
+        'history_storage': 'memmap' if history_memmap is not None else 'memory',
+        'history_memmap_path': memmap_path,
+        'history_storage_bytes': int(history_storage_bytes),
         'burn_update_interval': int(burn_update_interval),
         'geometry_update_interval': int(geometry_update_interval),
         'termination_code': int(termination_code),
