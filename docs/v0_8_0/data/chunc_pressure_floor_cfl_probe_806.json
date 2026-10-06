@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "study": "chunc_pressure_floor_cfl_sensitivity_806",
+  "status": "complete",
+  "claims": {
+    "pressure_floor_converged": false,
+    "physics_validated": false,
+    "research_note_results_reproduced": false
+  },
+  "common_configuration": {
+    "target_propellant_cells": 800,
+    "actual_cells": 806,
+    "t_max_s": 0.05,
+    "pressure_floor_pa": 1000.0,
+    "pyrogen": "mtv",
+    "roughness_m": 3.5e-05,
+    "kappa": 0.45,
+    "T_ignition_k": 900.0,
+    "k_solid_w_m_k": 0.4
+  },
+  "provenance": {
+    "event_ledger_commit": "55b19cb0ebe2a8ed9ed0c8f8f1af50225e501dea",
+    "cfl_0_3_artifact": {
+      "path": "artifacts/verification_chunc_startup_point/2026-10-05T16-32-34_55b19cb",
+      "point_json_sha256": "684d65868b3827a1f5eef1f04faab87042dd134938036d91955a4274836eca69",
+      "numerical_limits_csv_sha256": "3a4521e59c02cef91132f7f74d9b09c726329d71abeb5f937fb580d68af85dae"
+    },
+    "cfl_0_15_artifact": {
+      "path": "artifacts/verification_chunc_startup_point/2026-10-06T00-05-34_2d664ff",
+      "point_json_sha256": "6d282f937a983d8dc9cd7d27c070defda7bee6fc87540a4ceac17fd11d743543",
+      "numerical_limits_csv_sha256": "0c65e070f1828a5563ee2ef59ca13c74dfa5e9f05395e1ea28bd46bc1b6f348e"
+    }
+  },
+  "runs": [
+    {
+      "cfl_target": 0.3,
+      "status": "complete",
+      "termination": "t_max reached",
+      "peak_pressure_mpa": 12.415425828200016,
+      "peak_time_s": 0.023735181142491065,
+      "max_fill_mach": 0.4463841677390413,
+      "minimum_pressure_pa": 1000.0,
+      "pressure_floor_active_cells": 2,
+      "pressure_floor_total_activations": 110,
+      "pressure_floor_maximum_raw_deficit_pa": 4882.323040122968,
+      "pressure_floor_first_activation_time_s": 0.009438671713828879,
+      "pressure_floor_last_activation_time_s": 0.009443790462731916
+    },
+    {
+      "cfl_target": 0.15,
+      "status": "complete",
+      "termination": "t_max reached",
+      "peak_pressure_mpa": 12.419761303282064,
+      "peak_time_s": 0.023620950047215806,
+      "max_fill_mach": 0.4463722362703414,
+      "minimum_pressure_pa": 10096.874876855729,
+      "pressure_floor_active_cells": 0,
+      "pressure_floor_total_activations": 0,
+      "pressure_floor_maximum_raw_deficit_pa": 0.0,
+      "pressure_floor_first_activation_time_s": null,
+      "pressure_floor_last_activation_time_s": null
+    }
+  ],
+  "relative_change_percent_cfl_0_3_to_0_15": {
+    "peak_pressure_mpa": 0.034907877665104406,
+    "peak_time_s": 0.48360076562087156,
+    "max_fill_mach": 0.0026729862949420964
+  },
+  "interpretation": {
+    "pressure_floor_activation_is_timestep_sensitive": true,
+    "selected_aggregate_metrics_below_two_percent": true,
+    "floor_free_solution_established": false,
+    "next_test": "Run the matching CFL 0.075 probe before testing cadence or changing any numerical/physics model."
+  }
+}

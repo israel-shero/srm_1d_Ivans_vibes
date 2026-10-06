@@ -44,6 +44,22 @@ associated with the aft bore-to-gap expansion, zero local source, and strong
 eastward flux divergence. No physics default, floor threshold, or solver
 equation was changed.
 
-The next discriminating experiment is a matching 806-cell, CFL 0.15 event
-probe. It should compare event cell, correction split, and flux imbalance before
-testing source cadence or a counterfactual boundary condition.
+The next discriminating experiment was a matching 806-cell, CFL 0.15 event
+probe, completed below. CFL 0.075 remains required before testing source cadence
+or a counterfactual boundary condition.
+
+## CFL sensitivity
+
+The matching CFL 0.15 run is committed in
+`docs/v0_8_0/data/chunc_pressure_floor_cfl_probe_806.json`. It reached the
+same configured 0.05 s duration and retained every setting except CFL.
+
+| CFL | Floor-active cells | Floor activations | Minimum pressure | Peak pressure | Peak time | Max fill Mach |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 0.30 | 2 | 110 | 1.000 kPa | 12.415426 MPa | 23.7352 ms | 0.4463842 |
+| 0.15 | 0 | 0 | 10.096875 kPa | 12.419761 MPa | 23.6210 ms | 0.4463722 |
+
+The no-floor result at CFL 0.15 means the aft undershoot is timestep-sensitive.
+The corresponding changes in peak pressure, peak time, and first-3-ms maximum
+Mach are 0.0349%, 0.4836%, and 0.00267%, respectively. This is not a
+floor-free convergence claim: CFL 0.075 remains the next required matched run.
