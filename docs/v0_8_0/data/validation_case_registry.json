@@ -3,10 +3,25 @@
   "updated": "2026-11-19",
   "purpose": "Candidate evidence inventory; calibration and holdout roles are intentionally unassigned.",
   "protocol": {
-    "event_time_zero": "pending per-case definition",
-    "startup_peak_and_plateau_windows": "pending; define before comparing model output",
-    "fit_holdout_split": "unassigned; split by whole motor or firing",
-    "pressure_trace_preprocessing": "No transformations are implied by this registry."
+    "version": "0.1",
+    "status": "scoring_rules_defined_case_windows_pending",
+    "event_time_zero": "Use an independently documented ignition trigger or event time. Never choose an offset by minimizing model error or aligning measured and simulated peaks. If independent time zero is unavailable, absolute timing metrics are ineligible; a source-documented shape-only alignment must be labeled exploratory and cannot score ignition delay.",
+    "pressure_preprocessing": "Convert only with the registered source units. Do not smooth, filter, fit gain, or fit offset. Apply baseline subtraction only from a documented calibration or pre-event interval; otherwise absolute-amplitude and baseline-normalized metrics are ineligible.",
+    "simulation_alignment": "Interpolate simulation pressure linearly at native measurement timestamps over the common time overlap only. Do not extrapolate or resample/smooth the experimental trace.",
+    "windows": "Register per-case startup, plateau, and tail-off windows using measurement metadata and the measured trace only, before inspecting model predictions. Do not assume universal numeric windows across motors. If a window cannot be defended, mark its metrics ineligible.",
+    "pressure_metrics": {
+      "rmse_mpa": "sqrt(mean((P_sim(t_i) - P_exp(t_i))^2)) over a registered valid window",
+      "mae_mpa": "mean(abs(P_sim(t_i) - P_exp(t_i))) over a registered valid window",
+      "bias_mpa": "mean(P_sim(t_i) - P_exp(t_i)) over a registered valid window",
+      "normalized_rmse": "rmse_mpa / (P_plateau_exp - P_baseline_exp), only when baseline and plateau are independently identifiable and the pressure channel is suitable for amplitude comparison",
+      "startup": "Report peak pressure and time-from-independent-t0 in the registered startup window; report 10-90% rise time only when baseline and plateau are defensible.",
+      "peak_to_plateau_ratio": "(P_peak - P_baseline) / (P_plateau - P_baseline), only with a documented linear pressure channel and defensible baseline/plateau."
+    },
+    "thrust_metrics": "When force calibration is documented, report RMSE, MAE, bias, and trapezoidal total impulse over the registered common interval separately from pressure metrics.",
+    "aggregation": "Report each firing separately. If aggregating, give each motor equal weight rather than pooling all samples; do not introduce a composite score or segment weights without predeclaring them.",
+    "fit_holdout_split": "Unassigned; when eligible cases exist, split by whole motor or independent firing, never by samples from the same firing.",
+    "legacy_scoring_note": "The baseline runner's manual time offsets and the LHS peak-alignment windows/segment weights are existing overlay or calibration mechanisms, not validation rules. Register their anchors and windows under this protocol before using them for validation.",
+    "acceptance": "No empirical acceptance threshold is set by this protocol. The provisional 2% numerical screen is not an experimental validation criterion."
   },
   "cases": [
     {
@@ -30,7 +45,13 @@
         "The trace starts at 0.010 s; ignition-zero alignment must be explicitly defined.",
         "High-L/D only; does not establish transfer to low-L/D motors."
       ],
-      "candidate_uses": ["startup-shape comparison", "pressure-history comparison"]
+      "candidate_uses": ["startup-shape comparison", "pressure-history comparison"],
+      "scoring_eligibility": {
+        "absolute_timing": "blocked_pending_independent_event_zero",
+        "absolute_pressure": "pending_calibration_and_baseline_review",
+        "shape": "candidate_after_case_windows_are_registered",
+        "role": "unassigned"
+      }
     },
     {
       "id": "zerox",
@@ -53,7 +74,13 @@
         "Coarse trace; the CSV columns are pressure then time.",
         "The workbook source may contain higher-resolution data and has not been extracted here."
       ],
-      "candidate_uses": ["cross-motor pressure-shape comparison"]
+      "candidate_uses": ["cross-motor pressure-shape comparison"],
+      "scoring_eligibility": {
+        "absolute_timing": "pending_source_trigger_verification",
+        "absolute_pressure": "candidate_with_coarse_sampling_caveat",
+        "shape": "exploratory_until_higher_resolution_source_is_checked",
+        "role": "unassigned"
+      }
     },
     {
       "id": "hasegawa_motor_a",
@@ -75,7 +102,12 @@
         "Digitized from Ma 2020 Figure 10; not raw instrument data.",
         "Reported peak is late and progressive, not an ignition-transient peak."
       ],
-      "candidate_uses": ["late-burn pressure comparison"]
+      "candidate_uses": ["late-burn pressure comparison"],
+      "scoring_eligibility": {
+        "startup": "ineligible_digitized_trace_does_not_resolve_ignition_transient",
+        "late_burn": "candidate_after_digitization_uncertainty_and_window_are_recorded",
+        "role": "unassigned"
+      }
     },
     {
       "id": "pathfinder_54",
@@ -99,7 +131,12 @@
       "known_limits": [
         "Confirm the matching motor geometry and trace time-zero before using as a validation case."
       ],
-      "candidate_uses": ["pressure and thrust-history comparison"]
+      "candidate_uses": ["pressure and thrust-history comparison"],
+      "scoring_eligibility": {
+        "absolute_timing": "blocked_pending_event_zero",
+        "pressure_and_thrust": "blocked_pending_matching_motor_geometry_and_calibration_review",
+        "role": "unassigned"
+      }
     },
     {
       "id": "ballsstick_2in_subscale",
@@ -127,7 +164,13 @@
         "Load-cell impulse and subscale-to-full-scale mapping remain unresolved."
       ],
       "candidate_uses": ["qualitative startup-shape check"],
-      "prohibited_uses": ["absolute-pressure calibration", "3-inch motor validation without justified scaling"]
+      "prohibited_uses": ["absolute-pressure calibration", "3-inch motor validation without justified scaling"],
+      "scoring_eligibility": {
+        "absolute_pressure": "ineligible",
+        "timing": "ineligible_until_daq_clock_is_anchored",
+        "shape": "qualitative_only_pending_raw_channel_review",
+        "role": "unassigned"
+      }
     }
   ],
   "coverage_gaps": [
