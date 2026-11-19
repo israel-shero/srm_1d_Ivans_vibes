@@ -216,13 +216,45 @@ by -0.00127%, final throat diameter by less than 0.000001%, clipping energy by
 is below the provisional 2% screen. Maximum ignition-to-refresh delay decreases
 by 51.14%, the intended consequence of the more frequent source update.
 
-This combined check does not explain the larger 106-to-206 changes in peak
-time, minimum pressure, early Mach, or clipping energy. Separate 20/41 and
-41/20 points are therefore deferred for the present materiality decision; they
-remain necessary before attributing an effect specifically to burn/source or
-geometry cadence or quantifying their interaction at 206 cells. This is not a
-formal cadence- or spatial-convergence claim, physics validation, or
-reproduction of a research-note or experimental result.
+At the time this combined check was recorded, separate 20/41 and 41/20 points
+were deferred. They are now complete and reported in
+`docs/v0_8_0/data/chunc_full_cadence_separated_206.json`. The follow-up
+attributes the cadence effects and interaction at 206 cells, but does not
+explain the larger 106-to-206 changes in peak time, minimum pressure, early
+Mach, or clipping energy. This is not a formal cadence- or spatial-convergence
+claim, physics validation, or reproduction of a research-note or experimental
+result.
+
+## Separated full-duration cadence probe at 206 cells
+
+The four-point result is recorded in
+`docs/v0_8_0/data/chunc_full_cadence_separated_206.json`. Each point used 206
+actual cells, CFL 0.075, the configured 3.0 s duration, exact disk-backed
+scalar histories, and the same physics defaults. All four reached the duration,
+passed the health gate, and had zero pressure-floor activations.
+
+| Burn / geometry steps | Peak pressure | Peak time | Minimum pressure | Total impulse | Perf. burn time | Clipping energy |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 41 / 41 | 12.291737 MPa | 24.7797 ms | 21.6450 kPa | 4938.427474 N s | 2.134665 s | 234.288 J |
+| 20 / 41 | 12.293116 MPa | 24.7532 ms | 21.6233 kPa | 4938.425788 N s | 2.134635 s | 235.372 J |
+| 41 / 20 | 12.292073 MPa | 24.7801 ms | 21.6450 kPa | 4938.426194 N s | 2.134656 s | 234.289 J |
+| 20 / 20 | 12.292821 MPa | 24.7530 ms | 21.6233 kPa | 4938.425929 N s | 2.134641 s | 235.371 J |
+
+Relative to 41/41, halving only the burn/source interval changes the selected
+physical metrics by at most 0.4625% (clipping energy); peak time changes by
+-0.1069%, minimum pressure by -0.1004%, and total impulse by -0.000034%.
+Halving only the geometry interval changes the selected metrics by at most
+0.00274% (peak pressure). The combined 20/20 point changes them by at most
+0.4624%. The largest factorial interaction across these metrics is 0.00514%
+of its reference value, so no material cadence interaction is resolved here.
+
+The 106-to-206 full-duration comparison still has changes above the provisional
+2% screen for peak time, minimum pressure, early Mach, and clipping energy.
+The separated matrix bounds cadence effects at 206 cells; it does not establish
+spatial or full-solution convergence and does not justify calibrating against
+those grid-sensitive quantities. No physics default was changed. The 41/20
+manifest records the untracked candidate registry present at run time; no
+tracked numerical source was modified for that point.
 
 ## Exact-history storage
 

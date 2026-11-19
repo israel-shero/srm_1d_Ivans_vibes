@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "updated": "2026-11-19",
+  "purpose": "Candidate evidence inventory; calibration and holdout roles are intentionally unassigned.",
+  "protocol": {
+    "event_time_zero": "pending per-case definition",
+    "startup_peak_and_plateau_windows": "pending; define before comparing model output",
+    "fit_holdout_split": "unassigned; split by whole motor or firing",
+    "pressure_trace_preprocessing": "No transformations are implied by this registry."
+  },
+  "cases": [
+    {
+      "id": "chunc_machbuster_new",
+      "motor": "Chunc / machbusterNew",
+      "data_status": "clean_csv",
+      "source": {
+        "path": "static_fire_data/thomas_chunc_firing.csv",
+        "sha256": "1e0840de48623542d4d79b9079eef0cc76f9ca8ad475d5f14657e8ac5afa7e08",
+        "sample_count": 346,
+        "time_column": 0,
+        "pressure_column": 1,
+        "pressure_unit": "MPa"
+      },
+      "coverage": {
+        "ld_class": "high",
+        "port_geometry": "fore-tapering conical",
+        "measurements": ["pressure"]
+      },
+      "known_limits": [
+        "The trace starts at 0.010 s; ignition-zero alignment must be explicitly defined.",
+        "High-L/D only; does not establish transfer to low-L/D motors."
+      ],
+      "candidate_uses": ["startup-shape comparison", "pressure-history comparison"]
+    },
+    {
+      "id": "zerox",
+      "motor": "Zerox / Risky Batman V3",
+      "data_status": "clean_coarse_csv",
+      "source": {
+        "path": "static_fire_data/zerox_data.csv",
+        "sha256": "a31569d780b4c6683f57d8950f0ba876bad1ecf70c47ee9a957528abe755d54f",
+        "sample_count": 58,
+        "time_column": 1,
+        "pressure_column": 0,
+        "pressure_unit": "MPa"
+      },
+      "coverage": {
+        "ld_class": "mid",
+        "port_geometry": "forward Finocyl plus aft BATES",
+        "measurements": ["pressure"]
+      },
+      "known_limits": [
+        "Coarse trace; the CSV columns are pressure then time.",
+        "The workbook source may contain higher-resolution data and has not been extracted here."
+      ],
+      "candidate_uses": ["cross-motor pressure-shape comparison"]
+    },
+    {
+      "id": "hasegawa_motor_a",
+      "motor": "Hasegawa Motor A",
+      "data_status": "digitized_paper_plot",
+      "source": {
+        "path": "srm_1d/plotting.py",
+        "sha256": "9afb6540ddb2e6bbe16dfdbf3ab3dbd507bd9d16bd4abb9b06b866c4b5133510",
+        "locator": "HASEGAWA_MOTOR_A_EXPERIMENTAL",
+        "sample_count": 36,
+        "pressure_unit": "MPa"
+      },
+      "coverage": {
+        "ld_class": "high",
+        "port_geometry": "see cited source and motor example",
+        "measurements": ["pressure"]
+      },
+      "known_limits": [
+        "Digitized from Ma 2020 Figure 10; not raw instrument data.",
+        "Reported peak is late and progressive, not an ignition-transient peak."
+      ],
+      "candidate_uses": ["late-burn pressure comparison"]
+    },
+    {
+      "id": "pathfinder_54",
+      "motor": "Pathfinder 54",
+      "data_status": "clean_csv",
+      "source": {
+        "path": "static_fire_data/pathfin54.csv",
+        "sha256": "2dbbd9f87c37e101f23ca95126d8a109676993f7e38e3c4ca131f3c737b2b1a1",
+        "sample_count": 409,
+        "time_column": 0,
+        "force_column": 1,
+        "pressure_column": 2,
+        "pressure_unit": "Pa",
+        "force_unit": "N"
+      },
+      "coverage": {
+        "ld_class": "unknown",
+        "port_geometry": "not established in this registry",
+        "measurements": ["pressure", "force"]
+      },
+      "known_limits": [
+        "Confirm the matching motor geometry and trace time-zero before using as a validation case."
+      ],
+      "candidate_uses": ["pressure and thrust-history comparison"]
+    },
+    {
+      "id": "ballsstick_2in_subscale",
+      "motor": "BALLSStick 2-inch subscale",
+      "data_status": "raw_unvalidated",
+      "source": {
+        "path": "static_fire_data/raw/ballsstick_subscale_raw.csv",
+        "sha256": "8cc9f70fe8e429bbe73faa35a9153ac0a40521dadf3e67fc94db31ac9be6f176",
+        "sample_count": 417,
+        "time_column": 0,
+        "pressure_column": 5,
+        "pressure_unit_label": "PSI (provenance/calibration unresolved)",
+        "force_column": 6,
+        "force_unit": "lbf"
+      },
+      "coverage": {
+        "ld_class": "high",
+        "port_geometry": "2-inch subscale; do not map directly to 3-inch motor",
+        "measurements": ["raw_pressure_shape", "raw_force"]
+      },
+      "known_limits": [
+        "Pressure channel drifts before ignition and does not track the logged voltage; absolute pressure is unusable.",
+        "Only a ratio/qualitative shape comparison is currently defensible.",
+        "Time is on the DAQ power-on clock; pre-trigger baseline is short.",
+        "Load-cell impulse and subscale-to-full-scale mapping remain unresolved."
+      ],
+      "candidate_uses": ["qualitative startup-shape check"],
+      "prohibited_uses": ["absolute-pressure calibration", "3-inch motor validation without justified scaling"]
+    }
+  ],
+  "coverage_gaps": [
+    {
+      "id": "clean_low_ld_static_fire",
+      "ld_class": "low",
+      "status": "missing",
+      "consequence": "A general short-to-long L/D transfer claim is blocked."
+    }
+  ]
+}
