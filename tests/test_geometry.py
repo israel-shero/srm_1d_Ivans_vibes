@@ -2,7 +2,7 @@
 import numpy as np
 import pytest
 from srm_1d.grain_geometry import (
-    update_cell_geometry, advance_bore_regression,
+    build_snapped_geometry, update_cell_geometry, advance_bore_regression,
     advance_endface_regression,
 )
 from srm_1d.nozzle import Nozzle
@@ -106,6 +106,32 @@ class TestFactoryFunctions:
         expected_buffers = 2 * 3 * dx          # 3-cell lead + 3-cell trail
         expected = expected_segments + expected_internal_gaps + expected_buffers
         assert geo.L_motor == pytest.approx(expected, abs=1e-9)
+
+    def test_solver_buffers_do_not_trigger_physical_length_warning(self, recwarn):
+        motor = load_ric(str(MOTORS_DIR / 'machbusterNew.ric'))
+        geo = convert_geometry(motor['grains'], target_propellant_cells=200)
+        requested_length = sum(
+            grain['properties']['length'] for grain in motor['grains']
+        )
+        snapped_length = sum(segment.length for segment in geo.segments)
+
+        assert snapped_length == pytest.approx(requested_length, abs=1e-12)
+        assert geo.L_motor - snapped_length == pytest.approx(6 * geo.dx)
+        assert not recwarn
+
+    def test_physical_length_warning_reports_real_grain_gap_snap(self):
+        segments_spec = [{
+            'D_bore_fwd': 0.040,
+            'length': 0.500,
+            'gap_after': 0.080,
+        }]
+
+        with pytest.warns(
+            UserWarning, match=r'physical grain/gap span by -20\.00 mm',
+        ):
+            build_snapped_geometry(
+                segments_spec, D_outer=0.080, target_propellant_cells=2,
+            )
 
     def test_web_thickness(self):
         geo = make_single_cylinder(0.040, 0.080, 0.500)

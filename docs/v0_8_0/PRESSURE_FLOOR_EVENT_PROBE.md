@@ -256,11 +256,15 @@ those grid-sensitive quantities. No physics default was changed. The 41/20
 manifest records the untracked candidate registry present at run time; no
 tracked numerical source was modified for that point.
 
-The run also emitted the existing `grain_geometry.py` warning that integer
-snapping changed total motor length by more than 10 mm. The same 206-cell
-geometry is used across the cadence matrix, so this does not explain its
-within-grid cadence deltas. Quantify the snapped-versus-requested motor length
-before interpreting absolute geometry-sensitive comparisons or calibrating.
+The old `grain_geometry.py` warning was a false positive: it compared the full
+domain length, including leading and trailing solver buffers, with the physical
+propellant length, excluding those buffers. At target 200 / actual 206 cells,
+`dx` is 4.064008 mm; requested and snapped propellant lengths are both
+0.812801626 m. The two segment boundaries shift by -1.016 mm and +1.016 mm,
+while the six buffer cells add 24.384049 mm to the solver domain. The warning
+now compares physical grain-plus-gap span only; this changes no geometry
+outputs. Focused tests cover both the Chunc buffer case and a true 20 mm
+physical-span snapping error.
 
 ## Exact-history storage
 

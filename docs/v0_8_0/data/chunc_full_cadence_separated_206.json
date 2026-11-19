@@ -52,7 +52,23 @@
     ],
     "wall_time_is_physical_screen_metric": false,
     "health_gate_basis": "Each point reached t_max and passed verify_run_health; every point recorded zero pressure-floor activations.",
-    "geometry_discretization_warning": "The run emitted the existing grain_geometry integer-snapping warning that total motor length changed by more than 10 mm. The cadence points share the same 206-cell geometry, so this is not a cadence difference; quantify the geometry discrepancy before physical calibration."
+    "geometry_length_audit": {
+      "warning_before_fix": "The warning compared L_motor, which includes leading/trailing solver buffers, against propellant-plus-gap length, which excludes them.",
+      "target_propellant_cells": 200,
+      "actual_cells": 206,
+      "dx_m": 0.0040640081280162565,
+      "requested_propellant_length_m": 0.8128016256032513,
+      "snapped_propellant_length_m": 0.8128016256032513,
+      "propellant_length_delta_m": 0.0,
+      "segment_length_deltas_mm": [
+        -1.0160020320040541,
+        1.0160020320040264
+      ],
+      "leading_and_trailing_solver_buffers_m": 0.02438404876809752,
+      "snapped_domain_length_m": 0.8371856743713488,
+      "warning_check_fixed": true,
+      "geometry_output_changed_by_fix": false
+    }
   },
   "provenance": {
     "motor_path": "motors/machbusterNew.ric",
@@ -293,6 +309,7 @@
   "interpretation": {
     "bounded_result": "At 206 cells, halving only the burn/source cadence changes the selected metrics by at most 0.462494%; halving only geometry cadence changes them by at most 0.002737%. The combined result is within 0.462340% of the reference. The largest resolved factorial interaction is 0.005139% of the reference metric.",
     "pressure_floor_note": "All four points have zero pressure-floor activations, so none of their minimum-pressure values is floor-censored.",
-    "limits": "This four-point cadence matrix is one motor, grid, CFL, and duration. It does not establish formal cadence or spatial convergence, validate the physics, or reproduce a research-note or experimental result. The >10 mm integer-snapping warning must be quantified before physical calibration."
+    "geometry_note": "The >10 mm warning was a false positive caused by counting 24.384 mm of leading/trailing solver buffers as a physical grain/gap length change. Total snapped propellant length matches the requested length; the two individual segment boundaries shift by about 1.016 mm in opposite directions.",
+    "limits": "This four-point cadence matrix is one motor, grid, CFL, and duration. It does not establish formal cadence or spatial convergence, validate the physics, or reproduce a research-note or experimental result."
   }
 }

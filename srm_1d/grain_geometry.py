@@ -1062,6 +1062,7 @@ def build_snapped_geometry(segments_spec: list[dict], D_outer: float, target_pro
     segments = []
     x_cursor = 0.0
     total_cells = 0
+    snapped_physical_length = 0.0
 
     # Snap leading gap
     n_leading = max(MIN_BUFFER_CELLS, int(round(leading_gap / dx)))
@@ -1072,6 +1073,7 @@ def build_snapped_geometry(segments_spec: list[dict], D_outer: float, target_pro
         # Snap the propellant segment
         n_seg = max(1, int(round(spec['length'] / dx)))
         snapped_length = n_seg * dx
+        snapped_physical_length += snapped_length
 
         # Tapered FMM grain: resolve the per-station tables now that the
         # cell count (n_seg) is known, so station density tracks the mesh.
@@ -1123,6 +1125,7 @@ def build_snapped_geometry(segments_spec: list[dict], D_outer: float, target_pro
         if raw_gap > 1e-6:
             n_gap = max(1, int(round(raw_gap / dx)))  # Stop forcing 3-cell minimum, allow 1 for speed
             snapped_gap = n_gap * dx
+            snapped_physical_length += snapped_gap
             x_cursor += snapped_gap
             total_cells += n_gap
             
@@ -1133,9 +1136,13 @@ def build_snapped_geometry(segments_spec: list[dict], D_outer: float, target_pro
     
     L_motor_snapped = x_cursor
     
-    # Verify deviation is within acceptable physical limits (< 10mm)
-    if abs(L_motor_snapped - (L_prop_total + sum(gaps))) > 0.01:
-        warnings.warn(f"Integer-snapping altered total motor length by more than 10mm. Check segment proportions.")
+    physical_length_delta = snapped_physical_length - (L_prop_total + sum(gaps))
+    if abs(physical_length_delta) > 0.01:
+        warnings.warn(
+            "Integer-snapping changed physical grain/gap span by "
+            f"{physical_length_delta * 1000.0:.2f} mm (limit 10 mm). "
+            "Check segment proportions."
+        )
 
     return MotorGeometry(
         L_motor=L_motor_snapped,
