@@ -172,18 +172,16 @@ def _install_fake_find_perimeter_cy():
 
 def _find_openmotor_root():
     """
-    Walk upward from this file looking for an `openMotor/openMotor/motorlib/`
-    directory. Returns the inner `openMotor/openMotor/` path (which contains
-    `motorlib/` and `mathlib/`), or None if not found.
+    Walk upward from this file looking for an openMotor checkout. Returns the
+    checkout path (which contains `motorlib/` and `mathlib/`), or None if not
+    found.
 
     Resolution order:
         1. `SRM1D_OPENMOTOR_PATH` environment variable (if set, must point
            directly at the inner openMotor/openMotor/ directory)
-        2. Walk upward from this file, checking each ancestor for a sibling
-           or descendant named `openMotor/openMotor/motorlib/`. Robust to
-           any folder depth — works whether srm_1d sits at
-           `Erosive Burning Solver/srm_1d/` or `.../Claude Testing/srm_1d/`
-           or anywhere else, as long as openMotor is somewhere up the tree.
+        2. Walk upward from this file, checking sibling checkout names used by
+           supported layouts, including `openMotor`, `openMotor-compatible`,
+           and nested `openMotor/openMotor` layouts.
 
     Returning None lets the caller raise a clear error message including
     the directories that were checked.
@@ -200,7 +198,15 @@ def _find_openmotor_root():
 
     here = Path(__file__).resolve().parent
     for ancestor in [here, *here.parents]:
-        candidate = ancestor / 'openMotor' / 'openMotor'
+        candidates = (
+            ancestor / 'openMotor' / 'openMotor',
+            ancestor / 'openMotor-compatible',
+            ancestor / 'openMotor',
+        )
+        for candidate in candidates:
+            if (candidate / 'motorlib').is_dir():
+                return candidate
+        candidate = ancestor
         if (candidate / 'motorlib').is_dir():
             return candidate
     return None

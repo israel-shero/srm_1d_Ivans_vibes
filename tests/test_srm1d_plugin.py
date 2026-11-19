@@ -308,12 +308,12 @@ def test_motor_round_trips_solver_configs(om):
 
 
 def test_motor_without_igniter_keeps_defaults(om):
-    """A motor dict lacking the igniter block loads with default igniter."""
+    """A motor dict lacking the igniter block keeps no block at Motor level.
+    File migration is responsible for provider-default seeding."""
     solvers, om_motor = om
     motor = _canonical_motor(om_motor)
     d = motor.getDict()
     d.pop('igniter', None)
     motor2 = om_motor.Motor(d)
-    # Default igniter is present and self-describing (BPNV / forward_plenum).
-    block = motor2.getDict()['igniter']
-    assert block['injection_topology'] == 'forward_plenum'
+    assert motor2.igniterData is None
+    assert 'igniter' not in motor2.getDict()

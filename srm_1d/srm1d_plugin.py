@@ -499,6 +499,110 @@ def register():
         def get_config_schema(self):
             return _transient_config_schema()
 
+        def get_default_igniter(self):
+            from .openmotor_adapter import default_igniter_block
+            return default_igniter_block('bpnv')
+
+        def get_igniter_materials(self):
+            from .openmotor_adapter import _pyrogen_to_block, load_pyrogen
+            return [
+                _pyrogen_to_block(load_pyrogen(name))
+                for name in ('bpnv', 'mtv', 'mtv_fast', 'thermite_cual')
+            ]
+
+        def get_igniter_material_schema(self):
+            _setup_openmotor_path()
+            from motorlib.properties import (
+                PropertyCollection, FloatProperty, StringProperty,
+                EnumProperty, BooleanProperty,
+            )
+            from .openmotor_adapter import load_pyrogen
+
+            schema = PropertyCollection()
+            schema.props['name'] = StringProperty('Pyrogen Name')
+            schema.props['a'] = FloatProperty('Burn Rate Coefficient', '', 0.0, 1.0)
+            schema.props['n'] = FloatProperty('Burn Rate Exponent', '', 0.0, 2.0)
+            schema.props['rho'] = FloatProperty('Density', 'kg/m^3', 1.0, 10000.0)
+            schema.props['T_flame'] = FloatProperty('Flame Temperature', 'K', 300.0, 6000.0)
+            schema.props['M'] = FloatProperty('Molar Mass', 'kg/mol', 0.001, 0.5)
+            schema.props['gamma'] = FloatProperty('Specific Heat Ratio', '', 1.0, 3.0)
+            schema.props['impetus_W'] = FloatProperty('Impetus', 'W', 0.0, 50000.0)
+            schema.props['heat_flux_cal_cm2_s'] = FloatProperty(
+                'Heat Flux', 'cal/(cm^2*s)', 0.0, 1000.0)
+            schema.props['particle_diameter_m'] = FloatProperty(
+                'Particle Diameter', 'm', 1e-6, 0.1)
+            schema.props['particle_LD_ratio'] = FloatProperty(
+                'Particle L/D', '', 0.1, 100.0)
+            schema.props['form'] = EnumProperty(
+                'Physical Form', ['powder', 'pellets', 'chunks', 'solid'])
+            schema.props['heat_delivery_mode'] = EnumProperty(
+                'Heat Delivery', ['demar', 'radiation', 'none'])
+            schema.props['pellet_emissivity'] = FloatProperty(
+                'Pellet Emissivity', '', 0.0, 1.0)
+            schema.props['radiation_absorption_length_m'] = FloatProperty(
+                'Radiation Absorption Length', 'm', 1e-3, 100.0)
+            schema.props['kappa_jet'] = FloatProperty(
+                'Jet Decay Factor', '', 0.0, 100.0)
+            schema.props['gas_mass_fraction'] = FloatProperty(
+                'Gas Mass Fraction', '', 0.0, 1.0)
+            schema.setProperties({
+                'name': 'BPNV',
+                'a': 2e-5,
+                'n': 0.5,
+                'rho': 1700.0,
+                'T_flame': 2800.0,
+                'M': 0.03,
+                'gamma': 1.25,
+                'impetus_W': 5000.0,
+                'heat_flux_cal_cm2_s': 69.4,
+                'particle_diameter_m': 0.0032,
+                'particle_LD_ratio': 1.0,
+                'form': 'pellets',
+                'heat_delivery_mode': 'demar',
+                'pellet_emissivity': 0.7,
+                'radiation_absorption_length_m': 1.0,
+                'kappa_jet': 8.0,
+                'gas_mass_fraction': 1.0,
+            })
+            return schema
+
+        def get_igniter_chamber_schema(self):
+            _setup_openmotor_path()
+            from motorlib.properties import (
+                PropertyCollection, FloatProperty, EnumProperty,
+            )
+            schema = PropertyCollection()
+            schema.props['mass'] = FloatProperty('Pyrogen Mass', 'kg', -1.0, 100.0)
+            schema.props['throat_area'] = FloatProperty(
+                'Vent Throat Area', 'm^2', -1.0, 1.0)
+            schema.props['volume'] = FloatProperty(
+                'Chamber Volume', 'm^3', -1.0, 1.0)
+            schema.props['burn_area'] = FloatProperty(
+                'Pyrogen Burn Area', 'm^2', -1.0, 100.0)
+            schema.props['cartridge_length_m'] = FloatProperty(
+                'Cartridge Length', 'm', -1.0, 100.0)
+            schema.props['basket_fill_fraction'] = FloatProperty(
+                'Basket Fill Fraction', '', 0.0, 1.0)
+            schema.props['pellet_packing_fraction'] = FloatProperty(
+                'Pellet Packing Fraction', '', 0.0, 1.0)
+            schema.props['injection_topology'] = EnumProperty(
+                'Injection Topology',
+                ['forward_plenum', 'head_basket', 'aft_basket'])
+            schema.props['burn_law'] = EnumProperty(
+                'Burn Law', ['0d'])
+            schema.setProperties({
+                'mass': -1.0,
+                'throat_area': -1.0,
+                'volume': -1.0,
+                'burn_area': -1.0,
+                'cartridge_length_m': -1.0,
+                'basket_fill_fraction': 0.5,
+                'pellet_packing_fraction': 0.6,
+                'injection_topology': 'forward_plenum',
+                'burn_law': '0d',
+            })
+            return schema
+
     return register_solver(Srm1dTransientSolver())
 
 
