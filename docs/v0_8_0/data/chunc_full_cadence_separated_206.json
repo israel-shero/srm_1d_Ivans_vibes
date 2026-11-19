@@ -51,7 +51,8 @@
       "mass_balance_error_fraction"
     ],
     "wall_time_is_physical_screen_metric": false,
-    "health_gate_basis": "Each point reached t_max and passed verify_run_health; every point recorded zero pressure-floor activations."
+    "health_gate_basis": "Each point reached t_max and passed verify_run_health; every point recorded zero pressure-floor activations.",
+    "geometry_discretization_warning": "The run emitted the existing grain_geometry integer-snapping warning that total motor length changed by more than 10 mm. The cadence points share the same 206-cell geometry, so this is not a cadence difference; quantify the geometry discrepancy before physical calibration."
   },
   "provenance": {
     "motor_path": "motors/machbusterNew.ric",
@@ -292,6 +293,6 @@
   "interpretation": {
     "bounded_result": "At 206 cells, halving only the burn/source cadence changes the selected metrics by at most 0.462494%; halving only geometry cadence changes them by at most 0.002737%. The combined result is within 0.462340% of the reference. The largest resolved factorial interaction is 0.005139% of the reference metric.",
     "pressure_floor_note": "All four points have zero pressure-floor activations, so none of their minimum-pressure values is floor-censored.",
-    "limits": "This four-point cadence matrix is one motor, grid, CFL, and duration. It does not establish formal cadence or spatial convergence, validate the physics, or reproduce a research-note or experimental result."
+    "limits": "This four-point cadence matrix is one motor, grid, CFL, and duration. It does not establish formal cadence or spatial convergence, validate the physics, or reproduce a research-note or experimental result. The >10 mm integer-snapping warning must be quantified before physical calibration."
   }
 }

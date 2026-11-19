@@ -256,6 +256,12 @@ those grid-sensitive quantities. No physics default was changed. The 41/20
 manifest records the untracked candidate registry present at run time; no
 tracked numerical source was modified for that point.
 
+The run also emitted the existing `grain_geometry.py` warning that integer
+snapping changed total motor length by more than 10 mm. The same 206-cell
+geometry is used across the cadence matrix, so this does not explain its
+within-grid cadence deltas. Quantify the snapped-versus-requested motor length
+before interpreting absolute geometry-sensitive comparisons or calibrating.
+
 ## Exact-history storage
 
 Commit `1a2aac1` adds opt-in disk-backed scalar histories without changing the
