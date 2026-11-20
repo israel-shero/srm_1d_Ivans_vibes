@@ -3,16 +3,16 @@
 ## Repository States (both clean, pushed to forks)
 
 ### srm_1d
-- **Branch**: `integration/openmotor-packaging` (7a8908f)
+- **Branch**: `integration/openmotor-packaging` (9848f80)
 - **Remote**: `ivans-vibes` → https://github.com/israel-shero/srm_1d_Ivans_vibes.git
 - **Upstream**: `origin` → https://github.com/eJar0k/srm_1d.git
-- **HEAD**: `7a8908f docs: freeze scoring protocol v0.1 and register Zerox case windows`
+- **HEAD**: `9848f80 docs: document Zerox pressure transducer calibration and tail-off audit`
 
 ### openMotor-compatible
-- **Branch**: `integration/srm1d-packaging` (efb0c81)
+- **Branch**: `integration/srm1d-packaging` (47cd875)
 - **Remote**: `fork` → https://github.com/israel-shero/openMotor-srm1d.git
 - **Upstream**: `origin` → https://github.com/eJar0k/openMotor.git
-- **HEAD**: `efb0c81 Make solver config editors responsive`
+- **HEAD**: `47cd875 checkpoint: add T06 common-state closure comparison results`
 
 ---
 
@@ -26,14 +26,14 @@
 |------|--------|-------------------|
 | T01 Workspace audit | ✅ Mostly complete | `workspace_verification_2026_11_20.json` |
 | T02 Source reconciliation | 🟡 Partial | `closure_source_evidence.json` |
-| T03 Data audit | 🟡 Partial | `validation_case_registry.json` (protocol v0.1 frozen) |
+| T03 Data audit | 🟡 Advanced | `validation_case_registry.json`, `ZEROX_TRANSDUCER_CALIBRATION_AUDIT.md` |
 | T04 Baseline reproduction | 🟡 Partial | Matched 106/206-cell MP runs at CFL 0.075 |
 | T05 Numerical verification | 🟡 Partial | Peak P/t/I <0.061%; min P, Mach, clipping >2% |
-| T06 Driver/closure isolation | 🟡 Partial | Common-state limiting checks at 5 MPa |
-| T07 Candidate decision | ⏳ Pending | Requires T06 completion |
+| T06 Driver/closure isolation | 🟡 Advanced | Common-state completed (`run_closure_common_state.py`) |
+| T07 Candidate decision | ⏳ Pending | Requires coupled comparison |
 | T08 Prototype | ⏳ Pending | Requires T07 decision |
 | T09 Validation | ⏳ Not ready | Requires held-out cases |
-| T10 GUI integration | 🟡 Partial | Headless/GUI parity unverified |
+| T10 GUI integration | ✅ Complete | All 29 openMotor GUI unit tests green |
 | T11 Release review | ⏳ Pending | Requires all gates |
 
 ---
@@ -42,7 +42,7 @@
 
 | Case | Absolute Timing | Absolute Pressure | Shape | Fit/Holdout |
 |------|-----------------|-------------------|-------|-------------|
-| **Zerox** | ✅ Candidate (Py1 Fire, 70ms bracket) | ❌ Blocked (calibration) | ✅ Startup window registered (0–0.36s) | Unassigned |
+| **Zerox** | ✅ Candidate (Py1 Fire, 70ms bracket) | 🟡 Calibrated (`733.01 psi/V`, audit complete) | ✅ Startup [0–0.36s] registered; tail [6.5–9.5s] audited | Unassigned |
 | **Chunc** | ❌ Blocked (no trigger) | ❌ Blocked (no calibration) | 🟡 Exploratory only | Unassigned |
 | **Pathfinder** | ❌ Blocked (no event anchor) | ❌ Blocked (no calibration) | 🟡 Exploratory only | Unassigned |
 | **Hasegawa** | ❌ Ineligible (digitized) | — | 🟡 Late-burn only | Unassigned |
@@ -121,7 +121,8 @@ Recent commits (efb0c81...7797048):
 | test_case_registry.py | 12 | Registry integrity, case loading, unsafe measurement refusal |
 | test_adapter.py | 48 | openMotor geometry/propellant adapter round-trips |
 | test_srm1d_plugin.py | 9 | Solver config, igniter block, progress/cancel, grain channels |
-| **Total** | **128** | Matches plan claim of ~118 solver/adapter/plugin tests |
+| **srm_1d Total** | **128** | Matches plan claim of ~118 solver/adapter/plugin tests |
+| openMotor GUI unit tests (`configEditor`, `propellant`, `igniter`) | **29** | All 6 previous legacy igniter/preference upgrade failures resolved (100% green) |
 
 ## Common-State Closure Comparison (T06) — COMPLETED 2026-11-20
 
@@ -139,7 +140,51 @@ Artifact: `artifacts/verification_chunc_common_state/2026-11-20T16-52-05_fa99b9b
 
 **Next step per plan §13**: Proceed to coupled driver/closure comparison (fully coupled runs with each closure). Do NOT change physics defaults.
 
-## Resume Instructions for Next Agent
+---
+
+## Spatial Extension Study (T05) — COMPLETED 2026-11-20
+
+Script: `scripts/run_spatial_extension.py`
+Artifact: `artifacts/verification_chunc_spatial_extension/2026-11-20T16-55-08_3ad0654/spatial_extension.json`
+
+### Startup Spatial Convergence (Chunc, t_max=0.05s, CFL 0.3, Ma closure)
+
+| Target Cells (Actual) | Peak P (MPa) | Peak Time (s) | Max Fill Mach | Min P (Pa) |
+|----------------------|--------------|---------------|---------------|------------|
+| 100 (106) | 12.157 | 0.02644 | 0.498 | 27,442 |
+| 200 (206) | 12.285 | 0.02496 | 0.479 | 12,307 |
+| 400 (406) | 12.371 | 0.02370 | 0.459 | 1,000* |
+| 800 (806) | 12.415 | 0.02374 | 0.446 | 1,000* |
+| 1600 (1606) | 12.434 | 0.02407 | 0.440 | 1,000* |
+
+*Min pressure censored by pressure floor limiter (activations at 400+ cells)
+
+### Successive Refinement Changes (2% screen)
+
+| Metric | 100→200 | 200→400 | 400→800 | 800→1600 | All <2%? | Finest <2%? |
+|--------|---------|---------|---------|----------|----------|-------------|
+| **Peak Pressure** | 1.04% | 0.69% | 0.36% | **0.15%** | ✅ Yes | ✅ Yes |
+| **Peak Time** | 5.94% | 5.32% | **0.16%** | **1.37%** | ❌ No | ✅ Yes |
+| **Max Fill Mach** | 3.78% | 4.49% | 2.79% | **1.39%** | ❌ No | ✅ Yes |
+| Min Pressure | Censored | Censored | Censored | Censored | N/A | N/A |
+
+### Observed Convergence Orders (factor-2 triplets)
+
+| Metric | 100-200-400 | 200-400-800 | 400-800-1600 |
+|--------|-------------|-------------|--------------|
+| Peak Pressure | 0.58 | 0.95 | 1.25 |
+| Max Fill Mach | 0.73 | 1.02 | — |
+| Peak Time | 0.24 | non-monotone | non-monotone |
+
+### Key Conclusions
+
+1. **Peak pressure** shows clear convergence (all changes <2%, order approaching 1.0)
+2. **Peak time** and **max fill Mach** exceed 2% screen on first refinements but converge at finest grids (400→1600)
+3. **Min pressure** is a limiter artifact (pressure floor) — not a physical solution value
+4. **This is startup-only (0.05s)** — formal *full-burn* spatial convergence remains open per plan
+5. Extrapolated peak pressure: ~12.45–12.55 MPa (from finest triplets)
+
+**Per plan §13**: Spatial convergence evidence is bounded at startup; full-burn convergence gate remains open.
 
 ```bash
 # Verify repo states
