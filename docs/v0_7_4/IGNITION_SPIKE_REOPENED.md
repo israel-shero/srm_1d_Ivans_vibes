@@ -11,6 +11,14 @@ assumptions* and test whether the spike is a structural solver artifact rather
 than fundamental burn-rate physics. The verdict after a full multi-angle
 re-investigation:
 
+> **Evidence status update (2026-11-19):** The empirical comparisons below
+> predate scoring protocol v0.1. The registry does not currently qualify
+> Chunc's absolute timing or pressure amplitude, and it permits only qualitative
+> inspection of BALLSStick; the latter's pressure ratios are not eligible.
+> Historical “no spike” and “same residual” phrases below are not current
+> validation conclusions. See
+> [`validation_case_registry.json`](../v0_8_0/data/validation_case_registry.json).
+
 > **STATUS: OPEN — deliberately left open for a new session (2026-06-17, see §8).**
 > The re-opening found and fixed two genuine solver issues — the Phase F flame-front
 > DeMar-cascade bug, and a grid-divergent PISO velocity artifact in the ignition fill
@@ -32,8 +40,10 @@ re-investigation:
 > without users quantifying their own erosive burning), and any high-g correction adds a
 > fitted figure. **→ The high-L/D ignition-transient erosive over-spike is now an
 > ACCEPTED, DOCUMENTED LIMITATION — there is no remaining non-dogma lever, and the spike
-> thread is effectively CLOSED on a product decision, not a physics gap.** BALLSstick
-> (bpnv, high-L/D) still over-spikes post-fix: same erosive-feedback residual as Chunc.
+> thread is effectively CLOSED on a product decision, not a physics gap.**
+> Simulations of BALLSstick (bpnv, high-L/D) still produce a large early peak
+> post-fix. Because its experimental pressure channel is uncalibrated, this is a
+> predicted model behavior, not an empirically measured residual.
 
 Two genuine solver issues were found and fixed (Phase F DeMar-cascade flame-front
 bypass; PISO fill velocity artifact, `port_mach_cap`). Two physically-grounded
@@ -50,7 +60,7 @@ Sutton sizing, roughness 32 µm, kappa 0.44, T_ignition 756 K).
 | P_peak (baseline) | 12.65 MPa @ 11.6 ms |
 | plateau (0.4–0.9 s) | 8.23 MPa |
 | spike ratio | **1.54×** |
-| experimental (Chunc) | ~8.5 MPa by 10 ms, flat ~8.8, **no spike** |
+| experimental trace (Chunc) | starts at 0.010 s and 8.466 MPa; independent event zero, pressure calibration, and startup window pending—no ignition-spike classification yet |
 | erosive-disabled | early spike **gone** (peak at end) → the spike is 100% erosive |
 
 The plateau and decay already match experiment well; the entire model error is
@@ -416,7 +426,9 @@ Liñán-Williams re-read firsthand via pypdf):
   `chunc_hc_decomp.py`.)
 
 ### 9.3 Igniter gas-generation over-production — FOUND + FIXED (commit bfc2f3f)
-Prompted by "sim spikes at LOW igniter mass; real firings use MORE mass with no spike."
+Prompted by low-mass spikes in simulation and the historical comparison with
+higher real-firing charges; that empirical spike classification is not
+currently qualified under protocol v0.1.
 The pyrogen gas physics ignored both the cited impetus and the condensed phase:
 BPNV `M = 0.030` / 100%-gas gave `R·T/M = 6869 psi·in³/g` — **2.1× the ProPep
 per-charge value (3245)** and 1.37× BPNV's own cited DeMar 5000. ProPep (BPNV 25:60:15
@@ -426,9 +438,10 @@ B(liq) 0.746 + BN(s) 0.557 = 21.9 g/100 g). Fix (committed): bpnv gas properties
 the gas fraction pressurizes). Effect: Chunc Sutton 0.9 g spike **1.50→1.36**, as-fired
 6 g **5.08→3.22**, plenum P_ig **17.6→11.5 MPa**; **Hasegawa A unchanged (6.14 MPa** —
 its peak is the late progressive peak, not the ignition transient). Resolves the
-low-mass over-drive but **leaves the erosive-feedback residual** (1.36×). **BALLSstick**
-(bpnv, high-L/D) still over-spikes far beyond steady state after the fix — the same
-erosive-feedback residual as Chunc.
+low-mass over-drive but **leaves the simulated transient** (1.36×). **BALLSstick**
+(bpnv, high-L/D) still produces a large simulated early peak after the fix.
+Because its raw experimental pressure channel is uncalibrated, this is not an
+empirically measured residual or a validation result.
 
 > **MARKED FOR LATER IMPLEMENTATION (igniter CEA extension).** MTV (impetus 1.47×) and
 > Cu/Al thermite (6.54×) carry the *same* impetus + all-gas error that BPNV did, but were

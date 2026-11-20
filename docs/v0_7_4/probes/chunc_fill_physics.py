@@ -65,4 +65,7 @@ for thr in (1,2,4,6,8):
     idx = np.argmax(P_hist/1e6 >= thr)
     tt = t_hist[idx]*1e3 if (P_hist/1e6>=thr).any() else float('nan')
     print(f"  P_head reaches {thr} MPa at {tt:.1f} ms")
-print("  Experimental Chunc: ~8.5 MPa by ~10 ms (smooth rise, no spike)")
+print(
+    "  Historical Chunc trace: starts at 0.010 s; event-zero/calibration/window "
+    "review pending (not a registered no-spike score)"
+)

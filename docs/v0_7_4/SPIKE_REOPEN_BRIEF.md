@@ -5,6 +5,14 @@ deliberately re-opening the high-L/D ignition over-spike. It exists to make you
 efficient (don't re-derive dead ends) and accurate (don't hallucinate) — *not*
 to fence you in.
 
+> **Evidence status update (2026-11-19):** This brief predates scoring protocol
+> v0.1. Treat its empirical ratios and “no spike” interpretations as historical
+> hypotheses, not registered validation results. The current registry blocks
+> Chunc absolute timing pending an independent event anchor and calibration
+> review; BALLSStick is qualitative-only, with pressure ratios ineligible until
+> channel provenance, calibration, linearity, and timing are resolved. See
+> [`validation_case_registry.json`](../v0_8_0/data/validation_case_registry.json).
+
 ---
 
 ## 0. Rules of engagement (from the user, carry these)
@@ -38,26 +46,33 @@ Find a **physically-justified closure** that reduces the high-L/D ignition
 pressure spike so the sim matches **empirical static-fire data across the full
 short → long L/D range** — not just one motor.
 
-The over-prediction is **progressively proportional to motor L/D** (Chunc and
-BALLSstick, both high-L/D, over-spike ~2×; Hasegawa A's peak is the *late
-progressive* peak, not the ignition transient, so it doesn't show the defect).
-There may be **other confounding factors** — treat L/D as the leading signature,
-not the sole variable.
+The original working hypothesis was that over-prediction increased with motor
+L/D (Chunc and BALLSstick are both high-L/D; Hasegawa A's peak is the *late
+progressive* peak, not the ignition transient). The current case audit does not
+establish that relationship: Chunc's event time and pressure eligibility remain
+open, and BALLSstick's pressure ratios are not eligible. Treat L/D and geometry
+as hypotheses to test after case qualification, not as established signatures.
 
 ---
 
-## 2. What the spike IS (best current understanding — build on this)
+## 2. Historical solver diagnosis (empirical inference still pending)
 
-Chunc (`motors/machbusterNew.ric`) is the clean diagnostic: **real motor = ZERO
-ignition spike → flat ~8.8 MPa**; sim over-spikes ~2×, but plateau + taildown
-already match. Established by the 2026-06-18 re-open (REOPENED §9):
+Chunc (`motors/machbusterNew.ric`) was used as the clean diagnostic. Its trace
+has a small peak-to-plateau ratio within the recorded samples, but starts at
+0.010 s and lacks an independently registered ignition zero; pressure
+calibration and startup-window review also remain pending. It therefore does
+not yet establish that the real motor had zero ignition spike or quantify the
+sim-to-experiment spike difference. The following solver findings are
+repository-reported analyses from the 2026-06-18 re-open (REOPENED §9), not
+registered validation results:
 
 - The spike is a **genuine Ma quasi-steady erosive feedback loop**
   (G → r_erosive → P → ρ → G) responding to a **modestly-elevated** transient
   mass flux — **sim aft-G is only 1.29× experimental**, with **no gas-dynamic
   inflation** (sim ρ|u| = 0.87× its own quasi-steady ṁ/A; **aft Mach 0.23** at
-  the spike — the supersonic fill is *over* by then). Measured directly against
-  a 346-pt static-fire trace, independent of any model assumption.
+  the spike — the supersonic fill is *over* by then). The historical analysis
+  compared this with a 346-point static-fire trace; that case's event-time and
+  pressure eligibility remain pending under protocol v0.1.
 - Of the hump, **~2/3 is real QS erosive physics** (Mukunda-Paul universal law
   gives η ≈ 2.08 at the spike's g) and **~1/3 is Ma's high-g over-prediction**
   (Ma η ≈ 2.76 vs MP 2.08; they agree within ~6% at the plateau).
@@ -67,32 +82,21 @@ already match. Established by the 2026-06-18 re-open (REOPENED §9):
   ignition window → bigger synchronized aft-G surge (**simultaneity
   sharpening**).
 
-### 2.1 The empirical target is per-motor, NOT "no spike" (measured 2026-06-19)
+### 2.1 Historical case comparison—not a registered empirical target
 
-**Do not aim to eliminate the spike.** Real motors disagree with each other:
+The following values were exploratory calculations from June 2026. Current
+protocol v0.1 eligibility is shown separately:
 
-| Real motor | measured startup over-pressure | source |
+| Case | Historical trace observation | Current evidence status |
 |---|---|---|
-| **Chunc** (high L/D, **fore-tapering conical**) | **1.015× — essentially NO spike** | `static_fire_data/thomas_chunc_firing.csv` (346 pt) |
-| **BALLSStick 2″ subscale** (high L/D) | **~1.35–1.50× — a REAL spike** (peak 1330 psi @ +0.070 s → trough 885 @ +0.300 s → mid-burn 985 @ +1.03 s) | `static_fire_data/raw/ballsstick_subscale_raw.csv` |
+| **Chunc** (high L/D, **fore-tapering conical**) | 1.015× peak/plateau ratio in the 346-point trace | Starts at 0.010 s; independent event zero, calibration, and scoring window remain pending. Do not classify it as a verified “no ignition spike.” |
+| **BALLSStick 2″ subscale** | Approx. 1.35–1.50× ratios calculated from the logged PSI column | Channel provenance/calibration/linearity and event time are unresolved. Qualitative observation only; ratios are not scoreable. |
 
-**Implications for this investigation:**
-- **"Real high-L/D motors don't spike" is FALSE.** One does, one doesn't — so
-  **L/D alone does not explain the defect.** Chunc's port is *fore-tapering
-  conical* (mass flux **lower** toward the aft — see
-  [[project_chunc_erosive_spike_diagnostic]]), a plausible geometric reason it
-  wouldn't spike. **Port geometry / G-distribution is a live confounder** —
-  exactly the "other confounding factors" the user flagged. Test the hypothesis
-  that the sim's error tracks **aft-G concentration**, not raw L/D.
-- The right success criterion is **reproducing each motor's own startup ratio**
-  (Chunc ≈1.0, BALLSStick ≈1.35–1.5), not driving all spikes to zero. A "fix"
-  that flattens Chunc but also flattens BALLSStick is **wrong**.
-- **Usability caveat:** the BALLSStick number is a **ratio**, which is why it
-  survives that file's broken calibration — a constant offset moves 1.50→1.53
-  (Δ0.02) and a pure gain error cancels exactly. Its **absolute** pressure is
-  NOT trustworthy, and it is the **2″ subscale**, not the 3″ motor. Also, whether
-  its startup peak is igniter-driven or erosive **cannot be settled from the
-  pressure trace alone** — treat the magnitude as a constraint, not a mechanism.
+Do not infer a high-L/D trend, a geometry effect, or a model success target
+from this pair yet. Chunc's fore-tapering geometry and a possible relationship
+between port geometry and aft-G distribution remain hypotheses. First complete
+the case-specific timing, calibration, geometry, and window reviews in the
+registry; do not tune a model to these exploratory ratios.
 
 ---
 
