@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-11-20",
+  "reviewed_srm1d_commit": "da63ed9c59583700d1483d6d8c8091f17a0c7b70",
+  "reviewed_openmotor_commit": "efb0c81241b648303fe06722553f6b2868467578",
+  "scope": "Recent implementation and plan accuracy; no new physical validation or full-duration simulation replay.",
+  "findings": [
+    {
+      "priority": "high",
+      "file": "docs/v0_8_0/data/chunc_mukunda_paul_spatial_probe_106_212.json",
+      "finding": "Spatial reference configuration contradicts the matching 106-cell source artifact; 212-cell manifest is absent. Grid stability is unverified.",
+      "action_taken": "Preserved reported values and attached independent-review qualification."
+    },
+    {
+      "priority": "medium",
+      "file": "scripts/run_limiting_case_verification.py",
+      "line": 205,
+      "finding": "Resume checks only motor/config file hashes, then skips existing variants by name. Code identity, dirty source content, and effective saved run options are not validated, so resumed comparisons can mix revisions/settings.",
+      "action_taken": "Review finding only; implementation unchanged.",
+      "required_action": "Verify exact effective configuration and numerical source identity on resume; retain per-run provenance and reject incompatible variants."
+    },
+    {
+      "priority": "low",
+      "file": "../SRM_Erosive_Prediction_Plan.md",
+      "line": 23,
+      "finding": "Status summary said no solver/model changes since October despite commits 0d6cf63 and 43b76ad.",
+      "action_taken": "Updated workspace plan summary and qualified its spatial comparison; parent workspace is not a Git repository."
+    }
+  ],
+  "checks": {
+    "focused_solver_data_and_history": {
+      "passed": 58,
+      "command": "../.venv-srm/bin/python -m pytest -q tests/test_burn_rate.py tests/test_limiting_case_verification.py tests/test_case_registry.py tests/test_numerical_verification.py tests/test_history_memmap.py"
+    },
+    "simulation_and_plugin": {
+      "passed": 34,
+      "warnings": 4,
+      "command": "../.venv-srm/bin/python -m pytest -q tests/test_simulation_phase3.py tests/test_srm1d_plugin.py",
+      "warning_note": "Quasi-steady nozzle numerical warnings."
+    },
+    "openmotor_gui_and_igniter": {
+      "passed": 22,
+      "failed": 7,
+      "files": [
+        "test/unit/configEditor.py",
+        "test/unit/propellant.py",
+        "test/unit/igniter.py"
+      ],
+      "environment": "QT_QPA_PLATFORM=offscreen; platformdirs user_log_dir/user_data_dir redirected to a temporary directory before pytest.main to respect filesystem permissions.",
+      "finding": "Reproduces the plan-disclosed igniter migration/default/solver-config failures; the two layout suites pass."
+    },
+    "primary_source": "Local docs/references/mukunda1997.pdf equation (12) agrees with the implemented threshold 35, coefficient 0.023, exponent 0.8 and normalized Reynolds exponent -0.125.",
+    "baseline_preservation": "Recorded baseline before and after closure wiring has effectively identical peak pressure/time; impulse differs by about 0.000026 N s. Default remains ma.",
+    "limitations": [
+      "No complete full-duration spatial rerun performed.",
+      "Experimental source audits were inspected but not fully re-extracted independently.",
+      "Passing focused tests does not establish held-out predictive accuracy."
+    ]
+  }
+}
