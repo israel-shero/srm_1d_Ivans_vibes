@@ -339,6 +339,43 @@ def saint_robert_from_tabs(P, tab_min_p, tab_max_p, tab_a, tab_n, n_tabs):
     return tab_a[k] * P_pos ** tab_n[k]
 
 
+@njit(cache=True, fastmath=False)
+def mukunda_paul_enhancement(
+    mass_flux_g,
+    normal_burn_rate,
+    hydraulic_diameter,
+    propellant_density,
+    dynamic_viscosity,
+):
+    """Mukunda-Paul 1997 dimensionless erosive enhancement.
+
+    Returns ``(eta, g)``.  The threshold and coefficients are the
+    universal-law values reported by Mukunda and Paul.
+    """
+    if (
+        normal_burn_rate <= 0.0
+        or hydraulic_diameter <= 0.0
+        or propellant_density <= 0.0
+        or dynamic_viscosity <= 0.0
+    ):
+        return 1.0, 0.0
+
+    g0 = mass_flux_g / (propellant_density * normal_burn_rate)
+    re0 = (
+        propellant_density
+        * normal_burn_rate
+        * hydraulic_diameter
+        / dynamic_viscosity
+    )
+    g = g0 * max(re0 / 1000.0, 0.0) ** (-0.125)
+    threshold = 35.0
+    if g <= threshold:
+        return 1.0, g
+
+    eta = 1.0 + 0.023 * (g ** 0.8 - threshold ** 0.8)
+    return max(eta, 1.0), g
+
+
 @njit(cache=True, fastmath=True)
 def _burn_rate_closure_residual(r, r0, alpha, ebf, h0):
     """Residual of the implicit Ma burn-rate closure at candidate ``r``."""

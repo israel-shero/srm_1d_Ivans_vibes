@@ -5,6 +5,7 @@ from srm_1d.burn_rate import (
     haaland_friction, gnielinski_nusselt, transpiration_correction,
     burn_rate_cell, compute_burn_rates, select_tab_idx,
     saint_robert_from_tabs, _burn_rate_closure_residual,
+    mukunda_paul_enhancement,
 )
 
 
@@ -109,6 +110,43 @@ class TestPressureTabs:
         )
 
         assert rate == pytest.approx(1.0e-3)
+
+
+class TestMukundaPaulEnhancement:
+    def test_below_threshold_has_no_enhancement(self):
+        eta, g = mukunda_paul_enhancement(
+            100.0, 0.005, 0.04, 1800.0, 7.0e-5,
+        )
+        assert eta == 1.0
+        assert g < 35.0
+
+    def test_above_threshold_uses_published_universal_law(self):
+        eta, g = mukunda_paul_enhancement(
+            1000.0, 0.005, 0.04, 1800.0, 7.0e-5,
+        )
+        expected = 1.0 + 0.023 * (
+            g ** 0.8 - 35.0 ** 0.8
+        )
+        assert g > 35.0
+        assert eta == pytest.approx(expected)
+
+    @pytest.mark.parametrize(
+        "mass_flux,rate,diameter,rho,mu",
+        [
+            (100.0, 0.0, 0.04, 1800.0, 7.0e-5),
+            (100.0, 0.005, 0.0, 1800.0, 7.0e-5),
+            (100.0, 0.005, 0.04, 0.0, 7.0e-5),
+            (100.0, 0.005, 0.04, 1800.0, 0.0),
+        ],
+    )
+    def test_invalid_state_disables_enhancement(
+        self, mass_flux, rate, diameter, rho, mu,
+    ):
+        eta, g = mukunda_paul_enhancement(
+            mass_flux, rate, diameter, rho, mu,
+        )
+        assert eta == 1.0
+        assert g == 0.0
 
 
 class TestBurnRateCell:

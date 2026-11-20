@@ -21,7 +21,11 @@ if str(SCRIPT_ROOT) not in sys.path:
 
 from cases.loader import PROJECT_ROOT
 from scripts.run_numerical_verification import _extract_metrics
-from srm_1d.burn_rate import burn_rate_cell, saint_robert_from_tabs
+from srm_1d.burn_rate import (
+    burn_rate_cell,
+    mukunda_paul_enhancement,
+    saint_robert_from_tabs,
+)
 from srm_1d.openmotor_adapter import convert_propellant, load_ric, run_from_ric
 from srm_1d.run_artifacts import artifact_dir, verify_run_health
 
@@ -141,6 +145,15 @@ def _closure_limiting_cases(propellant) -> dict:
         common[0], 5.0e5, *common[1:]
     )
     normal_from_flow = flow_total - flow_erosive
+    mass_flux = 5.0e5 * propellant.mu_gas / 0.04
+    mp_eta, mp_g = mukunda_paul_enhancement(
+        mass_flux,
+        r0,
+        0.04,
+        propellant.rho_propellant,
+        propellant.mu_gas,
+    )
+    mp_total = r0 * mp_eta
     return {
         "pressure_pa": pressure,
         "normal_rate_m_s": float(r0),
@@ -160,6 +173,16 @@ def _closure_limiting_cases(propellant) -> dict:
             "normal_rate_preserved": bool(
                 np.isclose(normal_from_flow, r0, rtol=1.0e-12, atol=1.0e-15)
             ),
+            "mass_flux_g_kg_m2_s": float(mass_flux),
+            "mukunda_paul": {
+                "dimensionless_g": float(mp_g),
+                "eta": float(mp_eta),
+                "total_rate_m_s": float(mp_total),
+                "erosive_rate_m_s": float(mp_total - r0),
+                "ma_to_mp_eta_ratio": float(
+                    (flow_total / r0) / mp_eta
+                ),
+            },
         },
     }
 

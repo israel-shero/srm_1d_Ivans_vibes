@@ -65,6 +65,10 @@ def test_closure_limiting_cases_use_converted_propellant():
     assert checks["zero_crossflow"]["normal_rate_preserved"]
     assert checks["finite_crossflow"]["normal_rate_preserved"]
     assert checks["finite_crossflow"]["erosive_rate_m_s"] > 0.0
+    mukunda_paul = checks["finite_crossflow"]["mukunda_paul"]
+    assert mukunda_paul["dimensionless_g"] > 35.0
+    assert mukunda_paul["eta"] > 1.0
+    assert mukunda_paul["erosive_rate_m_s"] > 0.0
 
 
 def test_resume_rejects_changed_motor_checksum(tmp_path):
