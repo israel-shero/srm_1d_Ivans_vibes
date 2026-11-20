@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-11-20",
+  "status": "complete_two_factor_cadence_sensitivity",
+  "study": "chunc_mukunda_paul_106_cell_burn_geometry_cadence_2x2",
+  "source_commits": [
+    "70d0b9581195426c9cdca687f01532d2d9eec5fb",
+    "f585bc140f77d45da4816eb11e1afaaf97580f97"
+  ],
+  "common_configuration": {
+    "motor": "motors/machbusterNew.ric",
+    "motor_sha256": "4a7163cf24d68a2cc4604a1f99e6a806d55aaae6f7ce61ee3077d96a1535d378",
+    "baseline_config_sha256": "6e6a54b1135c5d6638fc10203666e6d56fb680a2e01132c83347d6aa8625d84d",
+    "erosive_closure": "mukunda_paul",
+    "target_propellant_cells": 100,
+    "actual_cells": 106,
+    "cfl_target": 0.075,
+    "t_max_s": 3.0,
+    "history_capacity_rows": 8000000
+  },
+  "identity_checks": {
+    "source_fingerprints_equal": true,
+    "runtime_versions_equal": true,
+    "motor_and_config_checksums_equal": true,
+    "generated_initial_geometry_equal": true,
+    "requested_duration_reached_all_runs": true,
+    "git_worktree_clean_for_all_runs": true,
+    "commits_differ_only_in_documentation_and_archived_evidence": true
+  },
+  "factorial_design": {
+    "baseline": {
+      "burn_update_interval_steps": 10,
+      "geometry_update_interval_steps": 10,
+      "point_path": "artifacts/verification_chunc_full_point/2026-11-20T12-56-08_70d0b95/point.json",
+      "point_json_sha256": "f63a5764e1944adbe252176aa8a8e440f73d745b294c61da5bcfbb7fd1600638",
+      "steps": 6203067
+    },
+    "burn_refined_only": {
+      "burn_update_interval_steps": 1,
+      "geometry_update_interval_steps": 10,
+      "point_path": "artifacts/verification_chunc_full_point/2026-11-20T13-36-40_f585bc1/point.json",
+      "point_json_sha256": "0039355790bad69ea854d45e50ae9c43c92a75bc7e91ff3755bf3082ca67f7de",
+      "steps": 6203049
+    },
+    "geometry_refined_only": {
+      "burn_update_interval_steps": 10,
+      "geometry_update_interval_steps": 1,
+      "point_path": "artifacts/verification_chunc_full_point/2026-11-20T13-42-31_f585bc1/point.json",
+      "point_json_sha256": "4302ab5f7c81c81e3ebcf6e57cef52663ae645819be41d9324457b2d35524012",
+      "steps": 6203066
+    },
+    "both_refined": {
+      "burn_update_interval_steps": 1,
+      "geometry_update_interval_steps": 1,
+      "point_path": "artifacts/verification_chunc_full_point/2026-11-20T13-22-27_70d0b95/point.json",
+      "point_json_sha256": "5fc7f0e28632c3dfe762942e22a4485da8bf65c892625b6a2a104b5a9db91646",
+      "steps": 6203048
+    }
+  },
+  "arithmetic": {
+    "burn_effect": "burn_refined_only - baseline",
+    "geometry_effect": "geometry_refined_only - baseline",
+    "interaction": "both_refined - burn_refined_only - geometry_refined_only + baseline",
+    "relative_effect_percent": "effect / abs(baseline) * 100"
+  },
+  "metric_values": {
+    "peak_pressure_mpa": {
+      "baseline": 7.959322432409533,
+      "burn_refined_only": 7.959323990307409,
+      "geometry_refined_only": 7.959329133425871,
+      "both_refined": 7.959329130876555
+    },
+    "peak_time_s": {
+      "baseline": 1.0862508978308982,
+      "burn_refined_only": 1.0862382947111526,
+      "geometry_refined_only": 1.0862466385860985,
+      "both_refined": 1.0862362775078365
+    },
+    "total_impulse_ns": {
+      "baseline": 4961.932257164055,
+      "burn_refined_only": 4961.931620258857,
+      "geometry_refined_only": 4961.931163976178,
+      "both_refined": 4961.93070762222
+    },
+    "minimum_pressure_pa": {
+      "baseline": 31637.48542696637,
+      "burn_refined_only": 31641.57006046461,
+      "geometry_refined_only": 31637.491774700942,
+      "both_refined": 31641.58034371058
+    },
+    "integrated_abs_clipping_energy_j": {
+      "baseline": 283.673469696797,
+      "burn_refined_only": 284.3658026610346,
+      "geometry_refined_only": 283.67382869985244,
+      "both_refined": 284.365948770122
+    }
+  },
+  "relative_effects_percent": {
+    "peak_pressure_mpa": {
+      "burn_refined_only": 0.000019573247456956575,
+      "geometry_refined_only": 0.00008419078877980747,
+      "both_refined": 0.00008415875947772712,
+      "interaction": -0.000019605276759036936
+    },
+    "peak_time_s": {
+      "burn_refined_only": -0.0011602402143711947,
+      "geometry_refined_only": -0.0003921050659886816,
+      "both_refined": -0.0013459434731846606,
+      "interaction": 0.00020640180717521585
+    },
+    "total_impulse_ns": {
+      "burn_refined_only": -0.000012835830176590262,
+      "geometry_refined_only": -0.000022031495398308154,
+      "both_refined": -0.00003122859713537542,
+      "interaction": 0.0000036387284395284037
+    },
+    "minimum_pressure_pa": {
+      "burn_refined_only": 0.012910740038650618,
+      "geometry_refined_only": 0.000020063966798812696,
+      "both_refined": 0.012943243399231346,
+      "interaction": 0.00001243939378191667
+    },
+    "integrated_abs_clipping_energy_j": {
+      "burn_refined_only": 0.24405982165960188,
+      "geometry_refined_only": 0.00012655503379793538,
+      "both_refined": 0.24411132774070912,
+      "interaction": -0.00007504895269068844
+    }
+  },
+  "interpretation": {
+    "finding": "Burn-rate update cadence accounts for nearly all changes observed when both update intervals are refined together; the geometry-only response is much smaller for the recorded metrics.",
+    "largest_recorded_burn_only_change_percent": 0.24405982165960188,
+    "largest_recorded_geometry_only_change_percent": 0.00012655503379793538,
+    "largest_recorded_interaction_change_percent_of_baseline": 0.00020640180717521585,
+    "qualification": "This is a fixed-grid, fixed-CFL, complete-duration cadence sensitivity study for one motor/input and one closure. It does not establish spatial convergence, experimental accuracy, or universal solver behavior."
+  },
+  "claims": {
+    "burn_update_effect_separated": true,
+    "geometry_update_effect_separated": true,
+    "interaction_calculated": true,
+    "formal_convergence_established": false,
+    "experimental_validation": false
+  }
+}
