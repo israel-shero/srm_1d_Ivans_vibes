@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "recorded_utc": "2026-11-20T17:57:34Z",
+  "motor": "Chunc / machbusterNew",
+  "erosive_closure": "mukunda_paul",
+  "configuration": {
+    "target_propellant_cells": [
+      106,
+      212
+    ],
+    "actual_cells": [
+      106,
+      212
+    ],
+    "cfl_target": 0.075,
+    "pyrogen": "mtv",
+    "roughness": 0.000035,
+    "kappa": 0.45,
+    "T_ignition_k": 900.0,
+    "k_solid": 0.4,
+    "P_cutoff_pa": 50000.0,
+    "t_max_s": 3.0
+  },
+  "runs": {
+    "106_actual": {
+      "peak_pressure_mpa": 7.959287092504795,
+      "peak_time_s": 1.086359953954666,
+      "total_impulse_ns": 4961.93091272179,
+      "clipping_active_fraction": 0.004166744580878498,
+      "wall_time_s": 58.33420276641846,
+      "termination": "t_max reached"
+    },
+    "212_actual": {
+      "peak_pressure_mpa": 7.960937037420175,
+      "peak_time_s": 1.0866443930648275,
+      "minimum_pressure_pa": 22544.7570224187,
+      "total_impulse_ns": 4957.127837130789,
+      "clipping_active_fraction": 0.02018942329713632,
+      "wall_time_s": 624.3782830238342,
+      "termination": "history array full"
+    }
+  },
+  "comparison": {
+    "peak_pressure_relative_change_percent": 0.020729807785598242,
+    "peak_time_change_s": 0.00028443911016149,
+    "total_impulse_relative_change_percent": -0.09679851806656536
+  },
+  "qualification": {
+    "status": "partial_spatial_reference",
+    "complete_full_burn_comparison": false,
+    "claim": "The peak pressure and peak time are stable between 106 and 212 actual cells in this probe, but the 212-cell run did not complete to t_max and the full-burn impulse comparison is not complete.",
+    "no_empirical_validation_claim": true
+  }
+}
