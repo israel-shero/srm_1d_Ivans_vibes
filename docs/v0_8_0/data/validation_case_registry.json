@@ -4,7 +4,9 @@
   "purpose": "Candidate evidence inventory; calibration and holdout roles are intentionally unassigned.",
   "protocol": {
     "version": "0.1",
-    "status": "scoring_rules_defined_case_windows_pending",
+    "status": "frozen",
+    "frozen_date": "2026-11-20",
+    "freeze_note": "Scoring rules locked; case windows registered only where defensible from source metadata. Zerox startup window registered via independent py1_fire trigger (70 ms transition bracket). Pressure calibration and complete tail remain unresolved; all amplitude and full-burn metrics remain blocked.",
     "event_time_zero": "Use an independently documented ignition trigger or event time. Never choose an offset by minimizing model error or aligning measured and simulated peaks. If independent time zero is unavailable, absolute timing metrics are ineligible; a source-documented shape-only alignment must be labeled exploratory and cannot score ignition delay.",
     "pressure_preprocessing": "Convert only with the registered source units. Do not smooth, filter, fit gain, or fit offset. Apply baseline subtraction only from a documented calibration or pre-event interval; otherwise absolute-amplitude and baseline-normalized metrics are ineligible.",
     "simulation_alignment": "Interpolate simulation pressure linearly at native measurement timestamps over the common time overlap only. Do not extrapolate or resample/smooth the experimental trace.",
@@ -371,6 +373,18 @@
       "ld_class": "low",
       "status": "missing",
       "consequence": "A general short-to-long L/D transfer claim is blocked."
+    },
+    {
+      "id": "zerox_pressure_calibration",
+      "case": "zerox",
+      "status": "missing",
+      "consequence": "Zerox startup timing/shape are trigger-eligible, but amplitude, baseline-normalized, and plateau metrics are blocked until the PSI pressure channel has a documented calibration."
+    },
+    {
+      "id": "zerox_complete_tail",
+      "case": "zerox",
+      "status": "missing",
+      "consequence": "The Zerox trace ends above the channel floor (~14 psi vs ~10 psi floor), so burnout and complete tail-off are not established; tail-off metrics are blocked."
     }
   ]
 }
