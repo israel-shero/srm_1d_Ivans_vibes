@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-11-20",
+  "status": "complete_two_grid_sensitivity",
+  "study": "chunc_mukunda_paul_matched_full_duration_106_206",
+  "source_commit": "6dd9773",
+  "runs": [
+    {
+      "target_propellant_cells": 100,
+      "actual_cells": 106,
+      "local_artifact_path": "artifacts/verification_chunc_full_point/2026-11-20T12-20-07_6dd9773",
+      "archived_point_path": "docs/v0_8_0/data/chunc_mp_matched_grid/target100_point.json",
+      "point_json_sha256": "2b95b23474313733c99963cb183ceaff60e1090888e0c2eeeddd0913fd881fd8",
+      "termination": "t_max reached",
+      "recorded_end_time_s": 2.999999597373263
+    },
+    {
+      "target_propellant_cells": 200,
+      "actual_cells": 206,
+      "local_artifact_path": "artifacts/verification_chunc_full_point/2026-11-20T12-20-14_6dd9773",
+      "archived_point_path": "docs/v0_8_0/data/chunc_mp_matched_grid/target200_point.json",
+      "point_json_sha256": "a39e9d4bcb03862a481c4c9abbbbc675b6fc9f42f4a55b3f3614428864232610",
+      "termination": "t_max reached",
+      "recorded_end_time_s": 2.9999999916787603
+    }
+  ],
+  "common_configuration": {
+    "P_cutoff": 50000.0,
+    "T_ignition": 900.0,
+    "cfl_target": 0.075,
+    "erosive_closure": "mukunda_paul",
+    "history_capacity": 13000000,
+    "k_solid": 0.4,
+    "kappa": 0.45,
+    "print_interval": 0.0,
+    "pyrogen": "mtv",
+    "pyrogen_mass": null,
+    "pyrogen_throat_area": null,
+    "pyrogen_volume": null,
+    "roughness": 3.5e-05,
+    "snapshot_interval": 0.2,
+    "t_max": 3.0
+  },
+  "cadence": {
+    "coarse_burn_geometry_steps": [
+      10,
+      10
+    ],
+    "fine_burn_geometry_steps": [
+      20,
+      20
+    ],
+    "rationale": "Scale the update intervals with inverse cell width while keeping CFL fixed. MP cadence independence has not been separately demonstrated."
+  },
+  "identity_checks": {
+    "source_maps_equal": true,
+    "runtime_versions_equal": true,
+    "motor_and_baseline_config_checksums_equal": true,
+    "common_run_options_equal": true,
+    "generated_fmm_tables_equal": true,
+    "requested_duration_reached_both": true
+  },
+  "relative_change_formula": "(fine-coarse)/abs(coarse)*100",
+  "metrics": {
+    "peak_pressure_mpa": {
+      "coarse": 7.959322432409533,
+      "fine": 7.961446460294759,
+      "signed_relative_change_percent": 0.02668603895951118,
+      "within_provisional_2_percent_screen": true
+    },
+    "peak_time_s": {
+      "coarse": 1.0862508978308982,
+      "fine": 1.086909629692535,
+      "signed_relative_change_percent": 0.06064269893374324,
+      "within_provisional_2_percent_screen": true
+    },
+    "total_impulse_ns": {
+      "coarse": 4961.932257164055,
+      "fine": 4959.521381808878,
+      "signed_relative_change_percent": -0.04858742986054349,
+      "within_provisional_2_percent_screen": true
+    },
+    "performance_burn_time_s": {
+      "coarse": 2.2527550321662493,
+      "fine": 2.236683838797429,
+      "signed_relative_change_percent": -0.7134017298528094,
+      "within_provisional_2_percent_screen": true
+    },
+    "minimum_pressure_pa": {
+      "coarse": 31637.48542696637,
+      "fine": 23148.695203202875,
+      "signed_relative_change_percent": -26.83143147820475,
+      "within_provisional_2_percent_screen": false
+    },
+    "max_fill_mach": {
+      "coarse": 0.4975261274237115,
+      "fine": 0.4793424131556041,
+      "signed_relative_change_percent": -3.654826001252688,
+      "within_provisional_2_percent_screen": false
+    },
+    "integrated_abs_clipping_energy_j": {
+      "coarse": 283.673469696797,
+      "fine": 216.6969717949264,
+      "signed_relative_change_percent": -23.610420097959135,
+      "within_provisional_2_percent_screen": false
+    },
+    "mass_balance_error_fraction": {
+      "coarse": 0.001674376536075004,
+      "fine": 0.0016709523420720973,
+      "signed_relative_change_percent": -0.20450561323163272,
+      "within_provisional_2_percent_screen": true
+    },
+    "clipping_active_fraction": {
+      "coarse": 0.004090234717761391,
+      "fine": 0.012228981490951066,
+      "signed_relative_change_percent": 198.97994454567774,
+      "within_provisional_2_percent_screen": false
+    },
+    "first_burnout_time_s": {
+      "coarse": 1.631831274940118,
+      "fine": 1.6206521310401982,
+      "signed_relative_change_percent": -0.6850673884976276,
+      "within_provisional_2_percent_screen": true
+    },
+    "final_throat_diameter_m": {
+      "coarse": 0.021246197213079087,
+      "fine": 0.02124443534349868,
+      "signed_relative_change_percent": -0.008292634972448197,
+      "within_provisional_2_percent_screen": true
+    }
+  },
+  "claims": {
+    "complete_configured_duration": true,
+    "formal_spatial_convergence": false,
+    "independent_mp_cadence_convergence": false,
+    "experimental_validation": false,
+    "prediction_improvement_demonstrated": false
+  },
+  "limitations": [
+    "Two grids at one CFL and one grid-scaled cadence choice cannot establish an asymptotic order or full-solution convergence.",
+    "Inspect limiter sensitivity and remaining Ma spatial uncertainty before calibration.",
+    "Chunc empirical timing and pressure remain ineligible under protocol v0.1.",
+    "Raw disk-backed histories remain in the local artifact directories; checked-in manifests retain their SHA-256 checksums.",
+    "Runs overlapped in wall time, so recorded wall time is not a controlled performance benchmark."
+  ],
+  "supersedes_for_future_sensitivity_work": "docs/v0_8_0/data/chunc_mukunda_paul_spatial_probe_106_212.json",
+  "screening": {
+    "provisional_screen_percent": 2.0,
+    "selected_global_metrics": [
+      "peak_pressure_mpa",
+      "peak_time_s",
+      "total_impulse_ns",
+      "performance_burn_time_s",
+      "first_burnout_time_s",
+      "final_throat_diameter_m"
+    ],
+    "all_recorded_metrics_within_screen": false,
+    "quantities_exceeding_screen": [
+      "minimum_pressure_pa",
+      "max_fill_mach",
+      "integrated_abs_clipping_energy_j",
+      "clipping_active_fraction"
+    ],
+    "selected_global_metrics_within_screen": true
+  },
+  "pressure_floor_activations": [
+    0,
+    0
+  ]
+}

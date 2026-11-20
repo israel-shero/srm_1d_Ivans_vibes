@@ -57,6 +57,7 @@
     "finding": "All six 106_actual metrics exactly match the Mukunda-Paul limiting-case artifact, which declares CFL 0.3 and target_propellant_cells 100; this record instead declares common CFL 0.075 and targets 106/212. The original values are retained for audit.",
     "matching_artifact": "artifacts/verification_limiting_cases/2026-11-20T11-42-08_0d6cf63-dirty/limiting_cases.json",
     "spatial_isolation_established": false,
-    "required_action": "Recover per-point source manifests and exact configurations or rerun both grids with matched CFL/cadences and sufficient history capacity."
+    "required_action": "Recover per-point source manifests and exact configurations or rerun both grids with matched CFL/cadences and sufficient history capacity.",
+    "replacement_complete_two_grid_sensitivity_record": "docs/v0_8_0/data/chunc_mp_matched_grid/comparison.json"
   }
 }

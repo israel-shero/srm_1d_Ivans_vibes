@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-11-20",
+  "plan_path_in_parent_workspace": "../SRM_Erosive_Prediction_Plan.md",
+  "source_baseline": "6dd9773",
+  "completed_in_this_slice": {
+    "T01": "Consolidated exact imports/runtime/commands, categorized six remaining GUI failures, and refreshed compatible openMotor pin. Workspace verifier passes; fresh ordinary GUI simulation and full-suite health remain open.",
+    "T02": "Bounded Ma/Mukunda-Paul primary-source matrix with PDF checksums and page/equation anchors; detailed correlation conformance and applicability remain open.",
+    "T04": "Fixed incompatible resume reuse and archived complete manifest-backed 106/206-cell MP runs with source/runtime/input and generated FMM identities.",
+    "T05": "Completed replacement matched-CFL 3 s MP two-grid sensitivity study. Peak pressure/time/impulse changes are below 0.061%; local/limiter quantities still exceed provisional screen."
+  },
+  "fixes": [
+    {
+      "commit": "949a9ea",
+      "change": "Preserve igniter gas mass fraction across serialization, keeping missing-field legacy default."
+    },
+    {
+      "commit": "032e0cf",
+      "change": "Reject mismatched/legacy resumed-run identities before modifying the manifest."
+    },
+    {
+      "commit": "6dd9773",
+      "change": "Allow explicit verification closure selection; archive source/geometry identities and reject truncated duration."
+    },
+    {
+      "commit": "1a322aa",
+      "change": "Refresh the exact compatible openMotor pin and consolidate workspace verification."
+    }
+  ],
+  "evidence": {
+    "workspace": "docs/v0_8_0/data/workspace_verification_2026_11_20.json",
+    "primary_sources": "docs/v0_8_0/data/closure_source_evidence.json",
+    "matched_grid": "docs/v0_8_0/data/chunc_mp_matched_grid/comparison.json"
+  },
+  "verification": {
+    "focused_tests_passed": 118,
+    "resume_tests_passed": 13,
+    "gui_tests_passed": 23,
+    "gui_tests_failed": 6,
+    "archived_manifest_and_small_output_checksums_verified": true,
+    "comparison_arithmetic_verified": true
+  },
+  "remaining_gates": [
+    "Obtain/freeze eligible case metadata and whole-motor fit/holdout roles under protocol v0.1.",
+    "Treat minimum pressure, early Mach, and clipping as numerically unresolved; Ma peak-time sensitivity also remains open.",
+    "Establish MP cadence independence and additional spatial/CFL evidence before claiming convergence.",
+    "Complete detailed equation/transport-input applicability audit before candidate selection.",
+    "Resolve the six remaining GUI migration/editor assertions and verify headless/GUI metric parity."
+  ],
+  "claims": {
+    "formal_convergence_established": false,
+    "heldout_prediction_improvement_established": false,
+    "all_plan_tasks_complete": false,
+    "default_erosive_closure_changed": false,
+    "new_calibration_coefficients_added": false,
+    "existing_pyrogen_parameter_roundtrip_corrected": true
+  }
+}
