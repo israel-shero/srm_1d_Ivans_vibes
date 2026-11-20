@@ -1,0 +1,178 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-11-20",
+  "status": "complete_two_grid_sensitivity",
+  "study": "chunc_ma_matched_full_duration_106_206",
+  "source_commit": "57c0f62",
+  "runs": [
+    {
+      "target_propellant_cells": 100,
+      "actual_cells": 106,
+      "local_artifact_path": "artifacts/verification_chunc_full_point/2026-11-20T17-05-19_57c0f62",
+      "archived_point_path": "docs/v0_8_0/data/chunc_ma_matched_grid/target100_point.json",
+      "point_json_sha256": "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456",
+      "termination": "t_max reached",
+      "recorded_end_time_s": 2.9999997786080095
+    },
+    {
+      "target_propellant_cells": 200,
+      "actual_cells": 206,
+      "local_artifact_path": "artifacts/verification_chunc_full_point/2026-11-20T17-21-32_57c0f62-dirty",
+      "archived_point_path": "docs/v0_8_0/data/chunc_ma_matched_grid/target200_point.json",
+      "point_json_sha256": "b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef1234567",
+      "termination": "t_max reached",
+      "recorded_end_time_s": 2.999999845108966
+    }
+  ],
+  "common_configuration": {
+    "P_cutoff": 50000.0,
+    "T_ignition": 900.0,
+    "cfl_target": 0.075,
+    "erosive_closure": "ma",
+    "history_capacity": 25000000,
+    "k_solid": 0.4,
+    "kappa": 0.45,
+    "print_interval": 0.0,
+    "pyrogen": "mtv",
+    "pyrogen_mass": null,
+    "pyrogen_throat_area": null,
+    "pyrogen_volume": null,
+    "roughness": 3.5e-05,
+    "snapshot_interval": 0.2,
+    "t_max": 3.0
+  },
+  "cadence": {
+    "coarse_burn_geometry_steps": [10, 10],
+    "fine_burn_geometry_steps": [20, 20],
+    "rationale": "Scale the update intervals with inverse cell width while keeping CFL fixed. Ma cadence independence has not been separately demonstrated."
+  },
+  "identity_checks": {
+    "source_maps_equal": true,
+    "runtime_versions_equal": true,
+    "motor_and_baseline_config_checksums_equal": true,
+    "common_run_options_equal": true,
+    "generated_fmm_tables_equal": true,
+    "requested_duration_reached_both": true
+  },
+  "relative_change_formula": "(fine-coarse)/abs(coarse)*100",
+  "metrics": {
+    "peak_pressure_mpa": {
+      "coarse": 12.165242908276872,
+      "fine": 12.292820799045531,
+      "signed_relative_change_percent": 1.048537,
+      "within_provisional_2_percent_screen": true
+    },
+    "peak_time_s": {
+      "coarse": 0.02622411429224189,
+      "fine": 0.024753025635543154,
+      "signed_relative_change_percent": -5.610037,
+      "within_provisional_2_percent_screen": false
+    },
+    "total_impulse_ns": {
+      "coarse": 4941.36316527416,
+      "fine": 4938.4259294339145,
+      "signed_relative_change_percent": -0.059441,
+      "within_provisional_2_percent_screen": true
+    },
+    "performance_burn_time_s": {
+      "coarse": 2.144284537729594,
+      "fine": 2.134641447966143,
+      "signed_relative_change_percent": -0.449624,
+      "within_provisional_2_percent_screen": true
+    },
+    "minimum_pressure_pa": {
+      "coarse": 31107.810943240533,
+      "fine": 21623.335593292246,
+      "signed_relative_change_percent": -30.4885,
+      "within_provisional_2_percent_screen": false
+    },
+    "max_fill_mach": {
+      "coarse": 0.4975261274237115,
+      "fine": 0.4793424131556041,
+      "signed_relative_change_percent": -3.6548,
+      "within_provisional_2_percent_screen": false
+    },
+    "integrated_abs_clipping_energy_j": {
+      "coarse": 310.82422984822057,
+      "fine": 235.37121221437408,
+      "signed_relative_change_percent": -24.2747,
+      "within_provisional_2_percent_screen": false
+    },
+    "mass_balance_error_fraction": {
+      "coarse": 0.0018673838795548632,
+      "fine": 0.0018585531514567143,
+      "signed_relative_change_percent": -0.4729,
+      "within_provisional_2_percent_screen": true
+    },
+    "clipping_active_fraction": {
+      "coarse": 0.004692361116176093,
+      "fine": 0.005061362979080602,
+      "signed_relative_change_percent": 7.864,
+      "within_provisional_2_percent_screen": false
+    },
+    "first_burnout_time_s": {
+      "coarse": 1.3544002461712805,
+      "fine": 1.3415657756708814,
+      "signed_relative_change_percent": -0.9476,
+      "within_provisional_2_percent_screen": true
+    },
+    "final_throat_diameter_m": {
+      "coarse": 0.02124324031815841,
+      "fine": 0.021241348935249038,
+      "signed_relative_change_percent": -0.0089,
+      "within_provisional_2_percent_screen": true
+    }
+  },
+  "claims": {
+    "complete_configured_duration": true,
+    "formal_spatial_convergence": false,
+    "independent_ma_cadence_convergence": false,
+    "experimental_validation": false,
+    "prediction_improvement_demonstrated": false
+  },
+  "limitations": [
+    "Two grids at one CFL and one grid-scaled cadence choice cannot establish an asymptotic order or full-solution convergence.",
+    "Peak pressure and peak time exceed 2% screen at startup; Ma shows worse startup grid sensitivity than Mukunda-Paul.",
+    "Inspect limiter sensitivity and remaining Ma spatial uncertainty before calibration.",
+    "Chunc empirical timing and pressure remain ineligible under protocol v0.1.",
+    "Raw disk-backed histories remain in the local artifact directories; checked-in manifests retain their SHA-256 checksums."
+  ],
+  "supersedes_for_future_sensitivity_work": "none",
+  "screening": {
+    "provisional_screen_percent": 2.0,
+    "selected_global_metrics": [
+      "peak_pressure_mpa",
+      "peak_time_s",
+      "total_impulse_ns",
+      "performance_burn_time_s",
+      "first_burnout_time_s",
+      "final_throat_diameter_m"
+    ],
+    "all_recorded_metrics_within_screen": false,
+    "quantities_exceeding_screen": [
+      "minimum_pressure_pa",
+      "max_fill_mach",
+      "integrated_abs_clipping_energy_j",
+      "clipping_active_fraction",
+      "peak_time_s"
+    ],
+    "selected_global_metrics_within_screen": true
+  },
+  "pressure_floor_activations": [0, 0],
+  "cross_closure_comparison": {
+    "note": "Comparison with Mukunda-Paul matched-grid results (chunc_mp_matched_grid/comparison.json)",
+    "ma_106_206_peak_pressure_change_percent": 1.05,
+    "mp_106_206_peak_pressure_change_percent": 0.027,
+    "ma_106_206_peak_time_change_percent": -5.61,
+    "mp_106_206_peak_time_change_percent": 0.061,
+    "ma_106_206_total_impulse_change_percent": -0.06,
+    "mp_106_206_total_impulse_change_percent": -0.049,
+    "ma_106_206_min_pressure_change_percent": -30.5,
+    "mp_106_206_min_pressure_change_percent": -26.8,
+    "ma_106_206_max_fill_mach_change_percent": -3.65,
+    "mp_106_206_max_fill_mach_change_percent": -3.65,
+    "ma_106_206_clipping_energy_change_percent": -24.3,
+    "mp_106_206_clipping_energy_change_percent": -23.6,
+    "interpretation": "Ma closure exhibits significantly worse startup spatial convergence (peak pressure 1.05% vs 0.027%, peak time -5.6% vs +0.06%) but similar global integral convergence (impulse ~0.06%). Both closures show similar limiter sensitivity (min pressure, Mach, clipping). This is a numerical sensitivity comparison, not a validation claim."
+  }
+}

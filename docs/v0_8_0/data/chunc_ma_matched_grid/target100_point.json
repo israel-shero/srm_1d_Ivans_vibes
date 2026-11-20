@@ -1,0 +1,435 @@
+{
+  "claims": {
+    "full_burn_numerically_converged": false,
+    "research_note_results_reproduced": false
+  },
+  "completed_utc": "2026-11-20T23:10:00.834748+00:00",
+  "configuration": {
+    "P_cutoff": 50000.0,
+    "T_ignition": 900.0,
+    "burn_update_interval": 10,
+    "cfl_target": 0.075,
+    "erosive_closure": "ma",
+    "geometry_update_interval": 10,
+    "history_capacity": 13000000,
+    "history_memmap_path": "/Users/israelshero/Development/MotorDevelopment/srm_1d/artifacts/verification_chunc_full_point/2026-11-20T17-05-19_57c0f62/scalar_history.bin",
+    "k_solid": 0.4,
+    "kappa": 0.45,
+    "print_interval": 0.0,
+    "pyrogen": "mtv",
+    "pyrogen_mass": null,
+    "pyrogen_throat_area": null,
+    "pyrogen_volume": null,
+    "roughness": 3.5e-05,
+    "snapshot_interval": 0.2,
+    "t_max": 3.0,
+    "target_propellant_cells": 100
+  },
+  "created_utc": "2026-11-20T23:05:19.845304+00:00",
+  "generated_geometry": {
+    "D_outer": 0.047625095250190506,
+    "D_port": {
+      "dtype": "<f8",
+      "sha256": "58c074f385f5c3509f53889f007efce419170eedb35f22da4cf8c0ce3dec97b7",
+      "shape": [
+        106
+      ]
+    },
+    "N": 106,
+    "N_seg": 2,
+    "cell_A_port_init": {
+      "dtype": "<f8",
+      "sha256": "991cc739c4df2bdd02c804f7c7e8f13e8170bc0ae2913a7fcca24cdeaf40f8b6",
+      "shape": [
+        106
+      ]
+    },
+    "cell_D_bore_init": {
+      "dtype": "<f8",
+      "sha256": "58c074f385f5c3509f53889f007efce419170eedb35f22da4cf8c0ce3dec97b7",
+      "shape": [
+        106
+      ]
+    },
+    "cell_D_outer": {
+      "dtype": "<f8",
+      "sha256": "61dad458217bc2ebe8e5aa4932ae4b78d10111491bdbeba4f5472ebbd69c13f5",
+      "shape": [
+        106
+      ]
+    },
+    "cell_fmm_idx": {
+      "dtype": "<i8",
+      "sha256": "85198c912e0ed3f1c8912e874549c3b574da12c7e940045aa5839ebfbfe5e96e",
+      "shape": [
+        106
+      ]
+    },
+    "cell_segment_id": {
+      "dtype": "<i8",
+      "sha256": "e670b0357103dd4f103912dfdf198b64749afcd010d83a8834f7e27e4fa1c6cf",
+      "shape": [
+        106
+      ]
+    },
+    "cell_segment_type": {
+      "dtype": "<i8",
+      "sha256": "4925b9b6329f24346bce043f2cdabb940199fd87188f3ae77c9559bf7cfa9f43",
+      "shape": [
+        106
+      ]
+    },
+    "cell_wall_web": {
+      "dtype": "<f8",
+      "sha256": "870fbe9869a0b84c3d822dfe6a5e4859c8e136d5ff09c6afb57b69b2911e7309",
+      "shape": [
+        106
+      ]
+    },
+    "dx": 0.008128016256032513,
+    "fmm_offset": {
+      "dtype": "<i8",
+      "sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "shape": [
+        1
+      ]
+    },
+    "fmm_perim_flat": {
+      "dtype": "<f8",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "shape": [
+        0
+      ]
+    },
+    "fmm_port_flat": {
+      "dtype": "<f8",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "shape": [
+        0
+      ]
+    },
+    "fmm_reg_flat": {
+      "dtype": "<f8",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "shape": [
+        0
+      ]
+    },
+    "n_fmm_segs": 0,
+    "regress": {
+      "dtype": "<f8",
+      "sha256": "4925b9b6329f24346bce043f2cdabb940199fd87188f3ae77c9559bf7cfa9f43",
+      "shape": [
+        106
+      ]
+    },
+    "seg_D_bore_aft": {
+      "dtype": "<f8",
+      "sha256": "9e97e62e901456a2b8179571a9eeed5dda62446e04b962dca44905602a7d69bd",
+      "shape": [
+        2
+      ]
+    },
+    "seg_D_bore_fwd": {
+      "dtype": "<f8",
+      "sha256": "58f90e8e85c421f2d194d2b390828a136d80bff215ada465ec16a920827f0738",
+      "shape": [
+        2
+      ]
+    },
+    "seg_aft_regression": {
+      "dtype": "<f8",
+      "sha256": "374708fff7719dd5979ec875d56cd2286f6d3cf7ec317a3b25632aab28ec37bb",
+      "shape": [
+        2
+      ]
+    },
+    "seg_fwd_regression": {
+      "dtype": "<f8",
+      "sha256": "374708fff7719dd5979ec875d56cd2286f6d3cf7ec317a3b25632aab28ec37bb",
+      "shape": [
+        2
+      ]
+    },
+    "seg_inhibit_aft": {
+      "dtype": "|b1",
+      "sha256": "9dcf97a184f32623d11a73124ceb99a5709b083721e878a16d78f596718ba7b2",
+      "shape": [
+        2
+      ]
+    },
+    "seg_inhibit_fwd": {
+      "dtype": "|b1",
+      "sha256": "9dcf97a184f32623d11a73124ceb99a5709b083721e878a16d78f596718ba7b2",
+      "shape": [
+        2
+      ]
+    },
+    "seg_length": {
+      "dtype": "<f8",
+      "sha256": "b693a010ef043768e113a5c44f0e6296c373c9153b40096a96b366ccb7f09dfa",
+      "shape": [
+        2
+      ]
+    },
+    "seg_x_start": {
+      "dtype": "<f8",
+      "sha256": "b6347469e12863d09d5c7d9a12aca21ef18c76602235f437565a014b705b2e11",
+      "shape": [
+        2
+      ]
+    },
+    "x_centers": {
+      "dtype": "<f8",
+      "sha256": "da6dfcb66632d7682e0c6c8a093c3ff0d7b7b76c4cce0e9ccaccc73b67282de7",
+      "shape": [
+        106
+      ]
+    }
+  },
+  "history_storage": {
+    "caller_owned": true,
+    "mode": "memmap",
+    "path": "scalar_history.bin",
+    "size_bytes": 4368000000,
+    "snapshots_disk_backed": false
+  },
+  "metrics": {
+    "actual_cells": 106,
+    "average_isp_s": 224.57821016520907,
+    "average_thrust_n": 2304.4344527644457,
+    "burn_update_interval_steps": 10,
+    "clipping_active_fraction": 0.004692361116176093,
+    "clipping_active_steps": 28951,
+    "dt_median_s": 4.917235727631249e-07,
+    "dt_min_s": 1.271345313135603e-07,
+    "energy_balance_classification": "sensible-enthalpy scalar transport balance",
+    "final_throat_diameter_m": 0.02124324031815841,
+    "first_burnout_time_s": 1.3544002461712805,
+    "geometry_update_interval_steps": 10,
+    "history_capacity_rows": 13000000,
+    "history_storage": "memmap",
+    "history_storage_bytes": 4368000000,
+    "ignition_rate_refresh_delay_count": 100,
+    "ignition_rate_refresh_delay_max_s": 3.5761777592456176e-06,
+    "ignition_rate_refresh_delay_median_s": 1.666518137631752e-06,
+    "integrated_abs_clipping_energy_j": 310.82422984822057,
+    "integrated_abs_clipping_over_thermal_source": 2.3231021856645757e-05,
+    "integrated_abs_energy_residual_j": 3.7107017478308964e-05,
+    "integrated_abs_nozzle_boundary_mismatch_j": 6.028605938487473e-09,
+    "integrated_abs_residual_over_thermal_source": 2.7733807447845164e-12,
+    "integrated_abs_source_ledger_mismatch_j": 3.924629360362496e-09,
+    "limit_port_mach_cap_active_faces": 0,
+    "limit_port_mach_cap_first_activation_time_s": null,
+    "limit_port_mach_cap_last_activation_time_s": null,
+    "limit_port_mach_cap_threshold_mach": 0.0,
+    "limit_port_mach_cap_total_activations": 0,
+    "limit_port_mach_cap_total_face_duration_s": 0.0,
+    "limit_pressure_floor_active_cells": 0,
+    "limit_pressure_floor_first_activation_time_s": null,
+    "limit_pressure_floor_last_activation_time_s": null,
+    "limit_pressure_floor_max_cell_duration_s": 0.0,
+    "limit_pressure_floor_max_duration_x_m": 0.0040640081280162565,
+    "limit_pressure_floor_maximum_deficit_event_deficit_pa": null,
+    "limit_pressure_floor_maximum_deficit_event_density_after_first_correction_kg_m3": null,
+    "limit_pressure_floor_maximum_deficit_event_density_before_kg_m3": null,
+    "limit_pressure_floor_maximum_deficit_event_dt_s": null,
+    "limit_pressure_floor_maximum_deficit_event_east_face_first_corrected_velocity_m_s": null,
+    "limit_pressure_floor_maximum_deficit_event_east_face_predictor_velocity_m_s": null,
+    "limit_pressure_floor_maximum_deficit_event_first_continuity_rhs_kg_s": null,
+    "limit_pressure_floor_maximum_deficit_event_first_east_mass_flow_kg_s": null,
+    "limit_pressure_floor_maximum_deficit_event_first_local_pressure_diagonal_kg_per_s_pa": null,
+    "limit_pressure_floor_maximum_deficit_event_first_west_mass_flow_kg_s": null,
+    "limit_pressure_floor_maximum_deficit_event_hydraulic_diameter_m": null,
+    "limit_pressure_floor_maximum_deficit_event_mass_source_kg_s": null,
+    "limit_pressure_floor_maximum_deficit_event_nozzle_mass_flow_before_first_kg_s": null,
+    "limit_pressure_floor_maximum_deficit_event_nozzle_mass_flow_before_second_kg_s": null,
+    "limit_pressure_floor_maximum_deficit_event_nozzle_state_before_first": null,
+    "limit_pressure_floor_maximum_deficit_event_nozzle_state_before_second": null,
+    "limit_pressure_floor_maximum_deficit_event_port_area_m2": null,
+    "limit_pressure_floor_maximum_deficit_event_pressure_after_first_correction_pa": null,
+    "limit_pressure_floor_maximum_deficit_event_pressure_before_step_pa": null,
+    "limit_pressure_floor_maximum_deficit_event_pressure_correction_1_pa": null,
+    "limit_pressure_floor_maximum_deficit_event_pressure_correction_2_pa": null,
+    "limit_pressure_floor_maximum_deficit_event_pressure_pre_clamp_pa": null,
+    "limit_pressure_floor_maximum_deficit_event_second_continuity_rhs_kg_s": null,
+    "limit_pressure_floor_maximum_deficit_event_second_east_mass_flow_kg_s": null,
+    "limit_pressure_floor_maximum_deficit_event_second_local_pressure_diagonal_kg_per_s_pa": null,
+    "limit_pressure_floor_maximum_deficit_event_second_west_mass_flow_kg_s": null,
+    "limit_pressure_floor_maximum_deficit_event_step_start_time_s": null,
+    "limit_pressure_floor_maximum_deficit_event_temperature_before_k": null,
+    "limit_pressure_floor_maximum_deficit_event_west_face_first_corrected_velocity_m_s": null,
+    "limit_pressure_floor_maximum_deficit_event_west_face_predictor_velocity_m_s": null,
+    "limit_pressure_floor_maximum_raw_deficit_pa": 0.0,
+    "limit_pressure_floor_maximum_raw_deficit_x_m": null,
+    "limit_pressure_floor_threshold_pa": 1000.0,
+    "limit_pressure_floor_total_activations": 0,
+    "limit_pressure_floor_total_cell_duration_s": 0.0,
+    "limit_temperature_ceiling_active_cells": 106,
+    "limit_temperature_ceiling_first_activation_time_s": 2.658905411028578e-05,
+    "limit_temperature_ceiling_last_activation_time_s": 0.011831201469261499,
+    "limit_temperature_ceiling_max_cell_duration_s": 0.004473117436161998,
+    "limit_temperature_ceiling_max_duration_x_m": 0.01219202438404877,
+    "limit_temperature_ceiling_max_energy_x_m": 0.01219202438404877,
+    "limit_temperature_ceiling_total_abs_energy_j": 303.7080507860212,
+    "limit_temperature_ceiling_total_activations": 278204,
+    "limit_temperature_ceiling_total_cell_duration_s": 0.08920907697507578,
+    "limit_temperature_floor_active_cells": 106,
+    "limit_temperature_floor_first_activation_time_s": 0.0,
+    "limit_temperature_floor_last_activation_time_s": 0.0049477481104067775,
+    "limit_temperature_floor_max_cell_duration_s": 0.001146868257665645,
+    "limit_temperature_floor_max_duration_x_m": 0.8575057150114301,
+    "limit_temperature_floor_max_energy_x_m": 0.0040640081280162565,
+    "limit_temperature_floor_total_abs_energy_j": 14.159149617639569,
+    "limit_temperature_floor_total_activations": 32603,
+    "limit_temperature_floor_total_cell_duration_s": 0.015399174869030467,
+    "mass_balance_error_fraction": 0.0018673838795548632,
+    "max_abs_between_step_storage_jump_j": 0.6417479169313083,
+    "max_abs_clipping_power_w": 7961332.682811769,
+    "max_abs_energy_residual_w": 0.00017656614727457054,
+    "max_abs_nozzle_boundary_mismatch_w": 2.60770320892334e-08,
+    "max_abs_source_ledger_mismatch_w": 1.4901161193847656e-08,
+    "max_fill_mach": 0.4975261274237115,
+    "maximum_temperature_k": 3136.05,
+    "minimum_pressure_pa": 31107.810943240533,
+    "peak_pressure_mpa": 12.165242908276872,
+    "peak_thrust_n": 4325.914536019721,
+    "peak_time_s": 0.02622411429224189,
+    "performance_burn_time_s": 2.144284537729594,
+    "recorded_end_time_s": 2.9999997786080095,
+    "steps": 6169815,
+    "sum_abs_between_step_storage_jump_j": 91803.52423310469,
+    "termination": "t_max reached",
+    "total_impulse_ns": 4941.36316527416,
+    "wall_time_s": 251.86686372756958
+  },
+  "outputs": {
+    "mach_limit_by_face.csv": "6f7165c5e20ac4e5eebf6921c0c6fe80252440635a71d852b550e1de3dfb8d04",
+    "numerical_limits_by_cell.csv": "f73a811873a3ea78bdb527b897989dea931403fad5933d1fc0de99d6145ce6c3",
+    "scalar_history.bin": "cc081b1c78753383eab73050675336686f47dfe5fe0ba3d3de6cb200ac1d4d78"
+  },
+  "provenance": {
+    "baseline_config_sha256": "6e6a54b1135c5d6638fc10203666e6d56fb680a2e01132c83347d6aa8625d84d",
+    "command": [
+      "scripts/run_numerical_verification.py",
+      "--profile",
+      "full",
+      "--single-cells",
+      "100",
+      "--single-cfl",
+      "0.075",
+      "--single-erosive-closure",
+      "ma",
+      "--history-capacity",
+      "13000000",
+      "--single-burn-update-interval",
+      "10",
+      "--single-geometry-update-interval",
+      "10",
+      "--history-memmap"
+    ],
+    "git_commit": "57c0f626b2668a7cd6ae614a64e764e623ba8d1b",
+    "git_status": "",
+    "motor_path": "motors/machbusterNew.ric",
+    "motor_sha256": "4a7163cf24d68a2cc4604a1f99e6a806d55aaae6f7ce61ee3077d96a1535d378",
+    "platform": "macOS-26.7.3-x86_64-i386-64bit",
+    "python": "3.10.10 (main, Feb 16 2023, 02:55:02) [Clang 14.0.0 (clang-1400.0.29.202)]",
+    "runtime_versions": {
+      "PyYAML": "6.0",
+      "llvmlite": "0.40.1",
+      "machine": "x86_64",
+      "matplotlib": "3.7.1",
+      "numba": "0.57.1",
+      "numpy": "1.24.3",
+      "platform": "darwin",
+      "platform_detail": "macOS-26.7.3-x86_64-i386-64bit",
+      "python": "3.10.10 (main, Feb 16 2023, 02:55:02) [Clang 14.0.0 (clang-1400.0.29.202)]",
+      "scikit-fmm": "2023.4.2",
+      "scikit-image": "0.21.0",
+      "scipy": "1.10.1"
+    },
+    "source_sha256": {
+      "cases/__init__.py": "eb052dfb5674e8d0de9c4e035547350f53a36f720274cc0c94023462e2d10134",
+      "cases/baseline_configs.json": "6e6a54b1135c5d6638fc10203666e6d56fb680a2e01132c83347d6aa8625d84d",
+      "cases/baseline_runner.py": "425c53b84c2f4ff6d94538b1c80faea5e7b5e47928c741447de588d7da9549a3",
+      "cases/loader.py": "802c0938e6cb28b1816f9df7154db968174db7a4fce1442244549fd1c1a365b8",
+      "cases/registry.json": "bd33b017a15363b1db6fb0c7a10bf80aeadd817b9c2319ab88d4ce32a87e016e",
+      "manifest/openmotor/requirements.txt/requirements.txt": "944b7c286dc57418c1e0ffcbca22a8e1468da1435a78ed77a82d4597b1a2a034",
+      "manifest/srm_1d/pyproject.toml/pyproject.toml": "2fd5020a58f02915b17ea58fc00d0199679120ca9310254caed6e420c80cc10b",
+      "manifest/srm_1d/requirements/README.md": "92199813a16689f64e4d0281b317dcdca23f5980fd9f58ae3899791c3c56ea21",
+      "manifest/srm_1d/requirements/py310-macos-x86_64.lock.txt": "df2384241d92f2cdafb78cea0ef149871885e801e0d966942eaca0bd4dd5d700",
+      "manifest/srm_1d/requirements/workspace-lock.json": "f2c84f5e46d6fe6c26f6d97fbaa9c0c83633e39dd60772b81291da1718c89770",
+      "mathlib/__init__.py": "20ffad06bf79bcc43ef23abba8f6332cbcf9564c864538e0322cbe9bffb2bae0",
+      "mathlib/_find_perimeter.py": "0964e5c7205473b50a74f13e6d8c7c0bfc970062c1b868f248bd99d0c0aab00e",
+      "mathlib/_find_perimeter_cy.c": "5c0508a6f9f6f694fad00fa7689a559f332efe82ce5c7328736d9b4b2d71ad03",
+      "mathlib/_find_perimeter_cy.cpython-310-darwin.so": "d14e0ef1207ef839efdf67f5c3d3794217f9ed45258ec1f6243587bfae30d50a",
+      "mathlib/_find_perimeter_cy.pyx": "a88363071c0fbed3940fb264f3789b841df4cfcb6a0fb10639e7c7eee8badeac",
+      "motorlib/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "motorlib/constants.py": "9a2b4036a2c4adabbc0873ad2f153e058712a5a2cf3b08ca7f1cd197298cad17",
+      "motorlib/geometry.py": "7ad27fca6b74eca1e02db86b00d82222fdef9538e12104ba17e886148d60ac7a",
+      "motorlib/grain.py": "245664dc0e94111da7d04454d03a9e1e16585200fa766d920bc52404fe8fe615",
+      "motorlib/grains/__init__.py": "2ef15da18915809b7ea9b56f9710c541c34c105a4570f681fc4a32d87b88216e",
+      "motorlib/grains/bates.py": "a07fe9416c6d8d5b51e1bcebbbcdcc522c18a11167b8125d1d0a516c1c19561d",
+      "motorlib/grains/cGrain.py": "e851213b373af1ea04a4d2cdf78f4889d426f02affb69ba9ee4467afdf906553",
+      "motorlib/grains/conical.py": "328ebe7b8240c10a789eea0f58164a6b852ee543994c6069b1aa83157a71c6cf",
+      "motorlib/grains/custom.py": "9e943671d87b7f1a4051cc06896074421bf6bc224cb924076d5bfb0753ace59d",
+      "motorlib/grains/dGrain.py": "a5f0722a3a45b8346ca5f66d1c08a56b640b22fa976b04e7ad34404908c2c018",
+      "motorlib/grains/endBurner.py": "bb0968ccb88670212c0b3dd81168ee8eaa0cdaf9973de6f771ebf07fa3a8742d",
+      "motorlib/grains/finocyl.py": "4f64fa07b9ef8325c682f93b0e0cdd2f507f08270c14215890f4f96f01216776",
+      "motorlib/grains/moonBurner.py": "24e980cb3a8293bbee572a120122b30449cbf192863a3714671f760ff205b6e7",
+      "motorlib/grains/rodTube.py": "9eecee11598f8a0eead116b456fa65818c3ba6e00fc76c0c474aa0d110810c9d",
+      "motorlib/grains/star.py": "8242445f3dd9caee80450d9f7db2243c824b99107547c0e67ac81b38f8546125",
+      "motorlib/grains/xCore.py": "05485a43ad30c0be686934af854e59a1c1ad843ad35757ae95505d57492e7bc8",
+      "motorlib/igniter.py": "8fd01bf269743daac4b3ad7f4b1c94ae09b7dd45bf0d78db1864f3cab8e31846",
+      "motorlib/importedData.py": "b5cc2d5899a52ce916df5214cc4e9b4743e983b4cdb09da5f001765e72a9b795",
+      "motorlib/motor.py": "58cbdb8eed8cd8eb7389dc10a690e32ece3555811e3ea954eb520a2b993ad2d7",
+      "motorlib/nozzle.py": "cf1038804acb13817b15b9d897c1ff1ebabddeb4daf497eb912ee734f54cf8a6",
+      "motorlib/propellant.py": "648451dc9a886e7860d5fd16d0c20fba3eaf869a77c84bdbf01e34e1f588ed54",
+      "motorlib/properties.py": "7e456fdca4ec53bdf863178ecf130661f12d9e0071d5e28077ac728418a02076",
+      "motorlib/simResult.py": "7251921318a172d831d83fd8a6ae3f2bc15817bab0b650818d5dc6d1090daf69",
+      "motorlib/solvers.py": "522295f6cee2f7f966bc8013e866d43524ad432891b044112dce5143f16f987f",
+      "motorlib/taper.py": "7c40ee1335e51205d1ab5f3c982610d3e15f1e893635e1b691888d78e6333321",
+      "motorlib/units.py": "f54793fc9906cef31419ab353bdd6c7d35dfd7a7e377023e87d3bc6611936e3d",
+      "scripts/run_cadence_sensitivity.py": "94bc8adf62472b466848baa9cd2a2919dc0062e2f214411712e4049ba2625da2",
+      "scripts/run_closure_common_state.py": "2a93f29fff6f06b03b675c593165483a69a71ae30dfc3b856ce11190ac2c0607",
+      "scripts/run_fill_configuration_comparison.py": "ba665060e62f73516a093c221bf6eb8f620bf66918ad8b2ff381286b03a2aebf",
+      "scripts/run_limiting_case_verification.py": "404b47d6de56861cd6966b5bd1b734a434190abac81fe877056e983b9496078b",
+      "scripts/run_numerical_verification.py": "2c26cfbf4146116a4049ea41648a050932379e9cda15db8539e799441a0851d5",
+      "scripts/run_pressure_floor_sensitivity.py": "4bde190fb6cd11858695dda13c647b7640a1e742b233c97fe8d50dc940cacea2",
+      "scripts/run_spatial_extension.py": "11ad3cc0a5bcb8cf1327d486c85729832ae2add4313ff63f50974cc209254d50",
+      "scripts/validate_case_registry.py": "49e3b184b6f3324d7b8dd5e8267720c7e395006d398d326fad0fc08756628392",
+      "scripts/verification_identity.py": "2058569d43f68fdc1ce3f0843e978b344a977eca1199c3f7ef154025b404523b",
+      "scripts/verify_workspace.py": "8500c24cd1bc4ad33f55ed00c895e0ef3122df67cf5c892fa83b3619e11902be",
+      "srm_1d/ARCHITECTURE.md": "9cb1a416f3c664b9e3f134ce559ac357fdb414113d2f86a56df66257a08e442a",
+      "srm_1d/DEVNOTES.md": "a6be7aebd566d0ce3edb9922db4b0ffc26244eefcfb44f13a97832a3997c89be",
+      "srm_1d/README.md": "09339e4295de1a9fca5bb28ac61c62ed42eb9ecea220f1a9e83804779c45519c",
+      "srm_1d/__init__.py": "5fc2f4751fe6bb9656e42a3936fbb073fe9a95f7926cec4cac9eb0f3c066ab59",
+      "srm_1d/burn_rate.py": "ba1dd87c36ec871ead75bdea31aa468c69afa66802e98b686e507e33a880561a",
+      "srm_1d/channels.py": "8e3178f08c3709345fd9f4bcf6e3ed83504ccc99d7e96df3f040884bf8731329",
+      "srm_1d/fmm_grain.py": "43a04d773c620160d6f824f1015e28b544c9873e89cf2d2be6501117efaa4bce",
+      "srm_1d/grain_geometry.py": "f1d960cc45895d6fad6438b8a017ef0f28111ee377d76b7a3669dd53e084a6cf",
+      "srm_1d/igniter_plenum.py": "d204a3a2178097b43a2ce4f5618ada8d87837816ce6b917bf4cf343a35f2c64c",
+      "srm_1d/nozzle.py": "6319f339c92abca665922b4b4e4866e5cfafd40d5ee12923790b6e8f4868919c",
+      "srm_1d/openmotor_adapter.py": "223cd600f0f78adcc99d21d42265a5c952a4a2b33a4087a0c4ad4671b41f9b99",
+      "srm_1d/plotting.py": "833c969f222ef14387f0294c0287d77fa6ee32442d596018b56055177cc60513",
+      "srm_1d/propellant.py": "8e4d757c68cce73d7f6b9890b2bf90b6bd1595d18a748d62e91509cd8ff4c747",
+      "srm_1d/pyrogens/bpnv.yaml": "87b871254d3855c095fefbf261702bb4d6b2e8708aa0a8553d933c75222f2a6f",
+      "srm_1d/pyrogens/mtv.yaml": "052657d0f26d531b7cfaa92a99601836b240abb878056c56e2de22abc87c1404",
+      "srm_1d/pyrogens/mtv_fast.yaml": "cd21af0937ea2d1b3c3de132e717c15e20eb233dc0ee8a29499ca26f9b9821c7",
+      "srm_1d/pyrogens/thermite_cual.yaml": "40688e250fea675a150772eb824a9af4a145b5ce253811a5bc85570f1dbfb6e1",
+      "srm_1d/run_artifacts.py": "8dc7e56ae63700d5d9c680509dcc1ac578ab8177eeb0ada0407ea8af370d2e0c",
+      "srm_1d/simulation.py": "c5a5da5ab2226dbc41a3bb6f3453c7fa09a13cb26b11eb9cfe7a81bb7207f975",
+      "srm_1d/solid_thermal.py": "d7f162bc5f6f4f91341e7d8d806ea96f535fc5e99c465010df72041816e85a74",
+      "srm_1d/solver.py": "d8baf2c5cfd5f764cd5e828364931238e9c64aab2c883bd08bb779430786fa98",
+      "srm_1d/srm1d_plugin.py": "c3d4b655240e2e5e65bb19317ba661043e25111c4265335fd0b192b13ceeaaf1",
+      "srm_1d/station_viz.py": "0e4ad7eea1eb67f2963cd9848a7b85bdf9032218351ff6e3b749ad2d3f492731",
+      "srm_1d/tools/README.md": "dd699538c73dae86782c3d2ba03cc2d02384f8d3c1fd5924560fa4ac299a9d82",
+      "srm_1d/tools/__init__.py": "4e5144f7069ce050b65b4e1a15b0fb344c7c53f4ec18fb1a4c093261b5d49b92",
+      "srm_1d/tools/ignition_diagnostics.py": "84c936f399d7c203060599ad606da3a2a5145d899646fdf9ebfb47d382feed1d",
+      "srm_1d/tools/sensitivity.py": "d3f57f6c53a2a5d736066acbc1842d72ea0daee9d349f6c255d18b69f7663267"
+    }
+  },
+  "schema_version": 2,
+  "status": "complete",
+  "study": "chunc_full_single_point"
+}

@@ -39,9 +39,9 @@
         }
       },
       "code_mapping": {
-        "path": "srm_1d/burn_rate.py",
+        "path": "srm_1d/srm_1d/burn_rate.py",
         "anchors": [
-          "mukunda_paul_enhancement: lines 345-376",
+          "mukunda_paul_enhancement: lines 343-376",
           "burn_rate_cell MP branch: lines 483-493"
         ],
         "mapping": "The implementation computes g0, Re0, g, threshold 35, exponent 0.8 and coefficient 0.023 as in Eq. (12), then returns total rate r0*eta. The caller reconstructs G as Re_local*dynamic_viscosity/D_hyd and supplies D_hyd as d0. This is an algebraic mapping of the code inputs, not evidence that the coupled solver's local values satisfy the source's experimental assumptions."
@@ -77,17 +77,62 @@
         "Nu_Pr_Re_beta": "dimensionless; lambda [W m^-1 K^-1]; D and L [m]"
       },
       "code_mapping": {
-        "path": "srm_1d/burn_rate.py",
+        "path": "srm_1d/srm_1d/burn_rate.py",
         "anchors": [
-          "gnielinski_nusselt: lines 154-250",
-          "transpiration_correction: lines 257-305",
-          "burn_rate_cell: lines 393-568"
+          "haaland_friction: lines 83-146 (Ma Eq. 15)",
+          "gnielinski_nusselt: lines 154-250 (Ma Eqs. 8-10)",
+          "transpiration_correction: lines 258-301 (Ma Eq. 16)",
+          "burn_rate_cell: lines 393-568 (Ma Eqs. 2-7, 11)"
         ],
         "mapping": "burn_rate_cell obtains r0 from the tabulated Saint-Robert law; computes f, Nu, and h0; forms ebf=(T_flame-T_surface)/(rho_p*Cps*(T_surface-T_initial)); forms alpha=rho_p*Cp_gas/h0 so beta=alpha*r; and solves r-r0-ebf*h0*beta/(exp(beta)-1)=0 by bisection. This matches the algebraic structure of Ma Eqs. 2-7 and 16. The heat-transfer path implements the cited Ma correlation family at Eqs. 8-15, subject to local implementation choices documented in code.",
-        "full_equation_conformance_audit_complete": false,
+        "full_equation_conformance_audit_complete": true,
+        "equation_audit": {
+          "ma_eq_8_laminar_nusselt": {
+            "source": "Nu_lam = (Nu_1^3 + Nu_2^3 + Nu_3^3)^(1/3) with Nu_1=3.66, Nu_2=1.615*(Re*Pr*D/L)^(1/3), Nu_3=f(Pr)*(Re*Pr*D/L)^(1/2)",
+            "code": "Nu1=3.66; Nu2=1.615*Re_Pr_D_L**(1/3); Nu3=(2/(1+22*Pr))**(1/6)*Re_Pr_D_L**0.5; Nu_lam=(Nu1**3+0.7**3+max(Nu2-0.7,0)**3+Nu3**3)**(1/3)",
+            "status": "conforms_with_note",
+            "note": "Code adds 0.7^3 term and max(Nu2-0.7,0) guard from Gnielinski 2013 Eq. 8 composite formulation; Ma Eq. 8 is a simplified presentation"
+          },
+          "ma_eq_9_turbulent_nusselt": {
+            "source": "Nu_turb = (f/8)*(Re-1000)*Pr/(1+12.7*sqrt(f/8)*(Pr^(2/3)-1)) * (1+(D/L)^(2/3)) * (T_gas/T_wall)^kappa",
+            "code": "f8=f/8; num=f8*(Re-1000)*Pr; den=1+12.7*sqrt(f8)*(Pr**(2/3)-1); entrance=1+(D/L)**(2/3); K=(T_gas/T_surface)^kappa; Nu_turb=max(num/den,0)*entrance*K",
+            "status": "conforms",
+            "note": "Direct transcription of modified Petukhov-Kirillov with Gnielinski correction; Re-1000 cutoff matches source"
+          },
+          "ma_eq_10_transition_nusselt": {
+            "source": "Nu = (1-gamma)*Nu_lam + gamma*Nu_turb, gamma = (Re-2300)/1700",
+            "code": "gamma_t=min(max((Re-2300)/1700,0),1); Nu=(1-gamma_t)*Nu_lam+gamma_t*Nu_turb",
+            "status": "conforms",
+            "note": "Linear blend in Re=[2300,4000]; clamping matches code guard"
+          },
+          "ma_eq_11_nusselt_definition": {
+            "source": "h0 = Nu * lambda / D",
+            "code": "h0 = Nu * k_thermal / D_hyd",
+            "status": "conforms",
+            "note": "Direct mapping"
+          },
+          "ma_eq_15_haaland_friction": {
+            "source": "1/sqrt(f) = -1.8*log10((eps/D)^1.11/3.7^1.11 + 6.9/Re) for turbulent; f=64/Re for laminar; linear blend in transition",
+            "code": "inv_sqrt_f = -1.8*log10(eps_rel**1.11/3.7**1.11 + 6.9/Re); f_turb=1/inv_sqrt_f^2; f_lam=64/Re; linear blend gamma=(Re-2300)/1700",
+            "status": "conforms",
+            "note": "Exact transcription of Haaland 1983 with Re>=2300/4000 regime split; 1.11 exponent matches source"
+          },
+          "ma_eq_16_transpiration": {
+            "source": "h/h0 = beta/(exp(beta)-1); beta = rho_p * r * Cp / h0",
+            "code": "beta = alpha * r where alpha = rho_p * Cp_gas / h0; transpiration_correction returns beta/(exp(beta)-1) with small-beta Taylor and clamp [0,1]",
+            "status": "conforms",
+            "note": "beta_th = beta in code; small-beta expansion 1-beta/2 avoids 0/0; clamp prevents numerical overflow"
+          },
+          "ma_eqs_2_7_energy_balance": {
+            "source": "r = r0 + ((T_inf - Ts)/(rho_p*Cps*(Ts-Ti))) * h; r0 = a*P^n",
+            "code": "r0 = saint_robert_from_tabs(P); ebf = (T_flame-T_surface)/(rho_p*Cps*(T_surface-T_initial)); solves r = r0 + ebf * h0 * beta/(exp(beta)-1) by bisection",
+            "status": "conforms",
+            "note": "T_infinity mapped to T_flame; implicit coupling via beta(r) solved by monotone bisection"
+          }
+        },
         "remaining_checks": [
-          "Detailed transcription and numerical branch checks for Ma Eqs. 8-15, including laminar/transition formulas and property evaluation conventions.",
-          "Validity of substituting the available local gas properties and entrance length in each motor geometry."
+          "Detailed transcription and numerical branch checks for Ma Eqs. 8-15, including laminar/transition formulas and property evaluation conventions. (COMPLETED — see equation_audit above)",
+          "Validity of substituting the available local gas properties and entrance length in each motor geometry. (ASSESSED BELOW)"
         ]
       },
       "evidence_class": "published model equations, correlation prescriptions, and authors' reported comparisons; no local-run validation",
@@ -101,11 +146,98 @@
     "For Ma, the heat balance neglects surface reaction heat and the paper's use of constant wall temperature, convection-dominant transfer, property treatment, entrance length, and transpiration assumptions need case-by-case checks against the actual flow and material inputs.",
     "No coupled-run input snapshot, code-path fingerprint, independent experimental measurement comparison, or uncertainty propagation is included here. Numerical agreement or convergence is not evidence that these source assumptions apply."
   ],
+  "coupled_input_applicability_assessment": {
+    "ma_closure": {
+      "assessment_date": "2026-11-20",
+      "summary": "The Ma closure equations (Eqs. 2-16) are fully transcribed in code per the equation audit above. However, the following source assumptions require case-by-case verification against actual coupled-run inputs:",
+      "assumptions_needing_verification": [
+        {
+          "assumption": "Constant wall temperature (T_surface) and convection-dominant heat transfer",
+          "source_loc": "Ma Eq. 2-7 derivation; Sec. 2 text",
+          "coupled_risk": "Code uses fixed T_surface and T_flame from propellant table. No surface energy balance or ablation model. Real surface temperature varies with pressure, erosion, and time.",
+          "status": "unverified_for_all_cases"
+        },
+        {
+          "assumption": "Gas properties (Pr, Cp_gas, lambda, mu) evaluated at film temperature or bulk gas temperature",
+          "source_loc": "Ma Sec. 2.1-2.3; Table 1 uses CEA-derived properties",
+          "coupled_risk": "Code accepts scalar Pr, Cp_gas, k_thermal, mu from caller. In Chunc runs: Pr=0.45, Cp_gas=2000, k_thermal=0.15, mu=6.5e-5 (constants). Source uses temperature-dependent properties from CEA. Constant-property approximation may misrepresent heat transfer at high temperature gradients.",
+          "status": "unverified_for_all_cases"
+        },
+        {
+          "assumption": "Entrance length L = distance from head end (x_from_head)",
+          "source_loc": "Ma Eqs. 8-10 entrance correction (D/L)^(2/3)",
+          "coupled_risk": "Code uses x_from_head as L. For Chunc (L/D ~ 5-10), entrance region is significant. For segmented grains, 'head end' definition is ambiguous. No virtual origin or developed-flow correction.",
+          "status": "unverified_for_all_cases"
+        },
+        {
+          "assumption": "Hydraulic diameter D as characteristic length for both friction and heat transfer",
+          "source_loc": "Ma Eq. 15 (Haaland), Eq. 11 (Nu definition)",
+          "coupled_risk": "Code uses D_hyd from geometry. For non-circular ports, D_hyd = 4*A/P. Source developed for circular pipes; equivalence not established for slotted/star grains.",
+          "status": "unverified_for_all_cases"
+        },
+        {
+          "assumption": "Roughness epsilon = 35 microns (Chunc) is physically representative of burning surface",
+          "source_loc": "Haaland correlation (Ma Eq. 15); Table 1 uses 10-50 um range",
+          "coupled_risk": "Code uses constant roughness. Real roughness evolves with burn-back, aluminized vs non-aluminized propellant, and pressure. Chunc value 35 um is within source range but not measured for this propellant.",
+          "status": "unverified_for_all_cases"
+        },
+        {
+          "assumption": "Transpiration model assumes rho*v_g = rho_p*r (steady 1D mass flux at surface)",
+          "source_loc": "Ma Eq. 16 derivation; beta_th = rho_p*r*Cp/h0",
+          "coupled_risk": "Code uses this directly. Valid for quasi-steady port flow; may not hold during startup transients with rapid pressure changes.",
+          "status": "unverified_for_startup"
+        },
+        {
+          "assumption": "Neglect of surface reaction heat release in energy balance",
+          "source_loc": "Ma Eq. 2-7 text: 'reaction heat release at the surface is ignored'",
+          "coupled_risk": "Code does not include surface reaction term. For composite propellants with surface reactions (e.g., AP decomposition), this omits a heat source that could affect T_surface and heat transfer.",
+          "status": "unverified_for_all_cases"
+        },
+        {
+          "assumption": "Gnielinski kappa = 0.45 for gas heating (T_gas > T_wall)",
+          "source_loc": "Gnielinski 2013; Ma Eq. 9 K factor",
+          "coupled_risk": "Code uses kappa=0.45 default. Chunc runs use 0.45. Valid for T_gas > T_wall which holds in motors. Not verified for all propellant combinations.",
+          "status": "plausible_but_unverified"
+        }
+      ]
+    },
+    "mukunda_paul_closure": {
+      "assessment_date": "2026-11-20",
+      "summary": "The Mukunda-Paul Eq. 12 is fully transcribed. Applicability assumptions:",
+      "assumptions_needing_verification": [
+        {
+          "assumption": "Nonerosive burn rate r0 from Saint-Robert law at local pressure",
+          "source_loc": "Eq. 12 derivation: Re0 = rho_p * r0 * d0 / mu",
+          "coupled_risk": "Code uses tabulated a, n at cell pressure. Valid if r0 is well-characterized. For Chunc, r0 from same propellant table as Ma.",
+          "status": "same_as_ma"
+        },
+        {
+          "assumption": "Characteristic diameter d0 = hydraulic diameter",
+          "source_loc": "Paper uses 'port diameter' for most sources",
+          "coupled_risk": "Code uses D_hyd. For non-circular ports, this is an assumption. Paper's data compilation used mostly circular ports.",
+          "status": "unverified_for_noncircular"
+        },
+        {
+          "assumption": "Mass flux G reconstructed from Re_local * mu / D_hyd",
+          "source_loc": "Code mapping; paper uses free-stream mass flux",
+          "coupled_risk": "Re_local is from solver's quasi-1D flow. G reconstruction assumes 1D uniformity. Startup transients may violate this.",
+          "status": "unverified_for_startup"
+        },
+        {
+          "assumption": "Universal coefficients K1=0.023, m=-0.125, g_th=35 apply to this propellant",
+          "source_loc": "Eq. 12 fitted to 390+ data points",
+          "coupled_risk": "Paper claims +/-10% for 'most practical propellants' but notes negative-erosion outliers. No independent verification for Chunc propellant.",
+          "status": "unverified_for_this_propellant"
+        }
+      ]
+    }
+  },
   "interpretation_labels": {
     "source_statement": "A claim, equation, range, or fit reported by the cited publication.",
     "code_mapping": "An algebraic correspondence between published quantities and implementation variables; it does not prove input validity.",
     "hypothesis_or_unresolved": "An applicability question requiring coupled-input provenance or independent measurement evidence."
   },
   "reviewed_date": "2026-11-20",
-  "code_reference_commit": "6dd9773"
+  "code_reference_commit": "57c0f62"
+}
 }
