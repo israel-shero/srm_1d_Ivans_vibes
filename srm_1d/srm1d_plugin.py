@@ -499,6 +499,56 @@ def register():
         def get_config_schema(self):
             return _transient_config_schema()
 
+        def upgrade_solver_config(self, values):
+            if not isinstance(values, dict):
+                return values, []
+            new = dict(values)
+            upgraded = []
+            if 'T_ignition' in new and abs(new['T_ignition'] - 850.0) < 1e-4:
+                new['T_ignition'] = 756.0
+                upgraded.append('T_ignition')
+            if 'kappa' in new and abs(new['kappa'] - 0.45) < 1e-4:
+                new['kappa'] = 0.44
+                upgraded.append('kappa')
+            if 'roughness' in new and abs(new['roughness'] - 50.0) < 1e-4:
+                new['roughness'] = 32.0
+                upgraded.append('roughness')
+            return new, upgraded
+
+        def upgrade_igniter_block(self, block):
+            if not isinstance(block, dict) or 'pyrogen' not in block:
+                return block, False
+            pyro = block['pyrogen']
+            if not isinstance(pyro, dict) or pyro.get('name') != 'BPNV':
+                return block, False
+            if 'gas_mass_fraction' in pyro:
+                return block, False
+            import copy
+            import math
+            legacy_numeric = {
+                'a': 2.0e-5, 'n': 0.50, 'rho': 1700.0,
+                'T_flame': 2800.0, 'M': 0.030, 'gamma': 1.25,
+                'impetus_W': 5000.0, 'heat_flux_cal_cm2_s': 69.4,
+                'kappa_jet': 8.0,
+                'particle_diameter_m': 0.0032, 'particle_LD_ratio': 1.0,
+                'pellet_emissivity': 0.7, 'radiation_absorption_length_m': 1.0,
+            }
+            legacy_str = {
+                'form': 'pellets', 'heat_delivery_mode': 'demar',
+            }
+            for k, v in legacy_str.items():
+                if pyro.get(k) != v:
+                    return block, False
+            for k, v in legacy_numeric.items():
+                val = pyro.get(k)
+                if val is None or not math.isclose(float(val), v, rel_tol=1e-3, abs_tol=1e-5):
+                    return block, False
+            from .openmotor_adapter import _pyrogen_to_block, load_pyrogen
+            current = _pyrogen_to_block(load_pyrogen('bpnv'))
+            new_block = copy.deepcopy(block)
+            new_block['pyrogen'] = current
+            return new_block, True
+
         def get_default_igniter(self):
             from .openmotor_adapter import default_igniter_block
             return default_igniter_block('bpnv')

@@ -11,5 +11,6 @@
 
 ### Added
 
+- Implement solver config upgrade (`T_ignition`, `kappa`, `roughness`) and legacy uncustomized BPNV pyrogen block upgrade hooks for openMotor plugin integration.
 - Explicit `--single-erosive-closure` selection for numerical verification, with source, runtime, and generated-geometry checksums in each point manifest. Ma remains the default.
 - Complete-duration Mukunda–Paul grid-sensitivity records and bounded primary-source evidence. These records do not establish formal convergence or experimental validation.
