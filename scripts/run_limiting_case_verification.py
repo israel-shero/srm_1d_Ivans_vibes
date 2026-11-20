@@ -21,6 +21,11 @@ if str(SCRIPT_ROOT) not in sys.path:
 
 from cases.loader import PROJECT_ROOT
 from scripts.run_numerical_verification import _extract_metrics
+from scripts.verification_identity import (
+    effective_options as _effective_options,
+    runtime_versions as _runtime_versions,
+    source_fingerprints as _source_fingerprints,
+)
 from srm_1d.burn_rate import (
     burn_rate_cell,
     mukunda_paul_enhancement,
@@ -202,6 +207,18 @@ def run_limiting_cases(
         "print_interval": 0.0,
         "snapshot_interval": 0.1,
     })
+    variants = (
+        ("baseline", {}),
+        ("erosive_disabled", {"diagnostic_disable_erosive": True}),
+        ("mukunda_paul", {"erosive_closure": "mukunda_paul"}),
+    )
+    variant_overrides = dict(variants)
+    source_sha256 = _source_fingerprints()
+    runtime_versions = _runtime_versions()
+    resolved_options = _effective_options(options, variants)
+    source_identity_sha256 = hashlib.sha256(
+        json.dumps(source_sha256, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
     if resume_path is not None:
         result_path = resume_path.resolve()
         output = result_path.parent
@@ -213,6 +230,26 @@ def run_limiting_cases(
             raise ValueError(
                 "resume baseline-config checksum does not match current input"
             )
+        if payload.get("schema_version", 0) < 2:
+            raise ValueError("resume manifest lacks reproducibility identity (legacy schema)")
+        if provenance.get("source_sha256") != source_sha256:
+            raise ValueError("resume source checksum identity does not match current code")
+        if provenance.get("runtime_versions") != runtime_versions:
+            raise ValueError("resume runtime versions do not match current environment")
+        if payload.get("effective_options") != resolved_options:
+            raise ValueError("resume effective options do not match current settings")
+        if payload.get("configuration") != options:
+            raise ValueError("resume configuration does not match current settings")
+        for name, run in payload.get("runs", {}).items():
+            if name not in resolved_options or run.get("overrides") != variant_overrides[name]:
+                raise ValueError(f"resume overrides do not match current settings for {name}")
+            expected_run_identity = {
+                "source_fingerprint_sha256": source_identity_sha256,
+                "runtime_versions": runtime_versions,
+                "effective_options": resolved_options[name],
+            }
+            if run.get("identity") != expected_run_identity:
+                raise ValueError(f"resume run identity does not match current settings for {name}")
         payload["status"] = "running"
         payload["resumed_utc"] = datetime.now(timezone.utc).isoformat()
     else:
@@ -222,7 +259,7 @@ def run_limiting_cases(
         )
         result_path = output / "limiting_cases.json"
         payload = {
-            "schema_version": 1,
+            "schema_version": 2,
             "status": "running",
             "created_utc": datetime.now(timezone.utc).isoformat(),
             "study": "chunc_limiting_cases",
@@ -236,7 +273,10 @@ def run_limiting_cases(
                 "motor_path": str(motor_path.relative_to(PROJECT_ROOT)),
                 "motor_sha256": _sha256(motor_path),
                 "baseline_config_sha256": _sha256(CONFIG_PATH),
+                "source_sha256": source_sha256,
+                "runtime_versions": runtime_versions,
             },
+            "effective_options": resolved_options,
             "claims": {
                 "research_note_results_reproduced": False,
                 "limiting_cases_validate_full_physics": False,
@@ -245,11 +285,6 @@ def run_limiting_cases(
         }
     _write_json(result_path, payload)
 
-    variants = (
-        ("baseline", {}),
-        ("erosive_disabled", {"diagnostic_disable_erosive": True}),
-        ("mukunda_paul", {"erosive_closure": "mukunda_paul"}),
-    )
     propellant = None
     for name, overrides in variants:
         if name in payload["runs"]:
@@ -263,8 +298,17 @@ def run_limiting_cases(
         )
         if propellant is None:
             propellant = run_propellant
+        if _source_fingerprints() != source_sha256:
+            raise RuntimeError("source files changed during limiting-case verification")
+        if _runtime_versions() != runtime_versions:
+            raise RuntimeError("runtime versions changed during limiting-case verification")
         payload["runs"][name] = {
             "overrides": overrides,
+            "identity": {
+                "source_fingerprint_sha256": source_identity_sha256,
+                "runtime_versions": runtime_versions,
+                "effective_options": resolved_options[name],
+            },
             "metrics": _extract_metrics(result, performance),
             "steady_interval": _steady_interval_metrics(result),
         }
