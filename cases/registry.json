@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_date": "2026-09-29",
+  "recorded_date": "2026-11-20",
   "readiness_values": [
     "baseline_executed",
     "candidate",
@@ -20,7 +20,8 @@
     "runner_path_broken": "The example contains a known invalid or nonportable data path.",
     "motor_measurement_identity_unverified": "The measured trace has not been proven to belong to the modeled motor input.",
     "no_measured_trace": "No measured trace is paired with this motor.",
-    "no_independent_burn_rate": "No independent burn-rate dataset is registered for this case."
+    "no_independent_burn_rate": "No independent burn-rate dataset is registered for this case.",
+    "incomplete_tail": "The recorded interval does not establish a complete burnout or tail-off."
   },
   "cases": [
     {
@@ -52,7 +53,7 @@
         {
           "role": "measurement_source",
           "path": "srm_1d/plotting.py",
-          "sha256": "9afb6540ddb2e6bbe16dfdbf3ab3dbd507bd9d16bd4abb9b06b866c4b5133510"
+          "sha256": "833c969f222ef14387f0294c0287d77fa6ee32442d596018b56055177cc60513"
         }
       ],
       "measurement": {
@@ -298,9 +299,12 @@
         "runner_path_broken",
         "motor_measurement_identity_unverified",
         "uncertain_time_zero",
+        "unknown_calibration",
+        "limited_pre_event_baseline",
+        "incomplete_tail",
         "no_independent_burn_rate"
       ],
-      "notes": "The runner points to a Windows path with a trailing slash and currently uses the ST2.0 motor input. Pairing with pathfin54.csv is not yet proven."
+      "notes": "Source review (2026-11-20): the 409-row CSV has no firing identity, geometry, event-time definition, pressure/load-cell calibration, or complete tail metadata. Its time column begins at 0.000 s, but that is not an independent ignition marker. The candidate motor file is named ST2.0 but embeds the propellant name Stormtrooper 2.1; no source proves this motor matches the trace. The runner also points to an author-specific Windows path with a trailing slash. Keep timing, pressure, and thrust scoring blocked."
     },
     {
       "id": "st2_54_2800",

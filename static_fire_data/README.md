@@ -37,14 +37,14 @@ shifts the experimental ignition to sim `t=0`. These are coarse (30–60 pt);
 
 ---
 
-## Inventory (last broad review 2026-06-19; Chunc and Zerox reviewed 2026-11-20)
+## Inventory (last broad review 2026-06-19; Chunc, Zerox, and Pathfinder reviewed 2026-11-20)
 
 | Motor | L/D | File / dict | Points | State | Notes |
 |---|---|---|---|---|---|
 | **Chunc / machbusterNew** | high | **`thomas_chunc_firing.csv`** (+ `.xlsx` source) | **346** | ⚠️ event-time, calibration, and window review pending | t=[0.010, 2.353] s; first sample is already 8.466 MPa. Peak 8.894 MPa @ 0.397 s; the previously reported ~8.77 MPa plateau has no registered window, so the 1.015 ratio is descriptive—not evidence of “no ignition spike.” The two-column workbook has no trigger or baseline metadata. |
 | **Zerox** | mid | `zerox_data.csv` + [`zerox_high_resolution.csv`](zerox_high_resolution.csv) + `Zerox Data.xlsx` source | 58 coarse / 630 native event samples | ⚠️ pressure calibration review pending | The workbook's `FL88` sheet has a `Py1 Fire` trigger and a denser pressure trace. The first observed trigger-high is at flight time 0.009 s; the preceding low is at -0.061 s. The old 58-point CSV is a workbook-selected downsample: using the workbook's own baseline formula, it reports a 3.9938 MPa peak 81 ms later and 5.7% lower than the first high-resolution peak. The extracted CSV preserves source `pTap 1(psi)` values without smoothing or resampling; the processed time-zero average is excluded. Calibration and the full tail remain under review. |
 | **Hasegawa A** | ~42 (high) | `HASEGAWA_MOTOR_A_EXPERIMENTAL` (plotting.py) | 36 | ✅ clean (digitized) | Ma 2020 Fig. 10. Its peak is the *late progressive* peak, not an ignition spike. |
-| **Pathfinder 54** | — | `pathfin54.csv` | 409 | ✅ clean | Has force (N) + pressure (Pa). |
+| **Pathfinder 54** | unknown | `pathfin54.csv` | 409 | ⚠️ source metadata incomplete | Has force (N) + pressure (Pa), but firing identity, event-time meaning, motor geometry, channel calibration, baseline, and complete tail are undocumented. The 0.000 s first row is not an independent ignition marker. |
 | **BALLSStick (2″ subscale)** | high | **`raw/ballsstick_subscale_raw.csv`** | 417 | ⚠️ RAW: qualitative observation only; pressure ratios are not scoreable | The PSI column has an apparent startup excursion, but channel provenance/calibration, linearity, and event time remain unresolved. Do not treat the reported 1.35–1.50× ratios as validated or scoreable. Load-cell impulse is also unresolved, and the DAQ clock is not anchored. **No 3″ firing exists**; scaling to the 3″ motor is unsupported. See `raw/ballsstick_subscale_raw.notes.md`. |
 | **54-2800 ST2.0** | — | *(CSV missing)* | — | ❌ absent | `examples/run_pathfin54st2_0.py` + `motors/2025.12.25 54-2800 ST2.0.ric` exist; the CSV does not. |
 | **short / low-L/D** | low | *(none)* | — | ❌ absent | Held for now (no clean data). **Still the key coverage gap** — a fix must be shown not to break the near-zero-spike low-L/D case. |
@@ -99,6 +99,28 @@ first maximum observed 0.340–0.360 s after the trigger in the denser trace.
 That sampling difference is not a model score. The extracted series stops at
 8.153 s, while the workbook retains later raw DAQ samples; do not score
 tail-off until that remaining interval is reviewed.
+
+### Pathfinder 54 source review (2026-11-20)
+
+`pathfin54.csv` has 409 rows with columns `time(s)`, `force(N)`, and
+`pressure(Pa)`. Its timestamps increase from 0.000 to 2.765 s at 6–7 ms
+intervals. The recorded maximum pressure is 10.1159 MPa at 2.440 s, and the
+maximum force is 1175.7 N at 2.427 s. The first row is 90.15 kPa and 80.15 N;
+the last is 1.082 MPa and 82.42 N. These are source-trace facts, not calibrated
+pressure/thrust values or evidence of event timing. In particular, the first
+timestamp is not documented as ignition, and the final row does not establish
+burnout or tail-off.
+
+The CSV has no firing ID, accompanying source record, motor drawing, trigger or
+event marker, pressure-transducer calibration, load-cell calibration, tare, or
+processing notes. The available candidate motor input is named `54-2800 ST2.0`
+but embeds the propellant name `Stormtrooper 2.1`; its two-grain geometry is
+known, but there is no evidence linking that input to the measured firing.
+`examples/run_pathfin54.py` also uses an author-specific Windows CSV path with
+a trailing slash and an unverified zero time offset. Keep absolute timing,
+pressure, thrust, startup, plateau, and tail-off scores blocked until the source
+identity and independent timing/calibration records are established. Do not
+repair the missing time anchor by aligning the traces.
 
 ---
 

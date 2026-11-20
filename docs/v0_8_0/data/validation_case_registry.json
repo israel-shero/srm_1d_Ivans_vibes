@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated": "2026-11-19",
+  "updated": "2026-11-20",
   "purpose": "Candidate evidence inventory; calibration and holdout roles are intentionally unassigned.",
   "protocol": {
     "version": "0.1",
@@ -242,7 +242,7 @@
     {
       "id": "pathfinder_54",
       "motor": "Pathfinder 54",
-      "data_status": "clean_csv",
+      "data_status": "trace_present_source_metadata_incomplete",
       "source": {
         "path": "static_fire_data/pathfin54.csv",
         "sha256": "2dbbd9f87c37e101f23ca95126d8a109676993f7e38e3c4ca131f3c737b2b1a1",
@@ -253,18 +253,80 @@
         "pressure_unit": "Pa",
         "force_unit": "N"
       },
+      "source_only_observations": {
+        "time_range_s": [
+          0.0,
+          2.765
+        ],
+        "native_interval_s": {
+          "minimum": 0.006,
+          "maximum": 0.007
+        },
+        "first_sample": {
+          "time_s": 0.0,
+          "force_n": 80.1472,
+          "pressure_pa": 90148.5969
+        },
+        "maximum_pressure": {
+          "time_s": 2.44,
+          "pressure_pa": 10115892.5182
+        },
+        "maximum_force": {
+          "time_s": 2.427,
+          "force_n": 1175.6989
+        },
+        "last_sample": {
+          "time_s": 2.765,
+          "force_n": 82.4235,
+          "pressure_pa": 1082183.7578
+        },
+        "qualification": "These are CSV observations only. The file's zero timestamp is not documented as ignition or another independent event, and the final values do not establish burnout or tail-off."
+      },
+      "candidate_simulation_input": {
+        "path": "motors/2025.12.25 54-2800 ST2.0.ric",
+        "sha256": "45eb618280711fc492d77c5d92b8e690e46c5b64b24fd51aad89bc8bf2ff2631",
+        "filename_label": "54-2800 ST2.0",
+        "embedded_propellant_name": "Stormtrooper 2.1",
+        "grain_geometry": [
+          {
+            "type": "BATES",
+            "outer_diameter_m": 0.047625095250190506,
+            "core_diameter_m": 0.012700025400050802,
+            "length_m": 0.37625095250190504
+          },
+          {
+            "type": "Finocyl",
+            "outer_diameter_m": 0.047625095250190506,
+            "core_diameter_m": 0.015875031750063502,
+            "length_m": 0.13970027940055882,
+            "fin_count": 4
+          }
+        ],
+        "qualification": "This records the candidate input's contents; no source ties this geometry, propellant label, or input file to the Pathfinder 54 trace."
+      },
       "coverage": {
         "ld_class": "unknown",
-        "port_geometry": "not established in this registry",
+        "port_geometry": "not established for the measured motor; candidate input geometry is recorded separately",
         "measurements": ["pressure", "force"]
       },
       "known_limits": [
-        "Confirm the matching motor geometry and trace time-zero before using as a validation case."
+        "The CSV contains no firing identifier, source documentation, motor geometry, event marker, pressure calibration, load-cell calibration, tare, or complete tail metadata.",
+        "Although the first CSV timestamp is 0.000 s, its relation to ignition is undocumented; absolute timing and startup windows are blocked.",
+        "The first pressure sample is not a documented baseline. Pressure amplitude, thrust amplitude, and baseline-normalized metrics are blocked.",
+        "The final recorded sample remains at 1.082 MPa and 82.4 N; burnout and tail-off are not established.",
+        "The candidate .ric file is named ST2.0 but embeds the propellant name Stormtrooper 2.1. No source establishes that this input matches the measured firing.",
+        "The checked-in overlay runner uses an author-specific Windows path with a trailing slash and an unverified zero time offset."
       ],
-      "candidate_uses": ["pressure and thrust-history comparison"],
+      "candidate_uses": ["source-only trace description"],
       "scoring_eligibility": {
-        "absolute_timing": "blocked_pending_event_zero",
-        "pressure_and_thrust": "blocked_pending_matching_motor_geometry_and_calibration_review",
+        "absolute_timing": "blocked_no_independent_event_time_in_source",
+        "pressure_and_thrust": "blocked_pending_motor_identity_channel_calibration_and_baseline_provenance",
+        "shape": "exploratory_only_until_motor_identity_and_event_anchor_are_established",
+        "case_windows": {
+          "startup": "not_registered_no_independent_event_zero",
+          "plateau": "not_registered_no_source_only_window",
+          "tail_off": "not_registered_recorded_interval_does_not_establish_burnout"
+        },
         "role": "unassigned"
       }
     },
