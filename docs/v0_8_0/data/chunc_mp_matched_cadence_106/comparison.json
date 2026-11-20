@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-11-20",
+  "status": "complete_same_grid_cadence_sensitivity",
+  "study": "chunc_mukunda_paul_106_cell_cadence_10_5_1",
+  "source_commit": "70d0b9581195426c9cdca687f01532d2d9eec5fb",
+  "common_configuration": {
+    "motor": "motors/machbusterNew.ric",
+    "motor_sha256": "4a7163cf24d68a2cc4604a1f99e6a806d55aaae6f7ce61ee3077d96a1535d378",
+    "baseline_config_sha256": "6e6a54b1135c5d6638fc10203666e6d56fb680a2e01132c83347d6aa8625d84d",
+    "erosive_closure": "mukunda_paul",
+    "target_propellant_cells": 100,
+    "actual_cells": 106,
+    "cfl_target": 0.075,
+    "t_max_s": 3.0,
+    "history_capacity_rows": 8000000,
+    "history_storage": "disk-backed scalar memmap",
+    "pyrogen": "mtv",
+    "roughness_m": 0.000035,
+    "kappa": 0.45,
+    "ignition_temperature_k": 900.0,
+    "solid_conductivity_w_m_k": 0.4,
+    "cutoff_pressure_pa": 50000.0
+  },
+  "identity_checks": {
+    "source_fingerprints_equal": true,
+    "runtime_versions_equal": true,
+    "motor_and_baseline_config_checksums_equal": true,
+    "generated_initial_geometry_equal": true,
+    "requested_duration_reached_all_runs": true,
+    "git_worktree_clean_for_all_runs": true
+  },
+  "runs": [
+    {
+      "burn_update_interval_steps": 10,
+      "geometry_update_interval_steps": 10,
+      "point_path": "artifacts/verification_chunc_full_point/2026-11-20T12-56-08_70d0b95/point.json",
+      "point_json_sha256": "f63a5764e1944adbe252176aa8a8e440f73d745b294c61da5bcfbb7fd1600638",
+      "history_sha256": "2508d574dc2a73e83c3b81e8a9d06f9da3951ca0686569dbd0669defae0326ea",
+      "steps": 6203067,
+      "end_time_s": 2.999999597373263,
+      "termination": "t_max reached",
+      "wall_time_s": 205.93020009994507
+    },
+    {
+      "burn_update_interval_steps": 5,
+      "geometry_update_interval_steps": 5,
+      "point_path": "artifacts/verification_chunc_full_point/2026-11-20T13-00-25_70d0b95/point.json",
+      "point_json_sha256": "7c0e46f2478d482b1fc61abf8deba1c78ec4e1c3b20db758fe84e137261c2b59",
+      "history_sha256": "5357d0a8ba95cc647b0a0cf4053d9391ff30e839eca280c1f08d7d8e49ce70ea",
+      "steps": 6203055,
+      "end_time_s": 2.999999594549435,
+      "termination": "t_max reached",
+      "wall_time_s": 203.03015279769897
+    },
+    {
+      "burn_update_interval_steps": 1,
+      "geometry_update_interval_steps": 1,
+      "point_path": "artifacts/verification_chunc_full_point/2026-11-20T13-22-27_70d0b95/point.json",
+      "point_json_sha256": "5fc7f0e28632c3dfe762942e22a4485da8bf65c892625b6a2a104b5a9db91646",
+      "history_sha256": "e2859a3188d623a2394635a5def5e0e085f9110ac5b09a33bb8580195c9c369b",
+      "steps": 6203048,
+      "end_time_s": 2.9999998742024863,
+      "termination": "t_max reached",
+      "wall_time_s": 475.92470693588257
+    }
+  ],
+  "metrics": {
+    "relative_change_formula": "(interval_1 - interval_10) / abs(interval_10) * 100",
+    "interval_10": {
+      "peak_pressure_mpa": 7.959322432409533,
+      "peak_time_s": 1.0862508978308982,
+      "total_impulse_ns": 4961.932257164055,
+      "performance_burn_time_s": 2.2527550321662493,
+      "first_burnout_time_s": 1.631831274940118,
+      "minimum_pressure_pa": 31637.48542696637,
+      "max_fill_mach": 0.4975261274237115,
+      "integrated_abs_clipping_energy_j": 283.673469696797,
+      "clipping_active_fraction": 0.004090234717761391,
+      "mass_balance_error_fraction": 0.001674376536075004
+    },
+    "interval_5": {
+      "peak_pressure_mpa": 7.959326216752015,
+      "peak_time_s": 1.0862424582544197,
+      "total_impulse_ns": 4961.931447393696,
+      "performance_burn_time_s": 2.252754391223291,
+      "first_burnout_time_s": 1.6318248260214683,
+      "minimum_pressure_pa": 31641.067839994357,
+      "max_fill_mach": 0.4975261274237115,
+      "integrated_abs_clipping_energy_j": 283.9586416973888,
+      "clipping_active_fraction": 0.004087018412701484,
+      "mass_balance_error_fraction": 0.0016743582837332207
+    },
+    "interval_1": {
+      "peak_pressure_mpa": 7.959329130876555,
+      "peak_time_s": 1.0862362775078365,
+      "total_impulse_ns": 4961.93070762222,
+      "performance_burn_time_s": 2.252753372735944,
+      "first_burnout_time_s": 1.6318196455801877,
+      "minimum_pressure_pa": 31641.58034371058,
+      "max_fill_mach": 0.4975261274237115,
+      "integrated_abs_clipping_energy_j": 284.365948770122,
+      "clipping_active_fraction": 0.004084604858772655,
+      "mass_balance_error_fraction": 0.001674326748724816
+    },
+    "interval_1_vs_10_signed_relative_change_percent": {
+      "peak_pressure_mpa": 0.00008415875947772712,
+      "peak_time_s": -0.0013459434731846606,
+      "total_impulse_ns": -0.00003122859713537542,
+      "performance_burn_time_s": -0.00007366226160737358,
+      "first_burnout_time_s": -0.0007126570074349773,
+      "minimum_pressure_pa": 0.012943243399231346,
+      "max_fill_mach": 0.0,
+      "integrated_abs_clipping_energy_j": 0.24411132774070912,
+      "clipping_active_fraction": -0.1376414650310667,
+      "mass_balance_error_fraction": -0.002973485898506871
+    }
+  },
+  "screening": {
+    "provisional_2_percent_screen": true,
+    "largest_absolute_recorded_change_percent": 0.24411132774070912,
+    "largest_change_metric": "integrated_abs_clipping_energy_j",
+    "qualification": "A sensitivity screen for simultaneous burn/geometry cadence refinement on one 106-cell grid; not a tolerance on prediction error or evidence of solution convergence."
+  },
+  "claims": {
+    "requested_duration_complete": true,
+    "same_grid_combined_cadence_sensitivity_bounded_for_recorded_metrics": true,
+    "burn_cadence_effect_isolated": false,
+    "geometry_cadence_effect_isolated": false,
+    "formal_temporal_or_spatial_convergence_established": false,
+    "experimental_validation": false,
+    "prediction_improvement_established": false
+  },
+  "limitations": [
+    "Burn-rate and geometry update intervals were refined together, so their individual effects and interaction are not identified.",
+    "Three cadence points at one spatial grid and one CFL do not establish an asymptotic convergence order.",
+    "One-grid cadence insensitivity does not resolve the 106-to-206 changes in minimum pressure, early Mach, and clipping found in the matched spatial study.",
+    "Chunc absolute timing and pressure remain ineligible under protocol v0.1.",
+    "The 2% screen is numerical bookkeeping only, not an experimental accuracy or acceptance criterion."
+  ]
+}
