@@ -21,8 +21,10 @@ from srm_1d.openmotor_adapter import run_from_ric
 from srm_1d.plotting import plot_pressure, plot_flow_snapshot, plot_summary
 from srm_1d.run_artifacts import artifact_dir
 
+# Legacy plotting overlay only: its (0, 0) point is not in the primary
+# Chunc CSV/workbook and has no independently documented event-time meaning.
 CHUNC_EXPERIMENTAL = {
-    'label': 'Experimental (Hasegawa)',
+    'label': 'Experimental (Chunc / machbusterNew)',
     'time': np.array([
         0.0, 0.01, 0.044, 0.085, 0.126, 0.167, 0.207, 0.248, 0.289, 0.33,
         0.37, 0.411, 0.452, 0.493, 0.533, 0.574, 0.615, 0.655, 0.696,

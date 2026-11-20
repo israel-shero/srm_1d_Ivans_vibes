@@ -37,11 +37,11 @@ shifts the experimental ignition to sim `t=0`. These are coarse (30–60 pt);
 
 ---
 
-## Inventory (last broad review 2026-06-19; Zerox workbook reviewed 2026-11-19)
+## Inventory (last broad review 2026-06-19; Chunc and Zerox reviewed 2026-11-20)
 
 | Motor | L/D | File / dict | Points | State | Notes |
 |---|---|---|---|---|---|
-| **Chunc / machbusterNew** | high | **`thomas_chunc_firing.csv`** (+ `.xlsx` source) | **346** | ✅ clean | t=[0.010, 2.353] s; plateau ≈ **8.77 MPa**; P_peak 8.894 @ 0.397 s → **spike ratio 1.015 = essentially NO ignition spike.** The high-res trace behind the G-reconstruction (REOPENED §9.1). **The key spike-diagnostic asset.** Supersedes the 59-pt `CHUNC_EXPERIMENTAL` dict. |
+| **Chunc / machbusterNew** | high | **`thomas_chunc_firing.csv`** (+ `.xlsx` source) | **346** | ⚠️ event-time, calibration, and window review pending | t=[0.010, 2.353] s; first sample is already 8.466 MPa. Peak 8.894 MPa @ 0.397 s; the previously reported ~8.77 MPa plateau has no registered window, so the 1.015 ratio is descriptive—not evidence of “no ignition spike.” The two-column workbook has no trigger or baseline metadata. |
 | **Zerox** | mid | `zerox_data.csv` + [`zerox_high_resolution.csv`](zerox_high_resolution.csv) + `Zerox Data.xlsx` source | 58 coarse / 630 native event samples | ⚠️ pressure calibration review pending | The workbook's `FL88` sheet has a `Py1 Fire` trigger and a denser pressure trace. The first observed trigger-high is at flight time 0.009 s; the preceding low is at -0.061 s. The old 58-point CSV is a workbook-selected downsample: using the workbook's own baseline formula, it reports a 3.9938 MPa peak 81 ms later and 5.7% lower than the first high-resolution peak. The extracted CSV preserves source `pTap 1(psi)` values without smoothing or resampling; the processed time-zero average is excluded. Calibration and the full tail remain under review. |
 | **Hasegawa A** | ~42 (high) | `HASEGAWA_MOTOR_A_EXPERIMENTAL` (plotting.py) | 36 | ✅ clean (digitized) | Ma 2020 Fig. 10. Its peak is the *late progressive* peak, not an ignition spike. |
 | **Pathfinder 54** | — | `pathfin54.csv` | 409 | ✅ clean | Has force (N) + pressure (Pa). |
@@ -49,9 +49,32 @@ shifts the experimental ignition to sim `t=0`. These are coarse (30–60 pt);
 | **54-2800 ST2.0** | — | *(CSV missing)* | — | ❌ absent | `examples/run_pathfin54st2_0.py` + `motors/2025.12.25 54-2800 ST2.0.ric` exist; the CSV does not. |
 | **short / low-L/D** | low | *(none)* | — | ❌ absent | Held for now (no clean data). **Still the key coverage gap** — a fix must be shown not to break the near-zero-spike low-L/D case. |
 
-**L/D coverage:** candidate high-L/D evidence includes Chunc's hi-res trace and
-Hasegawa A's digitized trace; BALLSStick remains raw and qualitative-only.
+**L/D coverage:** high-L/D candidate datasets include Chunc's hi-res trace and
+Hasegawa A's digitized trace, but Chunc's event time and pressure calibration
+remain unqualified; BALLSStick remains raw and qualitative-only.
 **Low-L/D remains uncovered.**
+
+### Chunc source review (2026-11-20)
+
+The source workbook has one visible 347-by-2 worksheet with only `time` and
+`pressure (MPA)` columns; it contains no trigger, calibration, or baseline
+metadata, formulas, comments, or named ranges. Its 346 numeric pairs match the
+CSV to 9 decimal places (maximum absolute pressure difference:
+5.0e-10 MPa). Both sources start at 0.010 s and 8.466 MPa, so there is no
+pre-event baseline or evidence that the first timestamp is ignition time.
+
+The trace's recorded maximum is 8.893862608 MPa at 0.397 s. The earlier
+approximately 8.77 MPa plateau estimate has no registered source-only window;
+the derived 1.015 peak/plateau ratio is descriptive only and does not establish
+that the motor had no ignition spike. Keep timing, pressure amplitude, and
+startup/plateau/tail-off metrics blocked until independent timing and pressure
+calibration/baseline evidence is available and windows are registered.
+
+The legacy 59-point `CHUNC_EXPERIMENTAL` arrays add a `(0.0 s, 0.0 MPa)` pair
+that is absent from the source files and has no documented trigger/baseline
+meaning. The older LHS setup also uses a fixed zero offset and a 0–0.20 s
+peak-alignment window. Keep both as historical overlay/calibration settings;
+neither supplies independent event-time evidence or validation scores.
 
 ### Zerox source review (2026-11-19)
 

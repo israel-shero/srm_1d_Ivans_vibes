@@ -8,8 +8,14 @@
 
 **Status** (2026-05-30, historical): research complete; since then Phase F/Z
 shipped opt-in, the spike was closed-out then **re-opened** — see the brief.
-**Goal**: eliminate the ~2× ignition pressure-spike over-prediction on
-high-L:D motors (Chunc/machbusterNew is the clean diagnostic) without
+**Evidence status update (2026-11-20):** the Chunc workbook/CSV contain only
+time and pressure, start at 0.010 s / 8.466 MPa, and have no independent event
+time or calibration/baseline metadata. Its historical “zero spike” reading is
+not eligible as a validation conclusion under protocol v0.1; see the current
+case registry in `docs/v0_8_0/data/validation_case_registry.json`.
+**Goal**: assess the historical ~2× ignition pressure-spike over-prediction on
+high-L:D motors (Chunc/machbusterNew is the primary candidate, pending source
+qualification) without
 numerical tuning — using physically-grounded, literature-backed
 mechanisms.
 
@@ -23,12 +29,13 @@ plan is [`TASKS.md`](TASKS.md). Primary PDFs live in
 ## 1. The problem, localized
 
 Chunc (`machbusterNew.ric`) — high L:D fore-tapering conical, low-erosivity
-high-performance propellant, MTV-pellet fore-end ignition. As fired:
-**zero ignition spike**, gradual erosive lift to a flat ~8.8 MPa plateau,
-long taildown. Simulated: **16.85 MPa spike (~2×)** at ignition, but the
-plateau and taildown already match well. **The entire error is a
-~few-ms ignition transient.** (See `project_chunc_erosive_spike_diagnostic`
-memory + `docs/v0_7_3/` history.)
+high-performance propellant, MTV-pellet fore-end ignition. The historical
+interpretation treated the trace as a zero-spike rise to a flat ~8.8 MPa
+plateau, while simulations showed an early peak. The current evidence audit
+finds no independent event-time marker, baseline, or pressure calibration in
+the source workbook; the startup-spike classification and measured comparison
+therefore remain unresolved under protocol v0.1. Preserve the earlier model
+results as repository-reported analysis, not a validated error estimate.
 
 ### The pipeline, and where the spike is born
 

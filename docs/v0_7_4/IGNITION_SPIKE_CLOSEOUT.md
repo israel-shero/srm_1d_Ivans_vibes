@@ -10,24 +10,34 @@
 > partly an artifact of a now-fixed bug — the Phase F front was silently bypassed
 > for `forward_plenum` by a marching DeMar-flux target.
 
-**Verdict: the residual Chunc ignition over-prediction is the genuine,
-faithful Ma-2020 quasi-steady erosive response to the real transient
-mass-flux during fast ignition of a high-L/D motor — a regime Ma's paper
-explicitly excluded from every error figure and never benchmarked. Under
-the project's no-tuning constraint, there is no literature-supported
-mechanism (Ma / King / Beddini) that removes it. The simulator is NOT
-deviating from Ma; it reproduces Ma's own validation motors faithfully.**
+> **Evidence status update (2026-11-20):** The Chunc source workbook and CSV
+> contain only time and pressure, start at 0.010 s / 8.466 MPa, and provide no
+> independent event marker, pre-event baseline, or pressure-calibration
+> metadata. Under protocol v0.1, the historical “no spike” classification and
+> model-to-experiment spike difference below are not registered validation
+> conclusions. See
+> [`validation_case_registry.json`](../v0_8_0/data/validation_case_registry.json).
+
+**Historical verdict (pre-protocol v0.1):** the residual Chunc ignition
+over-prediction was interpreted as the genuine, faithful Ma-2020 quasi-steady
+erosive response to the real transient mass-flux during fast ignition of a
+high-L/D motor — a regime Ma's paper explicitly excluded from every error
+figure and never benchmarked. Under the project's no-tuning constraint, the
+analysis found no literature-supported mechanism (Ma / King / Beddini) that
+removed it. The simulator's agreement with Ma's own validation motors remains
+repository-reported analysis, not a qualification of the Chunc measurement.
 
 This document is the durable record of the differential diagnosis that
 reached that verdict, so the question is not re-opened from scratch.
 
 ## The question
 
-Chunc (`machbusterNew`, high-L/D) over-predicts the ignition pressure
-spike: experimentally it rises with no spike to a flat ~8.8 MPa plateau;
-the sim produces a transient peak (2–3× the plateau depending on igniter
-charge). Plateau and taildown already match. The entire error is the
-~tens-of-ms ignition transient.
+The historical comparison for Chunc (`machbusterNew`, high-L/D) described the
+trace as rising with no spike to a flat ~8.8 MPa plateau while the simulation
+produced a transient peak. The source now reviewed has no independent event
+time, pre-event baseline, or pressure calibration and begins at 8.466 MPa at
+0.010 s. Whether this trace resolves the startup event—and therefore the
+reported peak/plateau error—remains open.
 
 ## What was FIXED and kept (committed, 69a6c06)
 

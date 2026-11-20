@@ -251,8 +251,10 @@ ZEROX_EXPERIMENTAL = {
 }
 
 
-# Chunc / machbusterNew static-fire pressure trace (8.8 MPa plateau,
-# ~1 s burn). 59-point digitized. Originally mis-labeled as "Hasegawa"
+# Legacy Chunc / machbusterNew plotting overlay (59-point digitized). Its
+# (time=0, pressure=0) point is absent from the 346-point source, and its
+# time-zero/baseline are undocumented; do not use it as protocol v0.1 data.
+# Originally mis-labeled as "Hasegawa"
 # in srm_1d/examples/ISP_Super_Loki.py via a copy-paste, then
 # mis-promoted to ISP_SUPER_LOKI_EXPERIMENTAL in v0.7.3 Phase A.3
 # (2026-05-24). User flagged the provenance error 2026-05-25: this is

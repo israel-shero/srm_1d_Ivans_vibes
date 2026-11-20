@@ -27,7 +27,7 @@
     {
       "id": "chunc_machbuster_new",
       "motor": "Chunc / machbusterNew",
-      "data_status": "clean_csv",
+      "data_status": "two_column_trace_source_metadata_incomplete",
       "source": {
         "path": "static_fire_data/thomas_chunc_firing.csv",
         "sha256": "1e0840de48623542d4d79b9079eef0cc76f9ca8ad475d5f14657e8ac5afa7e08",
@@ -36,20 +36,83 @@
         "pressure_column": 1,
         "pressure_unit": "MPa"
       },
+      "source_workbook": {
+        "path": "static_fire_data/thomas_chunc_firing.xlsx",
+        "sha256": "d406481a9769df735e56c257afa4d14882f6e15cdb0c4d5765a6f03c9edc9a7b",
+        "worksheet": "Sheet1",
+        "dimensions": [
+          347,
+          2
+        ],
+        "columns": [
+          "time",
+          "pressure (MPA)"
+        ],
+        "formula_count": 0,
+        "csv_numeric_match": "All 346 time and pressure pairs match the CSV to 9 decimal places; maximum absolute pressure difference is 5.0e-10 MPa."
+      },
+      "source_only_observations": {
+        "first_sample": {
+          "time_s": 0.01,
+          "pressure_mpa": 8.466000756
+        },
+        "maximum": {
+          "time_s": 0.397,
+          "pressure_mpa": 8.893862608
+        },
+        "last_sample": {
+          "time_s": 2.353,
+          "pressure_mpa": 0.031874874
+        },
+        "previously_reported_plateau_mpa": 8.77,
+        "qualification": "The peak and samples are trace facts. The approximately 8.77 MPa plateau has no registered source-only window; the derived 1.015 peak/plateau ratio is descriptive only and does not establish absence of an ignition spike."
+      },
+      "legacy_plotting_overlay": {
+        "symbols": [
+          "srm_1d.plotting.CHUNC_EXPERIMENTAL",
+          "examples/machbusterNew.py:CHUNC_EXPERIMENTAL"
+        ],
+        "sample_count": 59,
+        "first_pair": [
+          0.0,
+          0.0
+        ],
+        "primary_source_first_pair": [
+          0.01,
+          8.466000756
+        ],
+        "qualification": "The extra zero-time/zero-pressure point has no documented relationship to the source measurement, trigger, or baseline. Keep these arrays for legacy plot overlays only, not protocol v0.1 scoring.",
+        "legacy_lhs_alignment": {
+          "time_offset_s": 0.0,
+          "peak_align_window_s": [
+            0.0,
+            0.2
+          ],
+          "example": "examples/cross_motor_lhs_v075.py",
+          "qualification": "Historical calibration/overlay settings, not independent event-time evidence or validation rules."
+        }
+      },
       "coverage": {
         "ld_class": "high",
         "port_geometry": "fore-tapering conical",
         "measurements": ["pressure"]
       },
       "known_limits": [
-        "The trace starts at 0.010 s; ignition-zero alignment must be explicitly defined.",
+        "The CSV and its two-column workbook contain no trigger/event marker, declared time-zero meaning, pre-event baseline, pressure calibration, or auxiliary metadata.",
+        "The first sample is already at 8.466 MPa; the trace cannot establish startup behavior before 0.010 s.",
+        "The previously reported ~8.77 MPa plateau has no registered source-only window, so the 1.015 peak/plateau ratio is not a validated no-spike result.",
         "High-L/D only; does not establish transfer to low-L/D motors."
       ],
       "candidate_uses": ["startup-shape comparison", "pressure-history comparison"],
       "scoring_eligibility": {
-        "absolute_timing": "blocked_pending_independent_event_zero",
-        "absolute_pressure": "pending_calibration_and_baseline_review",
-        "shape": "candidate_after_case_windows_are_registered",
+        "absolute_timing": "blocked_no_independent_event_time_in_source",
+        "absolute_pressure": "blocked_pending_pressure_calibration_and_baseline_provenance",
+        "shape": "exploratory_only_until_independent_event_anchor_and_source_only_window",
+        "case_windows": {
+          "startup": "not_registered_no_independent_event_zero",
+          "plateau": "not_registered_previous_8.77_mpa_estimate_has_no_window",
+          "tail_off": "not_registered_pressure_baseline_and_tail_endpoint_unverified"
+        },
         "role": "unassigned"
       }
     },

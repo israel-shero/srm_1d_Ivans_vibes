@@ -57,7 +57,7 @@ as hypotheses to test after case qualification, not as established signatures.
 
 ## 2. Historical solver diagnosis (empirical inference still pending)
 
-Chunc (`motors/machbusterNew.ric`) was used as the clean diagnostic. Its trace
+Chunc (`motors/machbusterNew.ric`) was used as a diagnostic case. Its trace
 has a small peak-to-plateau ratio within the recorded samples, but starts at
 0.010 s and lacks an independently registered ignition zero; pressure
 calibration and startup-window review also remain pending. It therefore does
@@ -192,10 +192,11 @@ From REOPENED §8 (deliberately left open) + this session's whole-core framing:
   [`../../static_fire_data/README.md`](../../static_fire_data/README.md)**
   (the files do NOT share a column layout — `zerox_data.csv` has **reversed**
   columns; read the recipes or you will silently swap time/pressure).
-  - ✅ **The hi-res Chunc trace is now committed**:
-    `static_fire_data/thomas_chunc_firing.csv` — **346 pts**, plateau ≈ 8.77 MPa,
-    **spike ratio 1.015 → the real motor has essentially NO ignition spike.**
-    This is the trace behind the §9.1 G-reconstruction and the primary target.
+  - ⚠️ **Chunc**: `static_fire_data/thomas_chunc_firing.csv` has 346 points,
+    but both it and its two-column workbook start at 0.010 s / 8.466 MPa and
+    contain no event marker, baseline, or pressure-calibration metadata. The
+    1.015 peak/previously reported plateau ratio is descriptive only; do not
+    call it a verified no-spike result. See the current case registry.
   - ⚠️ **BALLSStick**: no 3″ firing exists. The 2″ subscale raw DAQ is in
     `static_fire_data/raw/` but is **NOT usable as-is**: the record holds only
     ~0.21 s of pre-ignition data and **PSI is already ramping monotonically from
@@ -223,5 +224,7 @@ physical bounds.
 > range, keeping Ma as much as reasonably possible, treating the whole solver
 > core (ignition, sonic/shock, PISO energy balance, Goodman) as suspect and
 > possibly coupled, and treating prior rule-outs as information rather than
-> fences. Start by reproducing the Chunc spike and confirming the §2 baseline,
-> then pick a thread from §4.
+> fences. Start by reviewing current data eligibility; do not treat Chunc's
+> historical 1.015 ratio as a no-spike validation result until event time,
+> baseline/calibration, and windows are established. Then reproduce the solver
+> result and pick a thread from §4.
