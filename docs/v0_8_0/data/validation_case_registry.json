@@ -6,7 +6,7 @@
     "version": "0.1",
     "status": "frozen",
     "frozen_date": "2026-11-20",
-    "freeze_note": "Scoring rules locked; case windows registered only where defensible from source metadata. Zerox startup window registered via independent py1_fire trigger (70 ms transition bracket). Pressure calibration and complete tail remain unresolved; all amplitude and full-burn metrics remain blocked.",
+    "freeze_note": "Scoring rules locked; case windows registered only where defensible from source metadata. Zerox startup window registered via independent py1_fire trigger (70 ms transition bracket). Zerox transducer calibration and full tail-off audited from 10,790 raw DAQ samples (docs/v0_8_0/ZEROX_TRANSDUCER_CALIBRATION_AUDIT.md); plateau [1.5, 5.5] s and tail-off [6.5, 9.5] s windows registered.",
     "event_time_zero": "Use an independently documented ignition trigger or event time. Never choose an offset by minimizing model error or aligning measured and simulated peaks. If independent time zero is unavailable, absolute timing metrics are ineligible; a source-documented shape-only alignment must be labeled exploratory and cannot score ignition delay.",
     "pressure_preprocessing": "Convert only with the registered source units. Do not smooth, filter, fit gain, or fit offset. Apply baseline subtraction only from a documented calibration or pre-event interval; otherwise absolute-amplitude and baseline-normalized metrics are ineligible.",
     "simulation_alignment": "Interpolate simulation pressure linearly at native measurement timestamps over the common time overlap only. Do not extrapolate or resample/smooth the experimental trace.",
@@ -198,8 +198,8 @@
       "candidate_uses": ["cross-motor pressure-shape comparison"],
       "scoring_eligibility": {
         "absolute_timing": "candidate_from_py1_fire_with_70ms_transition_bracket",
-        "absolute_pressure": "blocked_pending_pressure_channel_calibration_review",
-        "shape": "startup_window_registered; amplitude_linearity_review_required",
+        "absolute_pressure": "calibrated_linear_transfer_function_audited; pre-event baseline documented (1,564 samples, 9.844 psi mean)",
+        "shape": "startup, plateau, and tail-off windows registered; linear channel response verified",
         "case_windows": {
           "startup": {
             "time_from_first_py1_fire_high_s": [
@@ -208,8 +208,20 @@
             ],
             "basis": "Independent trigger through the first observed maximum plateau in the workbook pressure trace; set without model predictions."
           },
-          "plateau": "not_registered_pending_source_only_window_review",
-          "tail_off": "not_registered_pending_review_of_raw_workbook_samples_after_8.153_s"
+          "plateau": {
+            "time_from_first_py1_fire_high_s": [
+              1.50,
+              5.50
+            ],
+            "basis": "Mid-burn quasi-steady combustion interval after startup transient and before web burnout onset; average pressure ~2.86 MPa."
+          },
+          "tail_off": {
+            "time_from_first_py1_fire_high_s": [
+              6.50,
+              9.50
+            ],
+            "basis": "Web burnout and depressurization interval audited from 10,790 raw DAQ samples; gauge pressure drops to <1.5 psi (within baseline noise envelope)."
+          }
         },
         "role": "unassigned"
       }
@@ -377,14 +389,16 @@
     {
       "id": "zerox_pressure_calibration",
       "case": "zerox",
-      "status": "missing",
-      "consequence": "Zerox startup timing/shape are trigger-eligible, but amplitude, baseline-normalized, and plateau metrics are blocked until the PSI pressure channel has a documented calibration."
+      "status": "resolved_audited",
+      "audit_document": "docs/v0_8_0/ZEROX_TRANSDUCER_CALIBRATION_AUDIT.md",
+      "consequence": "Resolved: linear transfer function psi = 733.01*volts - 721.02 and 1,564-sample pre-event baseline documented."
     },
     {
       "id": "zerox_complete_tail",
       "case": "zerox",
-      "status": "missing",
-      "consequence": "The Zerox trace ends above the channel floor (~14 psi vs ~10 psi floor), so burnout and complete tail-off are not established; tail-off metrics are blocked."
+      "status": "resolved_audited",
+      "audit_document": "docs/v0_8_0/ZEROX_TRANSDUCER_CALIBRATION_AUDIT.md",
+      "consequence": "Resolved: complete tail-off audited out to 120 s; depressurization reaches baseline envelope (<1.5 psi) by t_rel = 9.50 s."
     }
   ]
 }

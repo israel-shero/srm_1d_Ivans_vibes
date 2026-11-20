@@ -131,7 +131,7 @@
         "pressure_unit": "psi",
         "delimiter": ",",
         "skip_header": 1,
-        "qualification": "Native trigger-relative source trace. Pressure channel calibration is unresolved; pressure values are unit-converted only and are not absolute calibration.",
+        "qualification": "Native trigger-relative source trace. Transducer transfer function psi = 733.01*volts - 721.02 and pre-event baseline (1,564 samples, 9.844 psi mean) audited in docs/v0_8_0/ZEROX_TRANSDUCER_CALIBRATION_AUDIT.md.",
         "alignment": {
           "method": "not_frozen"
         }
