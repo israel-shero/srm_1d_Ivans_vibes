@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import csv
 import json
 from pathlib import Path
 
@@ -67,6 +68,27 @@ def load_measurement(case_id: str, registry: dict | None = None) -> dict:
             pressure_unit=measurement["pressure_unit"],
             label=case["label"],
         )
+
+    if kind == "native_trigger_csv":
+        path = _file_for_role(case, "measurement_native_csv")
+        trace = plotting.load_experimental_csv(
+            str(path),
+            time_col=measurement["time_column"],
+            pressure_col=measurement["pressure_column"],
+            delimiter=measurement["delimiter"],
+            skip_header=measurement["skip_header"],
+            pressure_unit=measurement["pressure_unit"],
+            label=case["label"],
+        )
+        trigger = []
+        with path.open("r", encoding="utf-8-sig", newline="") as stream:
+            reader = csv.reader(stream)
+            next(reader, None)
+            for row in reader:
+                trigger.append(float(row[measurement["trigger_column"]]))
+        trace["trigger"] = copy.copy(trigger)
+        trace["qualification"] = measurement["qualification"]
+        return trace
 
     if kind == "python_symbol":
         symbol = measurement["symbol"]

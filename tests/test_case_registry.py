@@ -36,11 +36,13 @@ def test_hasegawa_symbol_trace_loads_without_mutating_source():
     assert second["time"][0] == 0.0
 
 
-def test_zerox_reversed_columns_load_correctly():
+def test_zerox_native_trigger_trace_loads_correctly():
     trace = load_measurement("zerox")
-    assert len(trace["time"]) == 58
-    np.testing.assert_allclose(trace["time"][:2], [0.0, 0.155])
-    np.testing.assert_allclose(trace["pressure"][:2], [0.0, 0.0239])
+    assert len(trace["time"]) == len(trace["pressure"]) == len(trace["trigger"]) == 630
+    np.testing.assert_allclose(trace["time"][:2], [0.0, 0.02])
+    np.testing.assert_allclose(trace["pressure"][0], 10.3731 * 0.00689476)
+    assert trace["trigger"][0] == 1.0
+    assert trace["trigger"][-1] == 0.0
 
 
 def test_chunc_csv_loads_in_mpa():

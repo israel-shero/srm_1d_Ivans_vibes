@@ -110,19 +110,28 @@
           "skip_header": 1
         },
         {
+          "role": "measurement_native_csv",
+          "path": "static_fire_data/zerox_high_resolution.csv",
+          "sha256": "d49e6e28a5c8b9664e267be7fc232e7c73f5f9edbc17bba9f794fac91764e8a2",
+          "data_rows": 630,
+          "skip_header": 1
+        },
+        {
           "role": "measurement_workbook",
           "path": "static_fire_data/Zerox Data.xlsx",
           "sha256": "0c2b3810a81dc76f6bac60a8156fab7c537ed772d98cc1b629b22a1204ad9662"
         }
       ],
       "measurement": {
-        "kind": "csv",
-        "time_column": 1,
-        "pressure_column": 0,
+        "kind": "native_trigger_csv",
+        "time_column": 0,
+        "pressure_column": 2,
+        "trigger_column": 3,
         "time_unit": "s",
-        "pressure_unit": "MPa",
+        "pressure_unit": "psi",
         "delimiter": ",",
         "skip_header": 1,
+        "qualification": "Native trigger-relative source trace. Pressure channel calibration is unresolved; pressure values are unit-converted only and are not absolute calibration.",
         "alignment": {
           "method": "not_frozen"
         }
