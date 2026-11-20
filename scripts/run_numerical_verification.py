@@ -20,6 +20,7 @@ if str(SCRIPT_ROOT) not in sys.path:
     sys.path.insert(0, str(SCRIPT_ROOT))
 
 from cases.loader import PROJECT_ROOT
+from scripts.verification_identity import _source_fingerprints, _runtime_versions
 from srm_1d.openmotor_adapter import run_from_ric
 from srm_1d.run_artifacts import artifact_dir, verify_run_health
 from srm_1d.tools.ignition_diagnostics import sensible_enthalpy_audit
@@ -172,6 +173,7 @@ def _extract_metrics(result: dict, performance: dict | None = None) -> dict:
     storage_jump = energy_audit["between_step_storage_jump"]
     metrics = {
         "actual_cells": int(summary["cells"]),
+        "recorded_end_time_s": float(time[-1]),
         "steps": int(summary["steps"]),
         "termination": summary["termination"],
         "peak_pressure_mpa": float(pressure[peak_index] / 1e6),
@@ -339,6 +341,31 @@ def _adjacent_changes(rows: list[dict], key: str) -> list[dict]:
     return changes
 
 
+def _require_requested_duration(result: dict) -> None:
+    """A full-duration verification point must not silently truncate."""
+    termination = result["summary"]["termination"]
+    if termination != "t_max reached":
+        raise RuntimeError(
+            "verification point did not reach configured t_max: " + termination
+        )
+
+
+def _geometry_fingerprints(geo) -> dict:
+    """Checksum the generated geometry, including FMM tables, used by a run."""
+    arrays = geo.compile_geometry_arrays()
+    result = {}
+    for name, value in arrays.items():
+        if isinstance(value, np.ndarray):
+            array = np.ascontiguousarray(value)
+            result[name] = {
+                "shape": list(array.shape), "dtype": array.dtype.str,
+                "sha256": hashlib.sha256(array.tobytes()).hexdigest(),
+            }
+        elif isinstance(value, (int, float)):
+            result[name] = value
+    return result
+
+
 def run_single_point(
     profile: str,
     cells: int,
@@ -349,6 +376,7 @@ def run_single_point(
     burn_update_interval: int | None = None,
     geometry_update_interval: int | None = None,
     history_memmap: bool = False,
+    erosive_closure: str = "ma",
 ) -> Path:
     if profile not in {"startup", "full"}:
         raise ValueError(f"Unknown verification profile: {profile!r}")
@@ -368,6 +396,7 @@ def run_single_point(
     options.update({
         "target_propellant_cells": cells,
         "cfl_target": cfl,
+        "erosive_closure": erosive_closure,
     })
     if history_capacity is not None:
         options["history_capacity"] = history_capacity
@@ -387,13 +416,17 @@ def run_single_point(
         history_memmap_path = (output / "scalar_history.bin").resolve()
         options["history_memmap_path"] = str(history_memmap_path)
     point_path = output / "point.json"
+    source_sha256 = _source_fingerprints()
     payload = {
-        "schema_version": 1,
+        "schema_version": 2,
         "status": "running",
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "study": f"chunc_{profile}_single_point",
         "configuration": options,
         "provenance": {
+            "source_sha256": source_sha256,
+            "runtime_versions": _runtime_versions(),
+            "command": sys.argv,
             "python": sys.version,
             "platform": platform.platform(),
             "git_commit": _git_value("rev-parse", "HEAD"),
@@ -409,9 +442,14 @@ def run_single_point(
     }
     _write_json(point_path, payload)
     try:
-        result, performance, *_ = run_from_ric(
+        result, performance, _, geo, _ = run_from_ric(
             str(motor_path), verbose=False, **options,
         )
+        payload["metrics"] = _extract_metrics(result, performance)
+        payload["generated_geometry"] = _geometry_fingerprints(geo)
+        if _source_fingerprints() != source_sha256:
+            raise RuntimeError("verification source changed during the run")
+        _require_requested_duration(result)
         verify_run_health(
             result,
             motor_name=f"chunc-{profile} cells={cells} cfl={cfl}",
@@ -420,7 +458,6 @@ def run_single_point(
         )
         payload["status"] = "complete"
         payload["completed_utc"] = datetime.now(timezone.utc).isoformat()
-        payload["metrics"] = _extract_metrics(result, performance)
         limit_path = output / "numerical_limits_by_cell.csv"
         _write_limit_csv(limit_path, result)
         mach_limit_path = output / "mach_limit_by_face.csv"
@@ -628,6 +665,7 @@ def main() -> int:
     parser.add_argument("--output-root", type=Path)
     parser.add_argument("--single-cells", type=int)
     parser.add_argument("--single-cfl", type=float)
+    parser.add_argument("--single-erosive-closure", choices=["ma", "mukunda_paul"])
     parser.add_argument("--history-capacity", type=int)
     parser.add_argument("--single-port-mach-cap", type=float)
     parser.add_argument("--single-burn-update-interval", type=int)
@@ -651,13 +689,15 @@ def main() -> int:
             args.single_burn_update_interval,
             args.single_geometry_update_interval,
             args.history_memmap,
+            args.single_erosive_closure or "ma",
         )
     else:
         if (args.history_capacity is not None
                 or args.single_port_mach_cap is not None
                 or args.single_burn_update_interval is not None
                 or args.single_geometry_update_interval is not None
-                or args.history_memmap):
+                or args.history_memmap
+                or args.single_erosive_closure is not None):
             parser.error(
                 "single-point overrides require --single-cells and --single-cfl"
             )

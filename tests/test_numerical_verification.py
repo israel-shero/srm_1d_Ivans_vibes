@@ -239,3 +239,77 @@ def test_adjacent_changes_use_finer_value_as_denominator():
 def test_full_profile_avoids_known_history_capacity_limit():
     assert STARTUP_CFL_LEVELS[-1] == pytest.approx(0.075)
     assert FULL_CFL_LEVELS == (0.3, 0.2, 0.1)
+
+
+@pytest.mark.parametrize('termination', [
+    'history array full', 'numerical collapse aborted', 'canceled by user',
+    'pressure cutoff', 'complete burnout',
+])
+def test_full_duration_point_rejects_premature_termination(termination):
+    from scripts.run_numerical_verification import _require_requested_duration
+
+    with pytest.raises(RuntimeError, match='did not reach configured t_max'):
+        _require_requested_duration({'summary': {'termination': termination}})
+
+
+def test_full_duration_point_accepts_requested_stop():
+    from scripts.run_numerical_verification import _require_requested_duration
+
+    _require_requested_duration({'summary': {'termination': 't_max reached'}})
+
+
+def test_generated_geometry_fingerprint_detects_changed_fmm_table():
+    from types import SimpleNamespace
+    from scripts.run_numerical_verification import _geometry_fingerprints
+
+    tables = {'N': 2, 'fmm_port_flat': np.array([0.01, 0.02])}
+    geometry = SimpleNamespace(compile_geometry_arrays=lambda: tables)
+    before = _geometry_fingerprints(geometry)
+    tables['fmm_port_flat'][0] = 0.015
+    after = _geometry_fingerprints(geometry)
+
+    assert before['N'] == after['N'] == 2
+    assert before['fmm_port_flat']['sha256'] != after['fmm_port_flat']['sha256']
+
+
+@pytest.mark.parametrize('termination, expected_status', [
+    ('t_max reached', 'complete'), ('history array full', 'failed'),
+])
+def test_single_point_records_selected_closure_and_rejects_truncation(
+    tmp_path, monkeypatch, termination, expected_status,
+):
+    import json
+    from types import SimpleNamespace
+    import scripts.run_numerical_verification as runner
+
+    result = _localized_result()
+    result['summary']['termination'] = termination
+    seen_options = {}
+
+    def fake_run(path, **options):
+        seen_options.update(options)
+        return result, {}, None, SimpleNamespace(
+            compile_geometry_arrays=lambda: {'N': 2},
+        ), None
+
+    monkeypatch.setattr(runner, 'artifact_dir', lambda *a, **kw: tmp_path)
+    monkeypatch.setattr(runner, '_source_fingerprints', lambda: {'solver': 'abc'})
+    monkeypatch.setattr(runner, '_runtime_versions', lambda: {'python': 'test'})
+    monkeypatch.setattr(runner, 'run_from_ric', fake_run)
+    monkeypatch.setattr(runner, 'verify_run_health', lambda *a, **kw: True)
+    call = lambda: runner.run_single_point(
+        'full', 100, 0.075, erosive_closure='mukunda_paul',
+    )
+    if expected_status == 'failed':
+        with pytest.raises(RuntimeError, match='history array full'):
+            call()
+    else:
+        call()
+
+    payload = json.loads((tmp_path / 'point.json').read_text())
+    assert seen_options['erosive_closure'] == 'mukunda_paul'
+    assert payload['configuration']['cfl_target'] == 0.075
+    assert payload['status'] == expected_status
+    assert payload['metrics']['termination'] == termination
+    assert payload['metrics']['recorded_end_time_s'] == 0.002
+    assert payload['provenance']['source_sha256'] == {'solver': 'abc'}
