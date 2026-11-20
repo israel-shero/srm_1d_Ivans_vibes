@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "status": "bounded_primary_source_evidence_not_validation",
+  "purpose": "Record source statements and code mappings relevant to the Mukunda-Paul and Ma erosive burn-rate closures. This is not a complete T02 record and does not establish model validation or applicability to any coupled run.",
+  "sources": [
+    {
+      "id": "mukunda_paul_1997",
+      "citation": "H. S. Mukunda and P. J. Paul, 'Universal Behaviour in Erosive Burning of Solid Propellants,' Combustion and Flame 109 (1997), 224-236. Local source: docs/references/mukunda1997.pdf.",
+      "anchors": [
+        {
+          "location": "printed p. 224, abstract and nomenclature",
+          "content": "The authors define the normalized enhancement as actual/nonerosive burn rate and describe g0 as free-stream mass flux divided by nonerosive surface mass flux; Re0 is based on nonerosive mass flux and port diameter. The abstract reports m=-0.125 and says most compiled data correlate within experimental accuracy."
+        },
+        {
+          "location": "printed p. 226, Eqs. (9)-(11) and accompanying text",
+          "content": "The source defines g = g0 (Re0/1000)^m, with m selected as -0.125. Re0 is based on nonerosive mass burn rate and port diameter. Eq. (10) gives an enhancement of the form eta = 1 + K1 (g^0.8 - g_th^0.8) H(g-g_th); the text states K1 and g_th are determined from data and K2 is only a scaling choice."
+        },
+        {
+          "location": "printed p. 234, Eq. (12) and concluding remarks",
+          "content": "The recommended fitted universal expression is eta = 1 + 0.023 (g^0.8 - g_th^0.8) H(g-g_th), where g = g0 (Re0/1000)^(-0.125), g_th = 35.0. The authors describe the fit as within approximately +/-10% of the data for most practical propellants, while explicitly noting unresolved negative-erosion behavior."
+        },
+        {
+          "location": "printed pp. 233-234, data summary and Eq. (12) discussion",
+          "content": "The paper reports 390 discrete points in the assembled data plot, with roughly 60 additional points imputed for two data sets whose counts were unclear; 373 points fall within the stated +/-15% band and 77 outside. These are the paper's reported compilation/fit statistics, not an independent validation of this code."
+        }
+      ],
+      "formula": {
+        "eta": "1 + 0.023 * (g^0.8 - 35.0^0.8) * H(g - 35.0)",
+        "g": "g0 * (Re0 / 1000)^(-0.125)",
+        "g0": "G / (rho_p * r0)",
+        "Re0": "rho_p * r0 * d0 / mu",
+        "definitions_and_units": {
+          "G": "port gas mass flux [kg m^-2 s^-1]",
+          "rho_p": "solid propellant density [kg m^-3]",
+          "r0": "nonerosive burn rate [m s^-1]",
+          "d0": "port characteristic diameter [m] (hydraulic diameter for most sources in the paper)",
+          "mu": "gas dynamic viscosity [Pa s]",
+          "g0_Re0_eta": "dimensionless"
+        }
+      },
+      "code_mapping": {
+        "path": "srm_1d/burn_rate.py",
+        "anchors": [
+          "mukunda_paul_enhancement: lines 345-376",
+          "burn_rate_cell MP branch: lines 483-493"
+        ],
+        "mapping": "The implementation computes g0, Re0, g, threshold 35, exponent 0.8 and coefficient 0.023 as in Eq. (12), then returns total rate r0*eta. The caller reconstructs G as Re_local*dynamic_viscosity/D_hyd and supplies D_hyd as d0. This is an algebraic mapping of the code inputs, not evidence that the coupled solver's local values satisfy the source's experimental assumptions."
+      },
+      "evidence_class": "published correlation and authors' reported compiled-data fit; no local-run validation",
+      "local_path": "docs/references/mukunda1997.pdf",
+      "sha256": "f5ff1e5e2901907e1f521b105c2d6ad6e98f3cce6fe3db5b9fee84ae3c8a54fa",
+      "doi": "10.1016/S0010-2180(96)00150-2"
+    },
+    {
+      "id": "ma_etal_2020",
+      "citation": "Y. Ma, F. Bao, L. Sun, Y. Liu, and W. Hui, 'A New Erosive Burning Model of Solid Propellant Based on Heat Transfer Equilibrium at Propellant Surface,' International Journal of Aerospace Engineering (2020), Article 8889333, doi:10.1155/2020/8889333. Local source: docs/references/International Journal of Aerospace Engineering - 2020 - Ma - A New Erosive Burning Model of Solid Propellant Based on Heat.pdf.",
+      "anchors": [
+        {
+          "location": "printed p. 2, Sec. 2, Eqs. (2)-(7)",
+          "content": "The paper writes r=r0+re, r0=a P^n, assumes re=k Q, balances Q=re rho_p Cps (Ts-Ti), obtains k=1/[rho_p Cps (Ts-Ti)], and then gives r=a P^n + [(T_infinity-Ts)/(rho_p Cps (Ts-Ti))] h. It identifies Q=h(T_infinity-Ts). The paper says reaction heat release at the surface is ignored in this balance."
+        },
+        {
+          "location": "printed pp. 2-4, Sec. 2.1-2.3, Eqs. (8)-(16)",
+          "content": "The source specifies laminar, turbulent, and transitional Nusselt treatments (Eqs. 8-10), Nu=h0 D/lambda (Eq. 11), roughness-dependent Darcy friction (including Haaland Eq. 15), and transpiration correction h/h0=beta_th/[exp(beta_th)-1] (Eq. 16), with beta_th=rho_p r Cp/h0 after assuming rho v_g=rho_p r."
+        },
+        {
+          "location": "printed pp. 3 and 5-8, Table 1 and Sec. 3",
+          "content": "The article tabulates example composite formulations and properties (Table 1, p. 3), compares calculations against selected published propellant and motor cases, and describes using CEA for some gas transport properties. The abstract reports about 10% agreement for the comparisons presented. This is coverage of those source cases only; it does not document the input provenance or validity of the local coupled motor cases considered here."
+        }
+      ],
+      "formula_and_units": {
+        "normal_rate": "r0 = a * P^n [m s^-1]",
+        "total_rate": "r = r0 + ((T_infinity - Ts) / (rho_p * Cps * (Ts - Ti))) * h",
+        "heat_transfer": "h = h0 * beta/(exp(beta)-1); beta = rho_p * r * Cp_gas / h0",
+        "h0": "Nu * lambda / D [W m^-2 K^-1]",
+        "rho_p_Cps_T": "rho_p [kg m^-3], Cps [J kg^-1 K^-1], temperatures [K]",
+        "Nu_Pr_Re_beta": "dimensionless; lambda [W m^-1 K^-1]; D and L [m]"
+      },
+      "code_mapping": {
+        "path": "srm_1d/burn_rate.py",
+        "anchors": [
+          "gnielinski_nusselt: lines 154-250",
+          "transpiration_correction: lines 257-305",
+          "burn_rate_cell: lines 393-568"
+        ],
+        "mapping": "burn_rate_cell obtains r0 from the tabulated Saint-Robert law; computes f, Nu, and h0; forms ebf=(T_flame-T_surface)/(rho_p*Cps*(T_surface-T_initial)); forms alpha=rho_p*Cp_gas/h0 so beta=alpha*r; and solves r-r0-ebf*h0*beta/(exp(beta)-1)=0 by bisection. This matches the algebraic structure of Ma Eqs. 2-7 and 16. The heat-transfer path implements the cited Ma correlation family at Eqs. 8-15, subject to local implementation choices documented in code.",
+        "full_equation_conformance_audit_complete": false,
+        "remaining_checks": [
+          "Detailed transcription and numerical branch checks for Ma Eqs. 8-15, including laminar/transition formulas and property evaluation conventions.",
+          "Validity of substituting the available local gas properties and entrance length in each motor geometry."
+        ]
+      },
+      "evidence_class": "published model equations, correlation prescriptions, and authors' reported comparisons; no local-run validation",
+      "local_path": "docs/references/International Journal of Aerospace Engineering - 2020 - Ma - A New Erosive Burning Model of Solid Propellant Based on Heat.pdf",
+      "sha256": "b7220af4c5d334f0841b2e8d5ece25753591f35b76495888688e4695f17d3841"
+    }
+  ],
+  "unresolved_for_actual_coupled_input_applicability": [
+    "The local PDFs do not establish that the material-specific a, n, rho_p, Cps, Ti, Ts, T_flame, Cp_gas, Pr, conductivity, viscosity, roughness, or pressure ranges supplied to any current coupled run match the source case definitions or have traceable measurements for that propellant.",
+    "For Mukunda-Paul, applicability depends on local G, r0, hydraulic/characteristic diameter, and viscosity; source coverage does not independently verify the solver's reconstructed local G or choice of D_hyd as the source characteristic length for each geometry or transient state.",
+    "For Ma, the heat balance neglects surface reaction heat and the paper's use of constant wall temperature, convection-dominant transfer, property treatment, entrance length, and transpiration assumptions need case-by-case checks against the actual flow and material inputs.",
+    "No coupled-run input snapshot, code-path fingerprint, independent experimental measurement comparison, or uncertainty propagation is included here. Numerical agreement or convergence is not evidence that these source assumptions apply."
+  ],
+  "interpretation_labels": {
+    "source_statement": "A claim, equation, range, or fit reported by the cited publication.",
+    "code_mapping": "An algebraic correspondence between published quantities and implementation variables; it does not prove input validity.",
+    "hypothesis_or_unresolved": "An applicability question requiring coupled-input provenance or independent measurement evidence."
+  },
+  "reviewed_date": "2026-11-20",
+  "code_reference_commit": "6dd9773"
+}
