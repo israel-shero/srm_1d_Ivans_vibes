@@ -40,6 +40,27 @@ def test_pyrogen_block_round_trip():
         assert re[key] == val
 
 
+def test_gas_mass_fraction_default_and_custom_round_trip():
+    # The bundled BPNV material carries its condensed-phase split through the
+    # igniter block used by openMotor.
+    block = default_igniter_block('bpnv')['pyrogen']
+    assert block['gas_mass_fraction'] == pytest.approx(0.781)
+
+    custom = dict(block, gas_mass_fraction=0.63)
+    pyro = _block_to_pyrogen(custom)
+    assert pyro.gas_mass_fraction == pytest.approx(0.63)
+    assert _pyrogen_to_block(pyro)['gas_mass_fraction'] == pytest.approx(0.63)
+
+
+def test_gas_mass_fraction_missing_keeps_legacy_default():
+    # Older motor files and user material dictionaries omitted this field;
+    # preserve the Pyrogen model's established default when decoding them.
+    block = default_igniter_block('bpnv')['pyrogen']
+    block.pop('gas_mass_fraction')
+    pyro = _block_to_pyrogen(block)
+    assert pyro.gas_mass_fraction == pytest.approx(1.0)
+
+
 def test_load_igniter_maps_sentinels_to_auto():
     block = default_igniter_block('bpnv')
     motor = {'igniter': block}
