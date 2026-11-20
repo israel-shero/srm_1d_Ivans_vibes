@@ -123,6 +123,22 @@ Recent commits (efb0c81...7797048):
 | test_srm1d_plugin.py | 9 | Solver config, igniter block, progress/cancel, grain channels |
 | **Total** | **128** | Matches plan claim of ~118 solver/adapter/plugin tests |
 
+## Common-State Closure Comparison (T06) — COMPLETED 2026-11-20
+
+Script: `scripts/run_closure_common_state.py`
+Artifact: `artifacts/verification_chunc_common_state/2026-11-20T16-52-05_fa99b9b-dirty/comparison.json`
+
+### Key Findings (Ma vs Mukunda-Paul on identical saved flow states)
+
+| Regime | Peak η_Ma | Peak η_MP | Max Ma/MP | Mean frac cells Ma>MP (1%) | Peak Re |
+|--------|-----------|-----------|-----------|----------------------------|---------|
+| Startup spike (t < 0.5s) | 2.57 | 1.98 | 1.30 | 90.0% | 846,924 |
+| Plateau (t ≥ 0.5s) | 1.32 | 1.24 | 1.07 | 75.3% | 498,523 |
+
+**Interpretation**: Ma consistently predicts higher erosive augmentation than Mukunda-Paul. The divergence is largest during startup (30% higher η), narrowing to ~7% on plateau. This is a *constitutive* comparison — flow states are fixed from a Ma baseline run, so each closure sees identical P, Re, D_hyd, x. The difference is purely in the closure response.
+
+**Next step per plan §13**: Proceed to coupled driver/closure comparison (fully coupled runs with each closure). Do NOT change physics defaults.
+
 ## Resume Instructions for Next Agent
 
 ```bash
