@@ -1,40 +1,39 @@
 # ballsstick_subscale_raw.csv — provenance & cleaning notes
 
-**Status: RAW.** Absolute pressure is **NOT** trustworthy (see §Pressure
-channel) — **do NOT apply a naive constant offset.**
-**BUT the trace SHAPE / ratio IS usable — see §What IS usable, below. It is a
-load-bearing empirical data point for the ignition-spike investigation.**
+**Status: RAW.** The logged pressure channel is not currently eligible for
+absolute-amplitude or pressure-ratio scoring. Its provenance, calibration,
+linearity, and ignition-time anchor remain unresolved; do **not** apply a
+constant offset or treat the apparent excursion below as a validated result.
 
-## ⭐ What IS usable: the shape / spike ratio (measured 2026-06-19)
+## Preliminary observation only: apparent excursion in the logged PSI column
 
-A **ratio** is largely immune to this file's calibration problem: a pure **gain**
-error cancels exactly, and a constant **offset** barely moves it at firing
-pressures (subtracting 40 psi shifts 1.50 → 1.53, Δ0.02). So even though the
-absolute scale is untrustworthy, the startup **over-pressure ratio** is solid to
-a few percent — and that is exactly the quantity the spike investigation needs.
+A ratio would cancel a pure gain error and may be insensitive to a constant
+offset, but those assumptions require a stable, linear channel. This file does
+not establish that: PSI rises before ignition while the logged voltage is
+nearly flat, and the column's derivation is unknown. The numerical ratios below
+are therefore exploratory calculations from the PSI column, not validated
+measurements or a scoring target.
 
-Ignition-relative (ignition ≈ raw t = 1388.37 s):
+Using the prior exploratory time origin (not independently anchored):
 
 | feature | value |
 |---|---|
-| peak | **1330 psi @ +0.070 s** |
-| post-peak trough | **885 psi @ +0.300 s** |
-| mid-burn plateau | **985 psi @ +1.03 s** |
-| **spike / trough** | **1.50×** |
-| **spike / mid-burn** | **1.35×** |
+| logged PSI peak | **1330 psi @ +0.070 s** |
+| logged PSI post-peak trough | **885 psi @ +0.300 s** |
+| logged PSI mid-burn value | **985 psi @ +1.03 s** |
+| **logged peak / trough** | **1.50×** |
+| **logged peak / mid-burn** | **1.35×** |
 
-**The real 2″ BALLSStick DOES exhibit a startup over-pressure of ~1.35–1.5×** —
-in direct contrast to real **Chunc (1.015× → no spike)**. So *"real high-L/D
-motors don't spike"* is **false**, L/D alone doesn't explain the sim's defect,
-and the success criterion is **per-motor** ratio matching, not spike elimination.
-See `docs/v0_7_4/SPIKE_REOPEN_BRIEF.md` §2.1.
+These calculations do **not** establish that the real 2″ motor had a 1.35–1.50×
+pressure ratio, and they cannot yet be contrasted quantitatively with Chunc or
+used to select a model success criterion. They are a reason to resolve the
+channel and obtain an independent event-time anchor.
 
 **Caveats:** it's the **2″ subscale**, not the 3″ motor; the absolute pressure is
-unusable; and whether the startup peak is **igniter-driven or erosive cannot be
-determined from the pressure trace alone** — treat the magnitude as a constraint
-to reproduce, not a mechanism. Qualitative shape comparison is worthwhile
-(user, 2026-06-19: "a qualitative trace *shape* fit is still valuable" — worth
-running this motor in testing and eyeballing the shape).
+unusable; and whether the apparent startup feature is **igniter-driven or
+erosive cannot be determined from the pressure trace alone**. Until channel
+linearity and timing are established, retain it as a qualitative observation,
+not a validated pressure-ratio constraint.
 
 ## Provenance
 Raw DAQ export from a **2″ subscale** firing of the BALLSStick design.

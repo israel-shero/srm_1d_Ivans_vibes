@@ -37,20 +37,45 @@ shifts the experimental ignition to sim `t=0`. These are coarse (30–60 pt);
 
 ---
 
-## Inventory (verified 2026-06-19)
+## Inventory (last broad review 2026-06-19; Zerox workbook reviewed 2026-11-19)
 
 | Motor | L/D | File / dict | Points | State | Notes |
 |---|---|---|---|---|---|
 | **Chunc / machbusterNew** | high | **`thomas_chunc_firing.csv`** (+ `.xlsx` source) | **346** | ✅ clean | t=[0.010, 2.353] s; plateau ≈ **8.77 MPa**; P_peak 8.894 @ 0.397 s → **spike ratio 1.015 = essentially NO ignition spike.** The high-res trace behind the G-reconstruction (REOPENED §9.1). **The key spike-diagnostic asset.** Supersedes the 59-pt `CHUNC_EXPERIMENTAL` dict. |
-| **Zerox** | mid | `zerox_data.csv` + `Zerox Data.xlsx` (raw) + `ZEROX_EXPERIMENTAL` dict | 58 | ✅ clean (coarse) | t=[0, 8.113] s, P_peak 3.994 MPa @ 0.43 s. Same 58 pts as the dict (no extra resolution). The `.xlsx` is the full DAQ source — a higher-res trace could still be extracted from it. |
+| **Zerox** | mid | `zerox_data.csv` + [`zerox_high_resolution.csv`](zerox_high_resolution.csv) + `Zerox Data.xlsx` source | 58 coarse / 630 native event samples | ⚠️ pressure calibration review pending | The workbook's `FL88` sheet has a `Py1 Fire` trigger and a denser pressure trace. The first observed trigger-high is at flight time 0.009 s; the preceding low is at -0.061 s. The old 58-point CSV is a workbook-selected downsample: using the workbook's own baseline formula, it reports a 3.9938 MPa peak 81 ms later and 5.7% lower than the first high-resolution peak. The extracted CSV preserves source `pTap 1(psi)` values without smoothing or resampling; the processed time-zero average is excluded. Calibration and the full tail remain under review. |
 | **Hasegawa A** | ~42 (high) | `HASEGAWA_MOTOR_A_EXPERIMENTAL` (plotting.py) | 36 | ✅ clean (digitized) | Ma 2020 Fig. 10. Its peak is the *late progressive* peak, not an ignition spike. |
 | **Pathfinder 54** | — | `pathfin54.csv` | 409 | ✅ clean | Has force (N) + pressure (Pa). |
-| **BALLSStick (2″ subscale)** | high | **`raw/ballsstick_subscale_raw.csv`** | 417 | ⚠️ RAW: absolute P unusable — **but the SHAPE/ratio IS usable** | **Shows a REAL startup over-pressure of ~1.35–1.50×** (peak 1330 psi @ +0.070 s → trough 885 @ +0.300 s → mid-burn 985 @ +1.03 s) — vs Chunc's 1.015×. Ratio is offset/gain-robust, so it stands despite the calibration problem. **Absolute P not trustworthy:** no quiescent baseline (PSI ramps from sample 1 while volts stay flat → PSI isn't a linear map of the volts); **do not apply a constant offset**; load-cell impulse 0.85× expected; time on the DAQ power-on clock. **No 3″ firing exists**; needs justified 2″→3″ scaling. See `raw/ballsstick_subscale_raw.notes.md`. |
+| **BALLSStick (2″ subscale)** | high | **`raw/ballsstick_subscale_raw.csv`** | 417 | ⚠️ RAW: qualitative observation only; pressure ratios are not scoreable | The PSI column has an apparent startup excursion, but channel provenance/calibration, linearity, and event time remain unresolved. Do not treat the reported 1.35–1.50× ratios as validated or scoreable. Load-cell impulse is also unresolved, and the DAQ clock is not anchored. **No 3″ firing exists**; scaling to the 3″ motor is unsupported. See `raw/ballsstick_subscale_raw.notes.md`. |
 | **54-2800 ST2.0** | — | *(CSV missing)* | — | ❌ absent | `examples/run_pathfin54st2_0.py` + `motors/2025.12.25 54-2800 ST2.0.ric` exist; the CSV does not. |
 | **short / low-L/D** | low | *(none)* | — | ❌ absent | Held for now (no clean data). **Still the key coverage gap** — a fix must be shown not to break the near-zero-spike low-L/D case. |
 
-**L/D coverage:** high-L/D is now well covered (Chunc hi-res, Hasegawa A,
-BALLSStick-once-cleaned). **Low-L/D remains uncovered.**
+**L/D coverage:** candidate high-L/D evidence includes Chunc's hi-res trace and
+Hasegawa A's digitized trace; BALLSStick remains raw and qualitative-only.
+**Low-L/D remains uncovered.**
+
+### Zerox source review (2026-11-19)
+
+The 630-row [`zerox_high_resolution.csv`](zerox_high_resolution.csv) contains
+native pressure samples from the workbook's processed event interval
+(flight time 0.009–8.153 s), with time shifted only to the first observed
+`Py1 Fire` high. The previous low sample at -0.061 s brackets that transition
+to 70 ms. This is a sampled trigger anchor, not an exact ignition instant.
+
+The workbook's processed gauge-pressure column subtracts the mean of 1,564
+pre-trigger `pTap 1(psi)` samples (`AVERAGE(K2:K1565)`, 9.8441379 psi) and
+multiplies by 0.00689476 MPa/psi. The extracted CSV keeps the labeled raw psi
+channel so the pressure-scale/calibration question is not hidden by that
+processing. The workbook does not include independent transducer calibration
+metadata. Its processed time-zero row is an averaged synthetic baseline, not a
+native sample, and was not copied into the extracted trace.
+
+The original 58-point CSV matches the workbook's selected every-tenth series
+plus that synthetic baseline. Under the workbook's own baseline formula, its
+peak is 3.9938 MPa at 0.421 s after the trigger, versus 4.23575 MPa with the
+first maximum observed 0.340–0.360 s after the trigger in the denser trace.
+That sampling difference is not a model score. The extracted series stops at
+8.153 s, while the workbook retains later raw DAQ samples; do not score
+tail-off until that remaining interval is reviewed.
 
 ---
 

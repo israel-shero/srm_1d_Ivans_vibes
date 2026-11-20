@@ -56,7 +56,7 @@
     {
       "id": "zerox",
       "motor": "Zerox / Risky Batman V3",
-      "data_status": "clean_coarse_csv",
+      "data_status": "workbook_reconciled_high_resolution_trace",
       "source": {
         "path": "static_fire_data/zerox_data.csv",
         "sha256": "a31569d780b4c6683f57d8950f0ba876bad1ecf70c47ee9a957528abe755d54f",
@@ -65,20 +65,87 @@
         "pressure_column": 0,
         "pressure_unit": "MPa"
       },
+      "high_resolution_source": {
+        "path": "static_fire_data/zerox_high_resolution.csv",
+        "sha256": "d49e6e28a5c8b9664e267be7fc232e7c73f5f9edbc17bba9f794fac91764e8a2",
+        "sample_count": 630,
+        "columns": {
+          "time_from_py1_fire_s": 0,
+          "flight_time_s": 1,
+          "pressure_channel_psi": 2,
+          "py1_fire": 3
+        },
+        "pressure_unit": "psi as labeled by the source workbook",
+        "source_workbook": {
+          "path": "static_fire_data/Zerox Data.xlsx",
+          "sha256": "0c2b3810a81dc76f6bac60a8156fab7c537ed772d98cc1b629b22a1204ad9662",
+          "worksheet": "FL88"
+        },
+        "derivation": "Extract native pTap 1(psi) samples at the workbook's processed event timestamps from Flight Time 0.009 through 8.153 s. Preserve source pressure values; do not smooth or resample. Exclude the workbook's synthetic time-zero average-pressure row.",
+        "event_time_zero": {
+          "channel": "Py1 Fire(0/1)",
+          "first_observed_high_flight_time_s": 0.009,
+          "previous_observed_low_flight_time_s": -0.061,
+          "transition_bracket_s": [
+            -0.061,
+            0.009
+          ],
+          "definition": "First observed high sample; extracted timestamps are shifted by -0.009 s. The trigger transition is only bracketed to 70 ms by adjacent samples."
+        },
+        "workbook_pressure_processing": {
+          "pre_event_sample_count": 1564,
+          "baseline_mean_psi": 9.84413791560104,
+          "baseline_formula": "AVERAGE(K2:K1565)",
+          "gauge_conversion": "(pTap 1(psi) - baseline_mean_psi) * 0.00689476",
+          "limits": "The workbook uses this pre-trigger average for its processed MPa columns, but independent pressure-transducer calibration metadata is not present. The extracted CSV retains raw labeled psi values."
+        },
+        "native_sampling_interval_s": {
+          "minimum": 0.01,
+          "maximum": 0.033
+        },
+        "coarse_csv_comparison": {
+          "coarse_sample_count": 58,
+          "relationship": "Workbook-selected every-tenth samples plus a synthetic baseline point",
+          "workbook_gauge_peak_mpa": 4.23575141811703,
+          "high_resolution_first_peak_time_from_trigger_s": [
+            0.34,
+            0.36
+          ],
+          "coarse_peak_mpa": 3.9938,
+          "coarse_peak_time_from_trigger_s": 0.421,
+          "coarse_peak_underestimate_percent": 5.712125057248718,
+          "coarse_peak_lag_s": 0.081
+        },
+        "tail_coverage": "The extracted series ends at 8.153 s flight time while the workbook's raw DAQ continues later; its last pressure is still above the workbook-derived baseline. Tail-off window remains unregistered."
+      },
       "coverage": {
         "ld_class": "mid",
         "port_geometry": "forward Finocyl plus aft BATES",
         "measurements": ["pressure"]
       },
       "known_limits": [
-        "Coarse trace; the CSV columns are pressure then time.",
-        "The workbook source may contain higher-resolution data and has not been extracted here."
+        "The existing CSV is coarse and stores pressure before time; use the extracted 630-sample trace for startup-shape work.",
+        "Py1 Fire provides an independent trigger, but the transition is bracketed only to 70 ms.",
+        "Pressure-channel calibration metadata is unresolved; absolute-amplitude scoring remains blocked.",
+        "The workbook's processed gauge baseline spans 1,564 pre-trigger samples; validate that processing before amplitude scoring.",
+        "The extracted trace ends before the full raw-workbook tail has been reviewed."
       ],
       "candidate_uses": ["cross-motor pressure-shape comparison"],
       "scoring_eligibility": {
-        "absolute_timing": "pending_source_trigger_verification",
-        "absolute_pressure": "candidate_with_coarse_sampling_caveat",
-        "shape": "exploratory_until_higher_resolution_source_is_checked",
+        "absolute_timing": "candidate_from_py1_fire_with_70ms_transition_bracket",
+        "absolute_pressure": "blocked_pending_pressure_channel_calibration_review",
+        "shape": "startup_window_registered; amplitude_linearity_review_required",
+        "case_windows": {
+          "startup": {
+            "time_from_first_py1_fire_high_s": [
+              0.0,
+              0.36
+            ],
+            "basis": "Independent trigger through the first observed maximum plateau in the workbook pressure trace; set without model predictions."
+          },
+          "plateau": "not_registered_pending_source_only_window_review",
+          "tail_off": "not_registered_pending_review_of_raw_workbook_samples_after_8.153_s"
+        },
         "role": "unassigned"
       }
     },
@@ -159,7 +226,7 @@
       },
       "known_limits": [
         "Pressure channel drifts before ignition and does not track the logged voltage; absolute pressure is unusable.",
-        "Only a ratio/qualitative shape comparison is currently defensible.",
+        "A qualitative visual observation is possible, but pressure ratios are not eligible until channel provenance, calibration, and linearity are established.",
         "Time is on the DAQ power-on clock; pre-trigger baseline is short.",
         "Load-cell impulse and subscale-to-full-scale mapping remain unresolved."
       ],
@@ -168,7 +235,7 @@
       "scoring_eligibility": {
         "absolute_pressure": "ineligible",
         "timing": "ineligible_until_daq_clock_is_anchored",
-        "shape": "qualitative_only_pending_raw_channel_review",
+        "shape": "qualitative_visual_only; pressure_ratios_ineligible_pending_channel_review",
         "role": "unassigned"
       }
     }
