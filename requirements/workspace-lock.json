@@ -18,7 +18,7 @@
     "openMotor": {
       "path": "../openMotor-compatible",
       "origin": "https://github.com/eJar0k/openMotor.git",
-      "commit": "92e425f7832ed3f3e926ff985117649e3c77881a",
+      "commit": "efb0c81241b648303fe06722553f6b2868467578",
       "pin_mode": "exact",
       "required_paths": [
         "motorlib/solvers.py",

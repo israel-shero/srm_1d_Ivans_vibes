@@ -1,0 +1,72 @@
+{
+  "python_executable": "/Users/israelshero/Development/MotorDevelopment/.venv-srm/bin/python",
+  "runtime_versions": {
+    "python": "3.10.10 (main, Feb 16 2023, 02:55:02) [Clang 14.0.0 (clang-1400.0.29.202)]",
+    "platform": "darwin",
+    "platform_detail": "macOS-26.7.3-x86_64-i386-64bit",
+    "machine": "x86_64",
+    "numpy": "1.24.3",
+    "scipy": "1.10.1",
+    "numba": "0.57.1",
+    "PyYAML": "6.0",
+    "matplotlib": "3.7.1",
+    "scikit-fmm": "2023.4.2",
+    "scikit-image": "0.21.0",
+    "llvmlite": "0.40.1",
+    "Qt": "6.7.1",
+    "PyQt6": "6.7.1"
+  },
+  "import_paths": {
+    "srm_1d": "/Users/israelshero/Development/MotorDevelopment/srm_1d/srm_1d/__init__.py",
+    "motorlib": "/Users/israelshero/Development/MotorDevelopment/openMotor-compatible/motorlib/__init__.py",
+    "numpy": "/Users/israelshero/Development/MotorDevelopment/.venv-srm/lib/python3.10/site-packages/numpy/__init__.py",
+    "scipy": "/Users/israelshero/Development/MotorDevelopment/.venv-srm/lib/python3.10/site-packages/scipy/__init__.py",
+    "numba": "/Users/israelshero/Development/MotorDevelopment/.venv-srm/lib/python3.10/site-packages/numba/__init__.py",
+    "PyQt6": "/Users/israelshero/Development/MotorDevelopment/.venv-srm/lib/python3.10/site-packages/PyQt6/__init__.py",
+    "skfmm": "/Users/israelshero/Development/MotorDevelopment/.venv-srm/lib/python3.10/site-packages/skfmm/__init__.py",
+    "skimage": "/Users/israelshero/Development/MotorDevelopment/.venv-srm/lib/python3.10/site-packages/skimage/__init__.py"
+  },
+  "validated_commands": {
+    "focused_tests": "../.venv-srm/bin/python -m pytest -q tests/test_ric_igniter.py tests/test_adapter.py tests/test_numerical_verification.py tests/test_history_memmap.py tests/test_burn_rate.py tests/test_srm1d_plugin.py",
+    "resume_tests": "../.venv-srm/bin/python -m pytest tests/test_limiting_case_verification.py -q"
+  },
+  "results": {
+    "focused_tests_passed": 118,
+    "resume_tests_passed": 13,
+    "gui_and_igniter_passed": 23,
+    "gui_and_igniter_failed": 6
+  },
+  "gui_harness": "QT_QPA_PLATFORM=offscreen, with platformdirs user_log_dir and user_data_dir redirected into tempfile.mkdtemp() before pytest.main; the three tested files are configEditor.py, propellant.py, igniter.py.",
+  "gui_test_invocation": {
+    "cwd": "../openMotor-compatible",
+    "environment": {
+      "QT_QPA_PLATFORM": "offscreen"
+    },
+    "argv": [
+      "../.venv-srm/bin/python",
+      "-c",
+      "import tempfile\nfrom pathlib import Path\nimport platformdirs\nimport pytest\nroot=Path(tempfile.mkdtemp(prefix='motor-progress-'))\nplatformdirs.user_log_dir=lambda *a, **k: str(root/'logs')\nplatformdirs.user_data_dir=lambda *a, **k: str(root/'data')\nraise SystemExit(pytest.main(['-q','test/unit/configEditor.py','test/unit/propellant.py','test/unit/igniter.py','--tb=short']))\n"
+    ]
+  },
+  "remaining_gui_failure_categories": [
+    "Two legacy BPNV upgrade expectations (motor/library).",
+    "One unnamed material editor expectation.",
+    "Three solver/preference upgrade expectations."
+  ],
+  "claims": {
+    "full_test_suite_green": false,
+    "gui_headless_metric_parity_verified": false,
+    "normal_gui_simulation_reverified_this_slice": false,
+    "normal_headless_run_verified": true
+  },
+  "schema_version": 1,
+  "recorded_date": "2026-11-20",
+  "numerical_source_commit": "6dd9773",
+  "openmotor_commit": "efb0c81241b648303fe06722553f6b2868467578",
+  "workspace_verifier": {
+    "command": "../.venv-srm/bin/python scripts/verify_workspace.py",
+    "result": "passed_after_updating_openmotor_exact_pin",
+    "remaining_warning": "OpenMotor has untracked .DS_Store and compiled mathlib perimeter extension; numerical manifests checksum the extension."
+  },
+  "headless_evidence": "docs/v0_8_0/data/chunc_mp_matched_grid/comparison.json"
+}
