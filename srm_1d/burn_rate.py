@@ -395,7 +395,7 @@ def burn_rate_cell(
     Pr, k_thermal, Cp_gas, T_flame, T_surface,
     rho_p, Cps, T_initial,
     tab_min_p, tab_max_p, tab_a, tab_n, n_tabs,
-    kappa,
+    kappa, dynamic_viscosity=0.0, erosive_closure=0,
 ):
     """
     Compute total burn rate at a single cell using bisection.
@@ -479,6 +479,18 @@ def burn_rate_cell(
         return r0, 0.0
     if D_hyd <= 0.0:
         return r0, 0.0
+
+    if erosive_closure == 1:
+        mass_flux_g = Re_local * dynamic_viscosity / D_hyd
+        eta, _ = mukunda_paul_enhancement(
+            mass_flux_g,
+            r0,
+            D_hyd,
+            rho_p,
+            dynamic_viscosity,
+        )
+        r_erosive = max(r0 * eta - r0, 0.0)
+        return r0 + r_erosive, r_erosive
 
     # Friction factor
     f = haaland_friction(Re_local, roughness, D_hyd)
@@ -565,7 +577,7 @@ def compute_burn_rates(
     Pr, k_thermal, Cp_gas, T_flame, T_surface,
     rho_p, Cps, T_initial,
     tab_min_p, tab_max_p, tab_a, tab_n, n_tabs,
-    kappa, N,
+    kappa, N, dynamic_viscosity=0.0, erosive_closure=0,
 ):
     """
     Compute burn rates for all cells in the domain.
@@ -628,6 +640,6 @@ def compute_burn_rates(
                 Pr, k_thermal, Cp_gas, T_flame, T_surface,
                 rho_p, Cps, T_initial,
                 tab_min_p, tab_max_p, tab_a, tab_n, n_tabs,
-                kappa,
+                kappa, dynamic_viscosity, erosive_closure,
             )
     return r_total, r_erosive

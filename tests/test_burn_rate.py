@@ -174,14 +174,17 @@ class TestBurnRateCell:
     TAB_N = np.array([N_SR])
     N_TABS = 1
 
-    def _call(self, P, Re, D=0.04, x=0.5):
+    def _call(
+        self, P, Re, D=0.04, x=0.5,
+        erosive_closure=0, dynamic_viscosity=7.285e-5,
+    ):
         return burn_rate_cell(
             P, Re, D, x, 20e-6,
             self.PR, self.K_THERMAL, self.CP_GAS,
             self.T_FLAME, self.T_SURFACE,
             self.RHO_P, self.CPS, self.T_INITIAL,
             self.TAB_MIN_P, self.TAB_MAX_P, self.TAB_A, self.TAB_N, self.N_TABS,
-            self.KAPPA,
+            self.KAPPA, dynamic_viscosity, erosive_closure,
         )
 
     def test_low_Re_no_erosion(self):
@@ -200,6 +203,17 @@ class TestBurnRateCell:
         r_total, r_erosive = self._call(5e6, 500000.0)
         assert r_erosive > 0.0
         assert r_total > self.A_SR * 5e6**self.N_SR
+
+    def test_mukunda_paul_closure_is_lower_at_representative_state(self):
+        ma_total, _ = self._call(
+            5e6, 500000.0, erosive_closure=0,
+        )
+        mp_total, mp_erosive = self._call(
+            5e6, 500000.0, erosive_closure=1,
+        )
+
+        assert mp_erosive > 0.0
+        assert mp_total < ma_total
 
     def test_erosion_ratio_reasonable(self):
         """Erosion ratio should not exceed ~5x for typical conditions."""

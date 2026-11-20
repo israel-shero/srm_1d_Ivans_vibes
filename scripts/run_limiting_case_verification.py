@@ -248,6 +248,7 @@ def run_limiting_cases(
     variants = (
         ("baseline", {}),
         ("erosive_disabled", {"diagnostic_disable_erosive": True}),
+        ("mukunda_paul", {"erosive_closure": "mukunda_paul"}),
     )
     propellant = None
     for name, overrides in variants:
@@ -278,6 +279,14 @@ def run_limiting_cases(
     disabled = payload["runs"]["erosive_disabled"]["metrics"]
     payload["erosive_disabled_comparison"] = {
         key: _relative_change(reference[key], disabled[key])
+        for key in (
+            "peak_pressure_mpa", "peak_time_s", "total_impulse_ns",
+            "performance_burn_time_s",
+        )
+    }
+    mukunda_paul = payload["runs"]["mukunda_paul"]["metrics"]
+    payload["mukunda_paul_comparison"] = {
+        key: _relative_change(reference[key], mukunda_paul[key])
         for key in (
             "peak_pressure_mpa", "peak_time_s", "total_impulse_ns",
             "performance_burn_time_s",

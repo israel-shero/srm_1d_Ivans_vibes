@@ -1352,8 +1352,8 @@ def _run_time_loop(
     rho_propellant, Cps, T_surface, T_initial, T_initial_gas, k_solid,
     # --- Burn rate tabs (parallel arrays) ---
     tab_min_p, tab_max_p, tab_a, tab_n, n_tabs,
-        # --- Simulation parameters ---
-    roughness, kappa,
+    # --- Simulation parameters ---
+    roughness, kappa, erosive_closure_code,
     cfl_target, dt_max, burn_update_interval, geometry_update_interval,
     source_cfl_factor, port_mach_cap, pressure_floor_pa,
     T_ignition, P_ambient, ambient_temperature,
@@ -1682,7 +1682,7 @@ def _run_time_loop(
                 T_flame, T_surface,
                 rho_propellant, Cps, T_initial,
                 tab_min_p, tab_max_p, tab_a, tab_n, n_tabs,
-                kappa, N,
+                kappa, N, mu_gas, erosive_closure_code,
             )
             for i in range(N):
                 if diagnostic_disable_erosive:
@@ -2238,6 +2238,7 @@ def run_simulation(
     # roughness 32um, kappa 0.44 (was 50um / 0.45). All physical.
     roughness=32e-6,
     kappa=0.44,
+    erosive_closure="ma",
     # --- Solver ---
     # v0.7.3.2 (2026-05-27): cfl_target tightened 0.5 → 0.3 and
     # source_cfl_factor tightened 0.10 → 0.05 to absorb Phase B.0
@@ -2315,6 +2316,10 @@ def run_simulation(
         Propellant surface roughness [m]. Default: 50 μm.
     kappa : float
         Gnielinski temperature-ratio exponent [-]. Default: 0.45.
+    erosive_closure : str
+        Erosive closure selection. ``"ma"`` preserves the Ma 2020
+        heat-transfer closure and is the default. ``"mukunda_paul"``
+        enables the opt-in Mukunda-Paul 1997 universal-law enhancement.
     cfl_target : float
         Target CFL number for time stepping. Default: 0.5.
     dt_max : float
@@ -2696,6 +2701,14 @@ def run_simulation(
     if zn_enabled:
         tau_establishment = 0.0
 
+    erosive_closure_key = str(erosive_closure).strip().lower()
+    if erosive_closure_key not in ('ma', 'mukunda_paul'):
+        raise ValueError(
+            "erosive_closure must be 'ma' or 'mukunda_paul'; "
+            f"got {erosive_closure!r}"
+        )
+    erosive_closure_code = 0 if erosive_closure_key == 'ma' else 1
+
     theoretical_propellant_mass = (
         geo.total_propellant_volume() * propellant.rho_propellant
     )
@@ -2882,7 +2895,7 @@ def run_simulation(
         # Burn rate tabs
         tab_min_p, tab_max_p, tab_a, tab_n, n_tabs,
         # Simulation parameters
-        roughness, kappa,
+        roughness, kappa, erosive_closure_code,
         cfl_target, dt_max, burn_update_interval, geometry_update_interval,
         source_cfl_factor, float(port_mach_cap), float(pressure_floor_pa),
         T_ignition, P_ambient, T_ambient,
@@ -3144,6 +3157,7 @@ def run_simulation(
         'initial_gas_temperature': float(T_initial_gas),
         'ambient_temperature': float(T_ambient),
         'pressure_floor_pa': float(pressure_floor_pa),
+        'erosive_closure': erosive_closure_key,
         'diagnostic_disable_erosive': bool(diagnostic_disable_erosive),
         'diagnostic_disable_endfaces': bool(diagnostic_disable_endfaces),
         'diagnostic_disable_momentum': bool(diagnostic_disable_momentum),
