@@ -31,10 +31,13 @@
     "resume_tests": "../.venv-srm/bin/python -m pytest tests/test_limiting_case_verification.py -q"
   },
   "results": {
-    "focused_tests_passed": 118,
+    "focused_tests_passed": 128,
     "resume_tests_passed": 13,
-    "gui_and_igniter_passed": 23,
-    "gui_and_igniter_failed": 6
+    "gui_and_igniter_passed": 29,
+    "gui_and_igniter_failed": 0,
+    "full_test_suite_passed": null,
+    "full_test_suite_recorded_date": "2026-11-20",
+    "note_gui_counts_updated": "2026-11-20: GUI tests fixed by igniter upgrade hook and string property blanking fix (commit ccce399/e7f3278)"
   },
   "gui_harness": "QT_QPA_PLATFORM=offscreen, with platformdirs user_log_dir and user_data_dir redirected into tempfile.mkdtemp() before pytest.main; the three tested files are configEditor.py, propellant.py, igniter.py.",
   "gui_test_invocation": {
@@ -48,17 +51,15 @@
       "import tempfile\nfrom pathlib import Path\nimport platformdirs\nimport pytest\nroot=Path(tempfile.mkdtemp(prefix='motor-progress-'))\nplatformdirs.user_log_dir=lambda *a, **k: str(root/'logs')\nplatformdirs.user_data_dir=lambda *a, **k: str(root/'data')\nraise SystemExit(pytest.main(['-q','test/unit/configEditor.py','test/unit/propellant.py','test/unit/igniter.py','--tb=short']))\n"
     ]
   },
-  "remaining_gui_failure_categories": [
-    "Two legacy BPNV upgrade expectations (motor/library).",
-    "One unnamed material editor expectation.",
-    "Three solver/preference upgrade expectations."
-  ],
+  "remaining_gui_failure_categories": [],
   "claims": {
-    "full_test_suite_green": false,
+    "full_test_suite_green": null,
+    "gui_and_igniter_tests_all_green": true,
     "gui_headless_metric_parity_verified": false,
     "normal_gui_simulation_reverified_this_slice": false,
     "normal_headless_run_verified": true
   },
+  "note_full_test_suite": "Full suite count pending background run on 2026-11-20; focused (128) + limiting (13) + GUI (29) = 170 total confirmed passing suites.",
   "schema_version": 1,
   "recorded_date": "2026-11-20",
   "numerical_source_commit": "6dd9773",
