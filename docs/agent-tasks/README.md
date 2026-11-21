@@ -55,3 +55,18 @@ Read [CLAIM_PROTOCOL.md](CLAIM_PROTOCOL.md). **Claim the task atomically on GitH
 | [#23](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/23) | UQ-06 uncertainty and numerical error reporting | UQ-02, UQ-03, UQ-04 |
 
 **Architecture:** SRM 1D owns all UQ computation; openMotor_Ivan owns UI-08. First validate on analytic benchmark functions, then pinned solver fixtures. Never silently discard failed samples or treat fitted parameters as independently validated.
+
+## Full-conversation coverage expansion
+| Issue | Scope |
+|---|---|
+| [#24](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/24) | PHY-01 conservation/boundaries |
+| [#25](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/25) | PHY-02 thermal/ignition/erosive verification |
+| [#26](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/26) | VAL-01 experimental evidence and discrepancy |
+| [#27](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/27) | DATA-01 drawing evidence inventory |
+| [#28](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/28) | DATA-02 geometry fixture completeness |
+| [#29](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/29) | ARCH-01 API/release/diagnostics |
+| [#30](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/30) | AGENT-01 merge queue/checkpoints |
+| [#31](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/31) | RESEARCH-01 paper-to-code traceability |
+| [#32](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/32) | QA-03 numerical/release acceptance |
+
+These are bounded follow-ons; #8/#9/#10 and existing UQ/INF tasks remain authoritative for their overlapping scopes. Check live issue and PR status before claiming.
