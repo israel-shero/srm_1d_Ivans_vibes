@@ -10,6 +10,7 @@ import json
 import math
 import os
 import platform
+import re
 import subprocess
 import sys
 import traceback
@@ -93,6 +94,46 @@ def _git_state(repo: Path) -> dict:
         "dirty": bool(status),
         "status": status or "",
     }
+
+
+def validate_provenance(manifest: dict) -> list[str]:
+    """Return deterministic diagnostics for stored provenance without rerunning a case."""
+    errors = []
+    repositories = manifest.get("repositories")
+    source = repositories.get("srm_1d") if isinstance(repositories, dict) else None
+    if not isinstance(source, dict):
+        source = {}
+    commit = source.get("commit")
+    if not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", commit):
+        errors.append("repositories.srm_1d.commit: expected a full Git object ID")
+    status = source.get("status")
+    dirty = source.get("dirty")
+    if not isinstance(status, str) or dirty is not bool(status):
+        errors.append("repositories.srm_1d: dirty flag must agree with status")
+
+    files = manifest.get("registered_files")
+    if not isinstance(files, list):
+        errors.append("registered_files: expected a list")
+        return errors
+    for index, entry in enumerate(files):
+        label = f"registered_files[{index}]"
+        if not isinstance(entry, dict) or not isinstance(entry.get("path"), str):
+            errors.append(f"{label}: expected a file path")
+            continue
+        digest = entry.get("observed_sha256")
+        if entry.get("exists") is False and digest is None:
+            continue
+        if (
+            entry.get("exists") is not True
+            or not isinstance(digest, str)
+            or not re.fullmatch(r"[0-9a-f]{64}", digest)
+        ):
+            errors.append(f"{label}: expected an existence flag and consistent SHA-256")
+            continue
+        declared = entry.get("sha256")
+        if declared is not None and declared != digest:
+            errors.append(f"{label}: observed SHA-256 differs from the declared digest")
+    return errors
 
 
 def _call_defaults(function) -> dict:
