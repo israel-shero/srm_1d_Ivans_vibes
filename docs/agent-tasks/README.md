@@ -8,7 +8,7 @@ Read [CLAIM_PROTOCOL.md](CLAIM_PROTOCOL.md). **Claim the task atomically on GitH
 
 ## Instructions for Codex/agents
 1. Fetch current branches, issues, PRs, `AGENTS.md` and relevant tests. Do not assume this index is current.
-2. Select one dependency-ready issue; check that its work has not already been implemented, and announce issue number, scope, proposed branch and PR base.
+2. Select one dependency-ready issue; check that its work has not already been implemented, then acquire a verified create-only exclusive claim per CLAIM_PROTOCOL.md before announcing issue number, scope, proposed branch and PR base.
 3. Follow the issue's detailed specification and Codex handoff. Make bounded commits with regression tests, numerical/physical evidence, changelog and exact command/results.
 4. Prefer `main` for solver-native changes and `integration/openmotor-packaging` for adapter/plugin-specific changes, only after verifying branch state. Never change defaults or claim physical validation without evidence.
 5. Coordinate interface contracts with openMotor_Ivan through references and separate PRs. Never silently edit both repos as part of one issue.
