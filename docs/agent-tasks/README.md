@@ -70,3 +70,10 @@ Read [CLAIM_PROTOCOL.md](CLAIM_PROTOCOL.md). **Claim the task atomically on GitH
 | [#32](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/32) | QA-03 numerical/release acceptance |
 
 These are bounded follow-ons; #8/#9/#10 and existing UQ/INF tasks remain authoritative for their overlapping scopes. Check live issue and PR status before claiming.
+
+## Implementation readiness and evidence gates
+- [Implementation readiness and execution handoff](IMPLEMENTATION_READINESS.md)
+- [Validation evidence matrix](VALIDATION_MATRIX.md)
+- [Machine-readable initial requirements coverage](REQUIREMENTS_COVERAGE.json)
+
+**Important:** These are planning artifacts, not proof of code coverage or passing tests. No multi-agent task execution until verified atomic claims are available; task announcement alone does not reserve work.
