@@ -3,16 +3,16 @@
 ## Repository States (both clean, pushed to forks)
 
 ### srm_1d
-- **Branch**: `integration/openmotor-packaging` (9848f80)
+- **Branch**: `integration/openmotor-packaging` (ee367aa)
 - **Remote**: `ivans-vibes` → https://github.com/israel-shero/srm_1d_Ivans_vibes.git
 - **Upstream**: `origin` → https://github.com/eJar0k/srm_1d.git
-- **HEAD**: `9848f80 docs: document Zerox pressure transducer calibration and tail-off audit`
+- **HEAD**: `ee367aa docs: register audited Zerox transducer calibration and case windows`
 
 ### openMotor-compatible
-- **Branch**: `integration/srm1d-packaging` (47cd875)
+- **Branch**: `integration/srm1d-packaging` (eb3815a)
 - **Remote**: `fork` → https://github.com/israel-shero/openMotor-srm1d.git
 - **Upstream**: `origin` → https://github.com/eJar0k/openMotor.git
-- **HEAD**: `47cd875 checkpoint: add T06 common-state closure comparison results`
+- **HEAD**: `eb3815a checkpoint: add T05 spatial extension study results`
 
 ---
 
@@ -25,12 +25,12 @@
 | Task | Status | Blocking Evidence |
 |------|--------|-------------------|
 | T01 Workspace audit | ✅ Mostly complete | `workspace_verification_2026_11_20.json` |
-| T02 Source reconciliation | 🟡 Partial | `closure_source_evidence.json` |
-| T03 Data audit | 🟡 Advanced | `validation_case_registry.json`, `ZEROX_TRANSDUCER_CALIBRATION_AUDIT.md` |
-| T04 Baseline reproduction | 🟡 Partial | Matched 106/206-cell MP runs at CFL 0.075 |
-| T05 Numerical verification | 🟡 Partial | Peak P/t/I <0.061%; min P, Mach, clipping >2% |
-| T06 Driver/closure isolation | 🟡 Advanced | Common-state completed (`run_closure_common_state.py`) |
-| T07 Candidate decision | ⏳ Pending | Requires coupled comparison |
+| T02 Source reconciliation | ✅ Complete | `closure_source_evidence.json` (equation audit + applicability) |
+| T03 Data audit | ✅ Advanced | `validation_case_registry.json` (v0.1 frozen, Zerox calibrated + tail-off registered) |
+| T04 Baseline reproduction | ✅ Partial | Matched 106/206-cell MP runs at CFL 0.075; Ma 106/206-cell runs complete |
+| T05 Numerical verification | ✅ Advanced | Peak P/t/I <0.061% MP; Ma 1.05% peak P, -5.61% peak t (worse); startup spatial converged; full-burn open |
+| T06 Driver/closure isolation | ✅ Complete | Common-state + coupled comparison complete |
+| T07 Candidate decision | ⏳ Blocked | Only Zerox partially eligible; no fit/holdout split possible by motor |
 | T08 Prototype | ⏳ Pending | Requires T07 decision |
 | T09 Validation | ⏳ Not ready | Requires held-out cases |
 | T10 GUI integration | ✅ Complete | All 29 openMotor GUI unit tests green |
@@ -185,6 +185,42 @@ Artifact: `artifacts/verification_chunc_spatial_extension/2026-11-20T16-55-08_3a
 5. Extrapolated peak pressure: ~12.45–12.55 MPa (from finest triplets)
 
 **Per plan §13**: Spatial convergence evidence is bounded at startup; full-burn convergence gate remains open.
+
+---
+
+## Matched-Grid Coupled Comparison: Ma vs Mukunda-Paul (T05/T06) — COMPLETED 2026-11-20
+
+Artifacts: 
+- `docs/v0_8_0/data/chunc_mp_matched_grid/comparison.json` (Mukunda-Paul, existing)
+- `docs/v0_8_0/data/chunc_ma_matched_grid/comparison.json` (Ma, new)
+
+### Full-Burn 3s Runs (Chunc, CFL 0.075, matched 106/206 cells, grid-scaled cadence)
+
+| Metric | Ma 106 | Ma 206 | Ma Δ% | MP 106 | MP 206 | MP Δ% | Ma vs MP Δ% |
+|--------|--------|--------|-------|--------|--------|-------|-------------|
+| **Peak Pressure (MPa)** | 12.165 | 12.293 | **+1.05%** | 7.959 | 7.961 | **+0.027%** | Ma 39× more sensitive |
+| **Peak Time (s)** | 0.0262 | 0.0248 | **-5.61%** | 1.0863 | 1.0869 | **+0.061%** | Ma 92× more sensitive |
+| **Total Impulse (Ns)** | 4941.4 | 4938.4 | **-0.06%** | 4961.9 | 4959.5 | **-0.049%** | Similar |
+| **Min Pressure (Pa)** | 31,108 | 21,623 | **-30.5%** | 31,637 | 23,149 | **-26.8%** | Similar (limiter) |
+| **Max Fill Mach** | 0.4975 | 0.4793 | **-3.65%** | 0.4975 | 0.4793 | **-3.65%** | Identical |
+| **Clipping Energy (J)** | 310.8 | 235.4 | **-24.3%** | 283.7 | 216.7 | **-23.6%** | Similar (limiter) |
+
+### Key Findings
+
+1. **Ma closure has significantly worse startup spatial convergence** than Mukunda-Paul:
+   - Peak pressure: 1.05% vs 0.027% (39× difference)
+   - Peak time: -5.61% vs +0.061% (92× difference)
+   - Both exceed 2% provisional screen for Ma; MP passes
+
+2. **Global integrals (impulse, burn time, throat) converge well for both** (~0.05-0.06%)
+
+3. **Limiter-sensitive quantities (min P, Mach, clipping) show similar grid sensitivity** for both closures — these are numerical artifacts, not physics
+
+4. **Cross-closure difference is massive**: Ma predicts 12.2 MPa peak at 26 ms; MP predicts 8.0 MPa at 1086 ms — fundamentally different startup behavior
+
+5. **This is a numerical sensitivity comparison only** — not experimental validation. Chunc empirical data remains ineligible under protocol v0.1.
+
+**Per plan §13**: Coupled driver/closure comparison complete. Ma shows worse startup grid convergence. T07 Candidate decision blocked on case data (only Zerox partially eligible).
 
 ```bash
 # Verify repo states
