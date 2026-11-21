@@ -31,3 +31,15 @@ Read [CLAIM_PROTOCOL.md](CLAIM_PROTOCOL.md). **Claim the task atomically on GitH
 - #7 is a blocked decision gate, not permission to tune a closure or assign unverified fit/holdout roles.
 
 **Historical checkpoint:** The 2026-11-20 project checkpoint records T02 source reconciliation, T06 common-state/coupled comparison and T10 GUI tests as completed, while full-burn convergence and empirical validation remain incomplete. Verify all statuses against current source and evidence.
+
+## Reliability and coverage backlog (new)
+| Issue | Work | Dependency |
+|---|---|---|
+| [#12](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/12) | INF-01 atomic claims and safe lease recovery | Highest priority for concurrent agents |
+| [#13](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/13) | INF-02 registry and scheduler | #12 for live claims; schema can begin now |
+| [#14](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/14) | INF-03 cross-repo contract CI | Coordinate #10 and openMotor INF-03 |
+| [#15](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/15) | INF-04 independent verification | Can begin now |
+| [#16](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/16) | INF-05 performance baselines | Can begin now |
+| [#17](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/17) | QA-01 property/metamorphic tests | Coordinate #2/#3/#4 |
+
+**Recommended parallel starts:** #12 design/adversarial tests, #14 contract inventory, #15 verifier report schema, #17 invariant test design. Do not dispatch implementation without a verified exclusive claim.
