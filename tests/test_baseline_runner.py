@@ -106,3 +106,22 @@ def test_validate_provenance_reports_inconsistent_metadata_in_order():
     ]
     assert validate_provenance(manifest) == expected
     assert validate_provenance(manifest) == expected
+
+
+def test_validate_provenance_detects_digest_mismatch():
+    manifest = {
+        "repositories": {"srm_1d": {"commit": "a" * 40, "dirty": False, "status": ""}},
+        "registered_files": [
+            {
+                "path": "input.txt",
+                "exists": True,
+                "sha256": "a" * 64,
+                "observed_sha256": "b" * 64,
+            },
+        ],
+    }
+    assert validate_provenance(manifest) == [
+        "registered_files[0]: observed SHA-256 differs from the declared digest",
+    ]
+    manifest["registered_files"][0]["observed_sha256"] = "a" * 64
+    assert validate_provenance(manifest) == []

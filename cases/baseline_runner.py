@@ -123,8 +123,16 @@ def validate_provenance(manifest: dict) -> list[str]:
         digest = entry.get("observed_sha256")
         if entry.get("exists") is False and digest is None:
             continue
-        if entry.get("exists") is not True or not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
+        if (
+            entry.get("exists") is not True
+            or not isinstance(digest, str)
+            or not re.fullmatch(r"[0-9a-f]{64}", digest)
+        ):
             errors.append(f"{label}: expected an existence flag and consistent SHA-256")
+            continue
+        declared = entry.get("sha256")
+        if declared is not None and declared != digest:
+            errors.append(f"{label}: observed SHA-256 differs from the declared digest")
     return errors
 
 
