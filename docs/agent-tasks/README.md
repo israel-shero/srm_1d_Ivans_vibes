@@ -43,3 +43,15 @@ Read [CLAIM_PROTOCOL.md](CLAIM_PROTOCOL.md). **Claim the task atomically on GitH
 | [#17](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/17) | QA-01 property/metamorphic tests | Coordinate #2/#3/#4 |
 
 **Recommended parallel starts:** #12 design/adversarial tests, #14 contract inventory, #15 verifier report schema, #17 invariant test design. Do not dispatch implementation without a verified exclusive claim.
+
+## Uncertainty quantification and identification workstream
+| Issue | Task | Dependencies |
+|---|---|---|
+| [#18](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/18) | UQ-01 parameter schema, distributions, provenance | Start here |
+| [#19](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/19) | UQ-02 batch runner, failure accounting and checkpointing | UQ-01 schema; runner scaffold can start separately |
+| [#20](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/20) | UQ-03 Monte Carlo/LHS/quasi-Monte Carlo | UQ-01, UQ-02 |
+| [#21](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/21) | UQ-04 local/global sensitivity | UQ-01, UQ-02 |
+| [#22](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/22) | UQ-05 identification and identifiability | UQ-01, UQ-02, evidence #8 |
+| [#23](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/23) | UQ-06 uncertainty and numerical error reporting | UQ-02, UQ-03, UQ-04 |
+
+**Architecture:** SRM 1D owns all UQ computation; openMotor_Ivan owns UI-08. First validate on analytic benchmark functions, then pinned solver fixtures. Never silently discard failed samples or treat fitted parameters as independently validated.
