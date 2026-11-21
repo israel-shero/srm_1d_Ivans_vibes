@@ -64,3 +64,19 @@ def test_reject_duplicate_names(tmp_path):
 def test_exact_name_failure_is_informative():
     with pytest.raises(KeyError, match="Closest names"):
         get_propellant("RCS - Super Thundr (H13ST Version)")
+
+
+def test_existing_converter_accepts_only_complete_transport():
+    from srm_1d.openmotor_adapter import convert_propellant
+
+    catalog = load_propellant_catalog()
+    ready = [record for record in catalog.values()
+             if not missing_transport_fields(record)]
+    assert len(ready) == 17
+    converted = convert_propellant(ready[0])
+    assert converted.name == ready[0]["name"]
+    assert len(converted.tabs) == len(ready[0]["tabs"])
+
+    incomplete = get_propellant("RCS - Super Thunder (H13ST Version)")
+    with pytest.raises(ValueError, match="gas transport"):
+        convert_propellant(incomplete)
