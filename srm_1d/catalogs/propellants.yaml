@@ -1,0 +1,1251 @@
+data:
+- density: 1644.185975702585
+  name: RCS - Super Thunder (H13ST Version)
+  tabs:
+  - a: 0.0002724785840421993
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.233
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 23.767
+    maxPressure: 20685000.000000004
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.277
+    t: 2737.657
+  transportVariant: frozen
+- density: 1644.185975702585
+  name: '!!!RCS - Super Thunder (Approx)'
+  tabs:
+  - a: 0.0005814026786819685
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.223
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 23.767
+    maxPressure: 20685000.000000004
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.22
+    t: 2737.657
+  transportVariant: frozen
+- density: 1815.801346903865
+  name: RCS - Slower White Lightning
+  tabs:
+  - a: 7.994680775880937e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.245
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 27.022
+    maxPressure: 20685000.000000004
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.244
+    t: 2364.133
+  transportVariant: frozen
+- density: 1641.4179858444998
+  name: RCS - Warp9
+  tabs:
+  - a: 0.0002472181550396159
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.229
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 23.669
+    maxPressure: 34475000.00000001
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.287
+    t: 2780.64
+  transportVariant: frozen
+- density: 1729.9936613032248
+  name: RCS - Redline
+  tabs:
+  - a: 2.969528457282737e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.225
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 26.502
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.366
+    t: 2238.589
+  transportVariant: frozen
+- density: 1746.601600451736
+  name: RCS - Propellant X
+  tabs:
+  - a: 4.6143206660233734e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.177
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 27.704
+    maxPressure: 17237500.000000004
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.358
+    t: 3442.461
+  transportVariant: frozen
+- density: 1848.186828243461
+  name: RCS - 84% Solids White Lightning
+  tabs:
+  - a: 8.812202896381492e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.23
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 28.419
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.272
+    t: 2685.257
+  transportVariant: frozen
+- density: 1671.8658742834366
+  name: Alex - AlexFunny
+  tabs:
+  - a: 4.479342932566496e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.206
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 25.207
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.3
+    t: 2938.0
+  transportVariant: frozen
+- density: 1815.801346903865
+  name: RCS - Slow White Lightning
+  tabs:
+  - a: 2.147703044198994e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.245
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 27.022
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.346
+    t: 2364.133
+  transportVariant: frozen
+- density: 1697.884978949437
+  name: RCS - Dark Matter
+  tabs:
+  - a: 4.643358154162961e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.257
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 23.262
+    maxPressure: 10342500.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.334
+    t: 1895.29
+  transportVariant: frozen
+- density: 1702.590561708182
+  name: RCS - New Blue Thunder
+  tabs:
+  - a: 1.4706023923823198e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.203
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 26.005
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.41
+    t: 3184.414
+  transportVariant: frozen
+- density: 1671.8658742834366
+  name: Alex - AlexProp1
+  tabs:
+  - a: 4.479342932566496e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.206
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 25.207
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.3
+    t: 2938.0
+  transportVariant: frozen
+- density: 1610.970097405563
+  name: Alex - Turbo Terrain v1
+  tabs:
+  - a: 0.00025084320422372376
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.26
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 21.9
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.3
+    t: 2050.0
+  transportVariant: frozen
+- density: 1741.0656207355653
+  name: Alex - Turbo Terrain v1.5
+  tabs:
+  - a: 0.00025084320422372376
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.236
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 25.004
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.3
+    t: 2464.0
+  transportVariant: frozen
+- density: 2075.99239356387
+  name: Alex - AlexFunny Bismuth v0
+  tabs:
+  - a: 4.479342932566496e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.191
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 32.831
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.3
+    t: 3088.17
+  transportVariant: frozen
+- density: 1741.0656207355653
+  name: Alex - Turbo Terrain v1.6
+  tabs:
+  - a: 0.0001919838827659912
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.236
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 25.04
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.3875
+    t: 2464.0
+  transportVariant: frozen
+- density: 1702.0369637365648
+  name: Fisher - Orange Sunset
+  tabs:
+  - a: 0.000564112447090937
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.229
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 25.12
+    maxPressure: 8274000.000000001
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.1167
+    t: 2491.335
+  - a: 0.019262561941440815
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.229
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 25.12
+    maxPressure: 13790000.000000002
+    minPressure: 8274000.000000001
+    mu: 0.0
+    n: -0.104925
+    t: 2491.335
+  transportVariant: frozen
+- density: 1597.1301481151372
+  name: Alex - AlexSparky
+  tabs:
+  - a: 2.9995236942249864e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.202
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 24.0
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.366
+    t: 1241.0
+  transportVariant: frozen
+- density: 1880.9875080617703
+  name: Alex - Copper Balls
+  tabs:
+  - a: 0.0002472181550396159
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.211
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 29.331
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.287
+    t: 2617.219
+  transportVariant: frozen
+- density: 2684.950162342605
+  name: Alex - 90% Fatboy Modified
+  tabs:
+  - a: 0.0009320857965163477
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.166
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 28.543
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.035
+    t: 3447.0
+  transportVariant: frozen
+- density: 1880.9875080617703
+  name: Copper Balls
+  tabs:
+  - a: 0.0002472181550396159
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.211
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 29.331
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.287
+    t: 2617.219
+  transportVariant: frozen
+- density: 1633.114016270244
+  name: Alex - Blue
+  tabs:
+  - a: 5.8948479636189386e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.231
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 23.75
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.307
+    t: 2628.0
+  transportVariant: frozen
+- density: 2092.600332712381
+  name: Alex - 90% Fatboy Fast
+  tabs:
+  - a: 0.0027962573895490427
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.182
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 33.6
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.035
+    t: 3447.0
+  transportVariant: frozen
+- density: 1743.8336105936507
+  name: Alex - Hairless Balless
+  tabs:
+  - a: 0.00027796386499737217
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.213
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 27.027
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.28
+    t: 2733.6
+  transportVariant: frozen
+- density: 1741.0656207355653
+  name: Turbo Terrain v1.5
+  tabs:
+  - a: 0.00025084320422372376
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.236
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 25.004
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.3
+    t: 2464.0
+  transportVariant: frozen
+- density: 1666.8834925388833
+  name: Alex - Shuttle Ignitor Prop
+  tabs:
+  - a: 0.0004599228234829277
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.227
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 24.218
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.25
+    t: 2593.0
+  transportVariant: frozen
+- density: 1646.95396556067
+  name: RCS - Classic
+  tabs:
+  - a: 4.444895953703669e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.225
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 24.145
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.323
+    t: 2887.981
+  transportVariant: frozen
+- density: 2093.984327641423
+  name: Alex - Fatboy91 NOTSlow
+  tabs:
+  - a: 8.18796623050676e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.182
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 33.6
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.323
+    t: 3241.0
+  transportVariant: frozen
+- density: 2093.984327641423
+  name: Alex - Fatboy91 NOTSlow OG
+  tabs:
+  - a: 6.43340203825531e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.182
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 33.6
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.323
+    t: 3241.0
+  transportVariant: frozen
+- density: 1746.601600451736
+  name: RCS - K1103 Propellant X
+  tabs:
+  - a: 4.6143206660233734e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.177
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 27.704
+    maxPressure: 17237500.000000004
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.358
+    t: 3442.461
+  transportVariant: frozen
+- density: 1625.0868456817973
+  name: RCS - Blue Thunder
+  tabs:
+  - a: 6.994600946367753e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.235
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 22.959
+    maxPressure: 10342500.0
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.321
+    t: 2616.5
+  transportVariant: frozen
+- density: 1753.0510168210742
+  name: RCS - O5500 Propellant X
+  tabs:
+  - a: 3.945371021854406e-06
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.179
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 27.44
+    maxPressure: 17237500.000000004
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.488
+    t: 3427.895
+  transportVariant: frozen
+- density: 1716.153712012799
+  name: BB - Reliant Robin Fast
+  tabs:
+  - a: 9.987337469367881e-06
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.198
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 24.98
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.412
+    t: 2977.0
+  transportVariant: frozen
+- density: 2092.600332712381
+  name: Chase - APPROX Bismuth
+  tabs:
+  - a: 9.987337469367881e-06
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.182
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 33.6
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.412
+    t: 3241.0
+  transportVariant: frozen
+- density: 1716.153712012799
+  name: BB - Reliant Robin
+  tabs:
+  - a: 8.988603722431091e-06
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.198
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 24.98
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.412
+    t: 2977.0
+  transportVariant: frozen
+- density: 2006.7926471117407
+  name: Chase - Actual Bismuth
+  tabs:
+  - a: 6.8873512932066105e-06
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.213
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 29.462
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.450211
+    t: 2672.0
+  transportVariant: frozen
+- density: 1981.8807383889744
+  name: BB - Fatboy 21-7-85G
+  tabs:
+  - a: 0.000721431954346071
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.213
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 29.48
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.126
+    t: 2672.0
+  transportVariant: frozen
+- density: 1674.6338641415216
+  name: Booska - Fast
+  tabs:
+  - a: 1.1152476321943208e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.2
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 24.47
+    maxPressure: 10894100.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.415
+    t: 2955.0
+  transportVariant: frozen
+- density: 1624.8100466959888
+  name: 'Booska Super Pourable - Vibe Mix '
+  tabs:
+  - a: 1.1333086102492701e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.2106
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 23.55
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.405
+    t: 2752.0
+  transportVariant: frozen
+- density: 1819.3997337193755
+  name: Chase - Energy
+  tabs:
+  - a: 1.075303334201942e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.198
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 24.98
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.412
+    t: 2977.0
+  transportVariant: frozen
+- density: 1815.801346903865
+  name: Chase - Energy 3in Cast
+  tabs:
+  - a: 1.075303334201942e-05
+    cpEffective: 2629.0
+    cpFrozen: 2017.0
+    k: 1.198
+    kThermalEffective: 0.5761
+    kThermalFrozen: 0.346
+    m: 24.98
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 9.009e-05
+    n: 0.412
+    t: 2977.0
+  transportVariant: frozen
+- density: 1801.9613976134392
+  name: Chase - Energy 2in Cast
+  tabs:
+  - a: 1.075303334201942e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.198
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 24.98
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.412
+    t: 2977.0
+  transportVariant: frozen
+- density: 1700.0
+  name: ClankerProp
+  tabs:
+  - a: 0.00035
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.2
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 27.0
+    maxPressure: 10000000.0
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.35
+    t: 3200.0
+  transportVariant: frozen
+- density: 1699.5457728642882
+  name: 84 Unsuppressed - CHARACTERIZED
+  tabs:
+  - a: 1.5694834407944363e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.19
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 24.98
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.4
+    t: 3105.0
+  transportVariant: frozen
+- density: 1.0
+  name: Krushna 8335090841
+  tabs:
+  - a: 1.1152476321943208e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.000001
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 1.0e-06
+    maxPressure: 5000000.0
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.415
+    t: 1.0
+  transportVariant: frozen
+- density: 1674.6338641415216
+  name: ASU Perfomance White (Normal)
+  tabs:
+  - a: 1.1152476321943208e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.2
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 24.47
+    maxPressure: 10342500.000000002
+    minPressure: 1379000.0000000002
+    mu: 0.0
+    n: 0.415
+    t: 2955.0
+  transportVariant: frozen
+- density: 1658.0259249930107
+  name: Some kinda propellant
+  tabs:
+  - a: 2.448729612786517e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.2087
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 23.9698
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.3486
+    t: 2793.0
+  transportVariant: frozen
+- density: 1677.0
+  name: Pathtouch - Angry Listerine
+  tabs:
+  - a: 9.257292465646946e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.211
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 23.7863
+    maxPressure: 10000000.0
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.283699
+    t: 2573.0
+  transportVariant: frozen
+- density: 1700.0
+  name: Hasegawa A Prop
+  tabs:
+  - a: 4.821e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.19
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 25.4
+    maxPressure: 10000000.0
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.3
+    t: 3041.0
+  transportVariant: frozen
+- density: 1862.8571744913124
+  name: Chase - Energy (1)
+  tabs:
+  - a: 1.075303334201942e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.198
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 24.98
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.412
+    t: 2977.0
+  transportVariant: frozen
+- density: 1682.0520769611899
+  name: Risky Batman V3 Jan2024
+  tabs:
+  - a: 5.054532350783141e-06
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.19889
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 23.7923
+    maxPressure: 13100500.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.456
+    t: 2883.66
+  transportVariant: frozen
+- density: 1681.1746241761768
+  name: KSP v1 0.42ips
+  tabs:
+  - a: 0.00016438807796402777
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.210129
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 24.54
+    maxPressure: 13790000.000000002
+    minPressure: 6895.000000000001
+    mu: 0.0
+    n: 0.265
+    t: 2835.896
+  transportVariant: frozen
+- density: 1716.153712012799
+  name: RCS - 8522
+  tabs:
+  - a: 1.912458279795643e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.216
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 25.278
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.405
+    t: 3016.0
+  transportVariant: frozen
+- density: 1622.6510146066823
+  name: Chase Red
+  tabs:
+  - a: 1.293975943475869e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.22209
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 24.01168
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.39
+    t: 2641.471
+  transportVariant: frozen
+- density: 1641.4179858444998
+  name: RCS - Warp9 (1)
+  tabs:
+  - a: 0.0002472181550396159
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.229
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 23.6686
+    maxPressure: 20685000.000000004
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.287
+    t: 2780.64
+  transportVariant: frozen
+- density: 1832.0965031984122
+  name: Stormtrooper 2.1
+  tabs:
+  - a: 6.919245093121588e-06
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.239961
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 24.50103
+    maxPressure: 11032000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.427909
+    t: 2202.0
+  transportVariant: frozen
+- density: 1699.5457728642882
+  name: 84 Solids - Rev. 2
+  tabs:
+  - a: 1.5694834407944363e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.19
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 24.98
+    maxPressure: 6895000.000000001
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.4
+    t: 3105.0
+  transportVariant: frozen
+- density: 1700.0
+  name: Hasegawa A Prop (1)
+  tabs:
+  - a: 4.821e-05
+    cpEffective: 2764.0
+    cpFrozen: 2060.0
+    k: 1.19
+    kThermalEffective: 0.6517
+    kThermalFrozen: 0.3685
+    m: 25.4
+    maxPressure: 10000000.0
+    minPressure: 0.0
+    mu: 8.842e-05
+    n: 0.3
+    t: 3041.0
+  transportVariant: frozen
+- density: 1699.5457728642882
+  name: 84 Unsuppressed - CHARACTERIZED (1)
+  tabs:
+  - a: 1.5694834407944363e-05
+    cpEffective: 2826.0
+    cpFrozen: 2050.0
+    k: 1.19
+    kThermalEffective: 0.6584
+    kThermalFrozen: 0.3654
+    m: 24.98
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 9.125e-05
+    n: 0.4
+    t: 3105.0
+  transportVariant: effective
+- density: 1716.153712012799
+  name: RCS - 8522 (1)
+  tabs:
+  - a: 1.912458279795643e-05
+    cpEffective: 1878.0
+    cpFrozen: 1878.0
+    k: 1.216
+    kThermalEffective: 0.2506
+    kThermalFrozen: 0.2506
+    m: 25.278
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 8.389e-05
+    n: 0.405
+    t: 3016.0
+  transportVariant: frozen
+- density: 1641.4179858444998
+  name: RCS - Warp9 (2)
+  tabs:
+  - a: 0.0002472181550396159
+    cpEffective: 1867.0
+    cpFrozen: 1867.0
+    k: 1.229
+    kThermalEffective: 0.2383
+    kThermalFrozen: 0.2383
+    m: 23.6686
+    maxPressure: 20685000.000000004
+    minPressure: 0.0
+    mu: 7.401e-05
+    n: 0.287
+    t: 2780.64
+  transportVariant: frozen
+- density: 1641.4179858444998
+  name: RCS - Warp9 (3)
+  tabs:
+  - a: 0.0002472181550396159
+    cpEffective: 1867.0
+    cpFrozen: 1867.0
+    k: 1.229
+    kThermalEffective: 0.2383
+    kThermalFrozen: 0.2383
+    m: 23.669
+    maxPressure: 34475000.00000001
+    minPressure: 0.0
+    mu: 7.401e-05
+    n: 0.287
+    t: 2780.64
+  transportVariant: frozen
+- density: 1622.6510146066823
+  name: Chase Red (1)
+  tabs:
+  - a: 1.293975943475869e-05
+    cpEffective: 1881.0
+    cpFrozen: 1881.0
+    k: 1.22209
+    kThermalEffective: 0.2841
+    kThermalFrozen: 0.2841
+    m: 24.01168
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 8.236e-05
+    n: 0.39
+    t: 2641.471
+  transportVariant: frozen
+- density: 1682.0520769611899
+  name: Risky Batman V3 Jan2024 (1)
+  tabs:
+  - a: 5.054532350783141e-06
+    cpEffective: 2468.0
+    cpFrozen: 2052.0
+    k: 1.19889
+    kThermalEffective: 0.5038
+    kThermalFrozen: 0.3455
+    m: 23.7923
+    maxPressure: 13100500.000000002
+    minPressure: 0.0
+    mu: 8.604e-05
+    n: 0.456
+    t: 2883.66
+  transportVariant: frozen
+- density: 1832.0965031984122
+  name: Stormtrooper 2.1 (1)
+  tabs:
+  - a: 6.919245093121588e-06
+    cpEffective: 1621.0
+    cpFrozen: 1621.0
+    k: 1.239961
+    kThermalEffective: 0.2898
+    kThermalFrozen: 0.2898
+    m: 24.50103
+    maxPressure: 11032000.000000002
+    minPressure: 0.0
+    mu: 7.285e-05
+    n: 0.427909
+    t: 2202.0
+  transportVariant: frozen
+- density: 1646.95396556067
+  name: Booska Super Pourable - Vibe Mix  THERMO
+  tabs:
+  - a: 1.1333086102492701e-05
+    cpEffective: 2.354
+    cpFrozen: 2.049
+    k: 1.2106
+    kThermalEffective: 0.4499
+    kThermalFrozen: 0.3386
+    m: 23.55
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 8.319e-05
+    n: 0.405
+    t: 2752.0
+  transportVariant: frozen
+- density: 1743.8336105936507
+  name: Alex - Hairless Balless (1)
+  tabs:
+  - a: 0.00027796386499737217
+    cpEffective: 1838.0
+    cpFrozen: 1838.0
+    k: 1.213
+    kThermalEffective: 0.2713
+    kThermalFrozen: 0.2713
+    m: 27.027
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 8.382e-05
+    n: 0.28
+    t: 2733.6
+  transportVariant: frozen
+- density: 1681.1746241761768
+  name: KSP v1 0.42ips (1)
+  tabs:
+  - a: 0.00016438807796402777
+    cpEffective: 1927.0
+    cpFrozen: 1927.0
+    k: 1.210129
+    kThermalEffective: 0.2892
+    kThermalFrozen: 0.2892
+    m: 24.54
+    maxPressure: 13790000.000000002
+    minPressure: 6895.000000000001
+    mu: 8.998e-05
+    n: 0.265
+    t: 2835.896
+  transportVariant: frozen
+- density: 1604.603720731967
+  name: Burnsim Test (Energy Edited)
+  tabs:
+  - a: 1.1787321153286852e-05
+    cpEffective: 2629.0
+    cpFrozen: 2017.0
+    k: 1.2768
+    kThermalEffective: 0.5761
+    kThermalFrozen: 0.346
+    m: 26.6
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 9.009e-05
+    n: 0.4194
+    t: 2900.0
+  transportVariant: frozen
+- density: 1699.5457728642882
+  name: 84 Unsuppressed - CHARACTERIZED (2)
+  tabs:
+  - a: 1.5694834407944363e-05
+    cpEffective: 2826.0
+    cpFrozen: 2050.0
+    k: 1.19
+    kThermalEffective: 0.6584
+    kThermalFrozen: 0.3654
+    m: 24.98
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 9.125e-05
+    n: 0.4
+    t: 3105.0
+  transportVariant: frozen
+- density: 1699.5457728642882
+  name: 84 Solids - Rev. 2 (1)
+  tabs:
+  - a: 1.5694834407944363e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.19
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 24.98
+    maxPressure: 6895000.000000001
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.4
+    t: 3105.0
+  transportVariant: frozen
+- density: 1699.5457728642882
+  name: Spaceshot 84 Sustainer
+  tabs:
+  - a: 1.4897362502849656e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.19
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 24.98
+    maxPressure: 13790000.000000002
+    minPressure: 6895.000000000001
+    mu: 0.0
+    n: 0.4059
+    t: 3105.0
+  transportVariant: frozen
+- density: 1699.5457728642882
+  name: Spaceshot Sustainer
+  tabs:
+  - a: 1.4897362502849656e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.19
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 24.98
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.4059
+    t: 3105.0
+  transportVariant: frozen
+- density: 1699.5457728642882
+  name: 84 Unsuppressed - TEST LOW N HIGH A
+  tabs:
+  - a: 8.958685865132992e-05
+    cpEffective: 2826.0
+    cpFrozen: 2050.0
+    k: 1.19
+    kThermalEffective: 0.6584
+    kThermalFrozen: 0.3654
+    m: 24.98
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 9.125e-05
+    n: 0.3
+    t: 3105.0
+  transportVariant: frozen
+- density: 1735.5296410193953
+  name: Hairless Ballless
+  tabs:
+  - a: 7.559289282265625e-05
+    cpEffective: 0.0
+    cpFrozen: 0.0
+    k: 1.214001
+    kThermalEffective: 0.0
+    kThermalFrozen: 0.0
+    m: 26.536
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 0.0
+    n: 0.33
+    t: 2748.0
+  transportVariant: frozen
+- density: 1660.7939148510957
+  name: Chase Gentle Performance
+  tabs:
+  - a: 9.271733915052673e-05
+    cpEffective: 2826.0
+    cpFrozen: 2050.0
+    k: 1.194
+    kThermalEffective: 0.6584
+    kThermalFrozen: 0.3654
+    m: 27.045
+    maxPressure: 20685000.000000004
+    minPressure: 0.0
+    mu: 9.125e-05
+    n: 0.258
+    t: 3215.0
+  transportVariant: frozen
+- density: 1801.9613976134392
+  name: Chase - Energy 2in Cast (1)
+  tabs:
+  - a: 1.075303334201942e-05
+    cpEffective: 2629.0
+    cpFrozen: 2017.0
+    k: 1.198
+    kThermalEffective: 0.5761
+    kThermalFrozen: 0.346
+    m: 24.98
+    maxPressure: 13790000.000000002
+    minPressure: 0.0
+    mu: 9.009e-05
+    n: 0.412
+    t: 2977.0
+  transportVariant: frozen
+type: !!python/object/apply:uilib.fileIO.fileTypes
+- 2
+version: !!python/tuple
+- 0
+- 7
+- 0
