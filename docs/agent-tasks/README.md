@@ -1,5 +1,8 @@
 # SRM 1D — agent task queue
 
+## Mandatory before starting any task
+Read [CLAIM_PROTOCOL.md](CLAIM_PROTOCOL.md). **Claim the task atomically on GitHub before any task-specific work.** If a lock already exists or create-only behavior cannot be guaranteed, do not start; choose another eligible task. Issue labels/comments alone are not sufficient for concurrency safety.
+
 **Implementation repository:** https://github.com/israel-shero/srm_1d_Ivans_vibes
 **Separate GUI implementation repository:** https://github.com/israel-shero/openMotor_Ivan (do not write there from these tasks).
 
