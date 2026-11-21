@@ -41,3 +41,6 @@ include = ["srm_1d*"]
 [tool.setuptools.package-data]
 # The pyrogen material library is runtime data loaded by openmotor_adapter.
 srm_1d = ["pyrogens/*.yaml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
