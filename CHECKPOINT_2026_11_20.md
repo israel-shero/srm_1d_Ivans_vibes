@@ -33,7 +33,7 @@
 | T07 Candidate decision | ⏳ Blocked | Only Zerox partially eligible; no fit/holdout split possible by motor |
 | T08 Prototype | ⏳ Pending | Requires T07 decision |
 | T09 Validation | ⏳ Not ready | Requires held-out cases |
-| T10 GUI integration | ✅ Complete | All 29 openMotor GUI unit tests green |
+| T10 GUI integration | ✅ Complete | All 29 openMotor GUI unit tests green (configEditor, propellant, igniter) |
 | T11 Release review | ⏳ Pending | Requires all gates |
 
 ---
