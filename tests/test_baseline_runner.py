@@ -3,7 +3,7 @@ import json
 
 import pytest
 
-from cases.baseline_runner import DEFAULT_CONFIGS, run_baseline
+from cases.baseline_runner import DEFAULT_CONFIGS, run_baseline, validate_provenance
 
 
 @pytest.fixture(scope="module")
@@ -66,6 +66,7 @@ def test_dry_run_writes_provenance_without_reproduction_claim(
     )
     output = run_baseline(case_id, output_root=tmp_path, dry_run=True)
     manifest = json.loads((output / "run_manifest.json").read_text())
+    assert validate_provenance(manifest) == []
 
     assert manifest["status"] == "dry_run_complete"
     assert manifest["case_id"] == case_id
@@ -76,3 +77,32 @@ def test_dry_run_writes_provenance_without_reproduction_claim(
     assert manifest["configuration"]["resolved_simulation_options"][
         "P_ambient"
     ] > 0
+
+
+def test_validate_provenance_accepts_explicitly_missing_files():
+    manifest = {
+        "repositories": {"srm_1d": {"commit": "a" * 40, "dirty": False, "status": ""}},
+        "registered_files": [
+            {"path": "present.txt", "exists": True, "observed_sha256": "b" * 64},
+            {"path": "missing.txt", "exists": False},
+        ],
+    }
+    assert validate_provenance(manifest) == []
+
+
+def test_validate_provenance_reports_inconsistent_metadata_in_order():
+    manifest = {
+        "repositories": {"srm_1d": {"commit": "abc", "dirty": False, "status": " M test.txt"}},
+        "registered_files": [
+            {"path": "invalid.txt", "exists": True, "observed_sha256": "bogus"},
+            {"path": "stale.txt", "exists": False, "observed_sha256": "a" * 64},
+        ],
+    }
+    expected = [
+        "repositories.srm_1d.commit: expected a full Git object ID",
+        "repositories.srm_1d: dirty flag must agree with status",
+        "registered_files[0]: expected an existence flag and consistent SHA-256",
+        "registered_files[1]: expected an existence flag and consistent SHA-256",
+    ]
+    assert validate_provenance(manifest) == expected
+    assert validate_provenance(manifest) == expected
