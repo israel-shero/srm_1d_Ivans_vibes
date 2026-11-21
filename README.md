@@ -62,6 +62,44 @@ result, perf, nozzle, geo, prop = run_from_ric(
 print(result["summary"]["P_peak"], perf["total_impulse"])
 ```
 
+## Propellant catalog
+
+The package includes the supplied openMotor `propellants.yaml` catalog
+(77 propellant names). The file is kept in its native YAML format and is
+installed with the package. The catalog does **not** modify solver defaults
+or existing motor definitions.
+
+List entries or inspect one entry:
+
+```bash
+python -m srm_1d.propellant_catalog
+python -m srm_1d.propellant_catalog --show "RCS - Super Thunder (H13ST Version)"
+```
+
+Python usage:
+
+```python
+from srm_1d.openmotor_adapter import load_ric
+from srm_1d.propellant_catalog import (
+    list_propellants, get_propellant,
+    missing_transport_fields, with_catalog_propellant,
+)
+
+names = list_propellants()
+selected = get_propellant(names[0])
+print(missing_transport_fields(selected))
+motor = with_catalog_propellant(load_ric("motors/example_bates.ric"), names[0])
+```
+
+The returned motor dictionary can be passed to the existing
+`ric_to_sim_args` adapter **only when all required transport
+properties are supplied**. Many library entries have zero sentinel
+values for viscosity, gas conductivity, or heat capacity. They are
+**not simulation-ready** until those physical properties are provided
+from appropriate sources; the importer deliberately does not estimate
+or backfill them. This is a reference-data import, not a validation
+of the catalog's values or a GUI library synchronization.
+
 ## Layout
 
 | Path | Role |
