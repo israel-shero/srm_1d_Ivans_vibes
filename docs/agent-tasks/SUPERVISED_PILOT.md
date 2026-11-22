@@ -7,7 +7,7 @@ Status: **operator-supervised only**. No unattended multi-agent scheduling, auto
 - The human operator dispatches `Request exclusive task claim` on the **trusted default branch** (openMotor: `staging`; SRM1D: `main`). Only an authorized person may dispatch this privileged workflow.
 - Assign agents unique labels, e.g. `codex-A`, `codex-B`, and branches `work/TASK-ID/codex-A` and `work/TASK-ID/codex-B`. Agent label is operator-supplied; it is not cryptographically authenticated identity.
 - Do **not** give agents a personal administrator token, repository Rulesets bypass, or the ability to modify `staging`/`main` directly. Agents operate on their own work branches and submit PRs.
-- GitHub ruleset `Pilot integration — pull requests only` protects the shared integration branch. An admin emergency bypass is reserved for the human, not an AI agent. No unattended merge.
+- GitHub ruleset `Pilot integration — pull requests only` protects the shared integration branch. A non-admin PR author cannot merge without **one independent approving review**. Administrator bypass is reserved for the human operator, never an AI agent. No unattended merge. If the owner authored the PR and GitHub disallows self-approval, the owner can explicitly authorize a documented manual admin-bypass merge only after reviewing CI and the changes.
 - Claim refs are immutable to non-bypassing actors: they are created once and remain until manually authorized reconciliation. A stale clock does not transfer ownership.
 
 ## Claim and assignment procedure
