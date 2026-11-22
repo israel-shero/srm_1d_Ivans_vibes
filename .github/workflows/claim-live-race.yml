@@ -1,0 +1,47 @@
+name: Live claim atomicity race test (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_task_id:
+        description: 'Fresh TEST-CLAIM-* identifier; a persistent ref will be created'
+        required: true
+        type: string
+      stagger_seconds:
+        description: 'Delay the second request in seconds (0 or 5 suggested)'
+        required: true
+        type: choice
+        options:
+          - '0'
+          - '5'
+
+permissions:
+  contents: write
+
+jobs:
+  live-claim-race:
+    name: Live race, one-winner invariant
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Test GitHub API with two competing callers
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          TEST_TASK_ID: ${{ inputs.test_task_id }}
+          BASE_SHA: ${{ github.sha }}
+          STAGGER: ${{ inputs.stagger_seconds }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/claim-coordinator/live_race.py \
+            --repo "$REPO" --task "$TEST_TASK_ID" \
+            --base-sha "$BASE_SHA" --stagger-seconds "$STAGGER"
+          {
+            echo "### Claim race test completed"
+            echo "Test ref: \`refs/heads/claims/$TEST_TASK_ID\`"
+            echo "The test ref persists. Review and authorize cleanup separately."
+          } >> "$GITHUB_STEP_SUMMARY"
