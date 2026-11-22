@@ -1,14 +1,14 @@
 # SRM 1D — agent task queue
 
 ## Mandatory before starting any task
-Read [SUPERVISED_PILOT.md](SUPERVISED_PILOT.md) and [CLAIM_PROTOCOL.md](CLAIM_PROTOCOL.md). **Have the operator dispatch and verify an atomic GitHub claim before any task-specific work.** If a lock already exists or create-only behavior cannot be guaranteed, do not start; choose another eligible task. Issue labels/comments alone are not sufficient for concurrency safety.
+Read [SUPERVISED_PILOT.md](SUPERVISED_PILOT.md) and [CLAIM_PROTOCOL.md](CLAIM_PROTOCOL.md). **Have the agent dispatch and verify its own atomic GitHub claim before any task-specific work; no per-task operator approval is required.** If a lock already exists or create-only behavior cannot be guaranteed, do not start; choose another eligible task. Issue labels/comments alone are not sufficient for concurrency safety.
 
 **Implementation repository:** https://github.com/israel-shero/srm_1d_Ivans_vibes
 **Separate GUI implementation repository:** https://github.com/israel-shero/openMotor_Ivan (do not write there from these tasks).
 
 ## Instructions for Codex/agents
 1. Fetch current branches, issues, PRs, `AGENTS.md` and relevant tests. Do not assume this index is current.
-2. Select one dependency-ready issue and check that its work has not already been implemented. Propose the task, scope and work branch; ask the human operator to dispatch `Request exclusive task claim` on `main`. Before coding, verify the exact claim ref and published owner record match your task and agent label.
+2. Select one dependency-ready issue and check that its work has not already been implemented. Choose the task, scope and work branch, then dispatch `Request exclusive task claim` yourself on `main` using an authorized non-admin identity with Actions: write. Before coding, verify the exact claim ref and matching ownership record. See `AGENTS.md` and `AGENT_SELF_ASSIGNMENT.md` on `main` once merged.
 3. Follow the issue's detailed specification and Codex handoff. Make bounded commits with regression tests, numerical/physical evidence, changelog and exact command/results.
 4. Prefer `main` for solver-native changes and `integration/openmotor-packaging` for adapter/plugin-specific changes, only after verifying branch state. Never change defaults or claim physical validation without evidence.
 5. Coordinate interface contracts with openMotor_Ivan through references and separate PRs. Never silently edit both repos as part of one issue.
@@ -42,7 +42,7 @@ Read [SUPERVISED_PILOT.md](SUPERVISED_PILOT.md) and [CLAIM_PROTOCOL.md](CLAIM_PR
 | [#16](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/16) | INF-05 performance baselines | Can begin now |
 | [#17](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/17) | QA-01 property/metamorphic tests | Coordinate #2/#3/#4 |
 
-**Recommended parallel starts:** #13 registry schema and dry-run validation, #14 contract inventory, #15 verifier report schema, #17 invariant test design. Do not dispatch implementation without a verified exclusive claim and ownership record.
+**Recommended parallel starts:** #13 registry schema and dry-run validation, #14 contract inventory, #15 verifier report schema, #17 invariant test design. Agents choose and dispatch their own eligible claims. Do not implement without a verified exclusive claim and ownership record.
 
 ## Uncertainty quantification and identification workstream
 | Issue | Task | Dependencies |
