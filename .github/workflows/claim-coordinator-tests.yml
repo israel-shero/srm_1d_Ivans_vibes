@@ -1,0 +1,27 @@
+name: Claim coordinator unit checks
+
+on:
+  pull_request:
+    paths:
+      - 'tools/claim-coordinator/**'
+      - '.github/workflows/claim-*.yml'
+  push:
+    paths:
+      - 'tools/claim-coordinator/**'
+      - '.github/workflows/claim-*.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  claim-coordinator-tests:
+    name: Claim coordinator unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Offline unit tests
+        run: python3 -m unittest discover -s tools/claim-coordinator -p 'test_*.py' -v
