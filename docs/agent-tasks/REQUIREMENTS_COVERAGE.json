@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "repository": "israel-shero/srm_1d_Ivans_vibes",
+  "source": "docs/agent-tasks/README.md",
+  "generated_from": "reviewed task index",
+  "status": "planning-only; not implementation verified",
+  "task_identifiers": [
+    "#2",
+    "#3",
+    "#4",
+    "#7",
+    "#8",
+    "#9",
+    "#10",
+    "#12",
+    "INF-01",
+    "#13",
+    "INF-02",
+    "#14",
+    "INF-03",
+    "#15",
+    "INF-04",
+    "#16",
+    "INF-05",
+    "#17",
+    "QA-01",
+    "#18",
+    "UQ-01",
+    "#19",
+    "UQ-02",
+    "#20",
+    "UQ-03",
+    "#21",
+    "UQ-04",
+    "#22",
+    "UQ-05",
+    "#23",
+    "UQ-06",
+    "#24",
+    "PHY-01",
+    "#25",
+    "PHY-02",
+    "#26",
+    "VAL-01",
+    "#27",
+    "DATA-01",
+    "#28",
+    "DATA-02",
+    "#29",
+    "ARCH-01",
+    "#30",
+    "AGENT-01",
+    "#31",
+    "RESEARCH-01",
+    "#32",
+    "QA-03"
+  ],
+  "requirements": [
+    {
+      "id": "REQ-CLAIM",
+      "description": "Verified exclusive task ownership before autonomous execution",
+      "evidence": "atomic create-only race test, fail-closed fallback, stale recovery",
+      "status": "unverified"
+    },
+    {
+      "id": "REQ-TRACE",
+      "description": "Each requirement maps to task, code, test and review evidence",
+      "evidence": "coverage matrix with links and explicit unsupported status",
+      "status": "unverified"
+    },
+    {
+      "id": "REQ-REGRESS",
+      "description": "No silent default or schema regression",
+      "evidence": "pinned baseline fixtures, golden tests, compatibility report",
+      "status": "unverified"
+    },
+    {
+      "id": "REQ-REPRO",
+      "description": "Reproduce runs and errors",
+      "evidence": "version, inputs, environment, seed where relevant, logs and failure codes",
+      "status": "unverified"
+    },
+    {
+      "id": "REQ-REVIEW",
+      "description": "Independent review before merge",
+      "evidence": "PR links, acceptance checks, reviewer verdict and unresolved risks",
+      "status": "unverified"
+    },
+    {
+      "id": "REQ-CROSS",
+      "description": "Cross-repository interface compatibility",
+      "evidence": "versioned contract fixtures and paired CI",
+      "status": "unverified"
+    }
+  ],
+  "repo_specific": [
+    "Numerical convergence and conservation",
+    "Fit/holdout evidence separation",
+    "Failed sample accounting",
+    "Analytical benchmark UQ tests"
+  ]
+}
