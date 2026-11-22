@@ -1,0 +1,115 @@
+# Manufacturer and historical propellant source register
+# Source audit: 2026-11-21
+# Asterisk (*) = an estimate or hypothesis, not a verified manufacturer value.
+# This file is informational. It is NOT a validated .ric input or a CEA output.
+schema_version: 1
+last_reviewed: "2026-11-21"
+notation:
+  manufacturer_reported: "Published by the named manufacturer; does not imply independent verification."
+  calculated_estimated: "Computed from specified assumptions; display an asterisk (*) in any downstream report."
+  unverified_historical: "Historical third-party claim; commercial equivalence has not been established. Display an asterisk (*)."
+  unreported: "Unknown; do not silently replace with a default or zero."
+sources:
+  - id: rcs_8225w_sheet
+    kind: manufacturer_data_sheet
+    url: "https://d3l66gvjdr7rqw.cloudfront.net/Templates/170652/myimages/rcs_8225w_propellant_data.pdf"
+    note: "RCS typical values. Sheet explicitly says not to use as a design/specification document."
+  - id: rcs_8125rc_sheet
+    kind: manufacturer_data_sheet
+    url: "https://d3l66gvjdr7rqw.cloudfront.net/Templates/170652/myimages/rcs_8125rc_propellant_data.pdf"
+    note: "RCS typical values, not a design/specification document."
+  - id: aerotech_sds_2023
+    kind: manufacturer_sds
+    date: "2023-04-26"
+    url: "https://d3l66gvjdr7rqw.cloudfront.net/Templates/170652/myimages/aerotech%20motor%20and%20reload%20sds%204-26-23_1702482126740.pdf"
+    note: "Qualitative ingredient families; precise identities/percentages can be proprietary."
+  - id: tqc_trf_repost_2006
+    kind: historical_forum_repost
+    date: "2006-12-13"
+    url: "https://www.tapatalk.com/groups/tqc/formulas-from-trf-t927.html"
+    note: "Claims attributed in a repost; authenticity, current relevance and AeroTech/RCS equivalence unverified."
+  - id: rutter_exhaust_aerosol_2007
+    kind: peer_reviewed_emission_measurement
+    date: "2007"
+    url: "https://aaqr.org/articles/aaqr-06-10-oa-0020.pdf"
+    note: "Measured exhaust particulate chemical signatures for historic Blue Thunder, White Lightning and Black Jack samples; inferred propellant chemistry is assumed, not assayed. Cannot establish specific current product recipes."
+  - id: swri_dot_test_report_2020
+    kind: third_party_government_report
+    date: "2020-12-15"
+    url: "https://www.phmsa.dot.gov/sites/phmsa.dot.gov/files/2020-12/SP%208451%20Shipping%20Pipe%20Test%20Report.pdf"
+    note: "Describes Blue Thunder chemistry as proprietary; does not disclose its formulation."
+entries:
+  - id: rcs_white_lightning_8225w
+    commercial_identity: "RCS White Lightning, part 8225W"
+    identity_status: manufacturer_reported
+    manufacturer_source: rcs_8225w_sheet
+    source_specificity: "This exact RCS part number; not necessarily any other White Lightning variant."
+    ancillary_chemistry_source: rutter_exhaust_aerosol_2007
+    reported:
+      propellant_density_lb_in3: 0.06576
+      chamber_pressure_psia: 1000.0
+      chamber_temperature_K: 2339.042
+      chamber_molecular_weight_g_mol: 27.125
+      chamber_gamma: 1.243
+    estimates:
+      flag: "*"
+      status: calculated_estimated
+      source_inputs: [rcs_8225w_sheet]
+      method: "srm_1d.propellant.create_gas_properties_estimated: ideal-gas Cp, Sutherland viscosity, modified Eucken conductivity"
+      gas_cp_J_kg_K: 1567.93935
+      gas_dynamic_viscosity_Pa_s: 0.000078859968
+      gas_thermal_conductivity_W_m_K: 0.153863233
+      gas_prandtl_number: 0.803620495
+      chemistry_mode: "NOT a CEA equilibrium/frozen calculation"
+      limitations: "Temperature-only generic transport fallback, not product-specific chemistry; high potential model error, especially conductivity. No validated confidence interval."
+    forum_formula_link:
+      status: unverified_historical
+      source: tqc_trf_repost_2006
+      forum_category: "White"
+      is_commercial_identity_confirmed: false
+      note: "Do not imply the forum White hypothesis is the 8225W recipe."
+  - id: rcs_blue_thunder
+    commercial_identity: "RCS Blue Thunder (product family)"
+    ancillary_chemistry_source: rutter_exhaust_aerosol_2007
+    identity_status: manufacturer_reported
+    manufacturer_source: aerotech_sds_2023
+    reported_transport: null
+    estimate_status: unreported
+    forum_formula_link:
+      source: tqc_trf_repost_2006
+      forum_category: "Blue"
+      status: unverified_historical
+      is_commercial_identity_confirmed: false
+  - id: rcs_redline
+    commercial_identity: "RCS Redline, part 8125RC (representative sheet)"
+    identity_status: manufacturer_reported
+    manufacturer_source: rcs_8125rc_sheet
+    source_specificity: "This exact RCS part number; not necessarily every Redline variant."
+    reported:
+      propellant_density_lb_in3: 0.0625
+      chamber_pressure_psia: 1000.0
+      chamber_temperature_K: 2238.589
+      chamber_molecular_weight_g_mol: 26.502
+      chamber_gamma: 1.225
+    estimates:
+      flag: "*"
+      status: calculated_estimated
+      source_inputs: [rcs_8125rc_sheet]
+      method: "srm_1d.propellant.create_gas_properties_estimated: ideal-gas Cp, Sutherland viscosity, modified Eucken conductivity"
+      gas_cp_J_kg_K: 1708.08341
+      gas_dynamic_viscosity_Pa_s: 0.000076827201
+      gas_thermal_conductivity_W_m_K: 0.161355976
+      gas_prandtl_number: 0.813278008
+      chemistry_mode: "NOT a CEA equilibrium/frozen calculation"
+      limitations: "Generic-temperature gas transport fallback; substantial possible model error. Not based on authenticated detailed composition."
+    forum_formula_link:
+      source: tqc_trf_repost_2006
+      forum_category: "Red"
+      status: unverified_historical
+      is_commercial_identity_confirmed: false
+downstream_rules:
+  - "Keep manufacturer's reported properties and model estimates in distinct fields."
+  - "Retain the asterisk when estimated/hypothetical inputs feed a derived value."
+  - "Do not treat a manufacturer SDS's product-family chemistry as an exact recipe."
+  - "Do not populate both frozen and effective transport slots from this single empirical fallback as though two independent CEA calculations had been made."
+  - "Do not export these estimates to operational motor inputs without an explicit, visible estimated-data acknowledgment."
