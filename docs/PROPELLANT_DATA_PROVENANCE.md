@@ -4,14 +4,14 @@ The machine-readable register is [data/propellant_source_register.yaml](data/pro
 
 ## Evidence and limitations
 
-1. **RCS 8225W White Lightning data sheet:** Lists typical product-level chamber temperature, gamma, molecular weight and propellant density, among other properties. The sheet warns that its values are not specifications. These are documented manufacturer claims, **not** independently measured values.
+1. **RCS 8225W White Lightning and RCS 8125RC Redline data sheets:** Lists typical product-level chamber temperature, gamma, molecular weight and propellant density, among other properties. The sheet warns that its values are not specifications. These are documented manufacturer claims, **not** independently measured values.
 2. **AeroTech/RCS SDS (2023):** Identifies broad chemical families and explicitly withholds some identities/concentrations as trade secrets. It does not authenticate a particular recipe or quantify combustion-gas transport.
 3. **TQC/TRF repost (2006):** Includes claimed Red/White/Blue formulations with a third-party attribution. It is **not proof** that they correspond to modern RCS/AeroTech Redline, White Lightning, or Blue Thunder products. Their inclusion in this register tracks the historical hypothesis, not the formula itself.
 4. **Southwest Research Institute / DOT report (2020):** Identifies Blue Thunder chemistry as proprietary, consistent with treating any external recipe identification as tentative.
 
 ## What the example estimate actually is
 
-For **RCS 8225W only**, the register includes an explicitly asterisked, gas-phase **Sutherland/Eucken fallback** using RCS-reported chamber temperature, molecular weight and gamma. It reproduces the form already present in `srm_1d.propellant.create_gas_properties_estimated`:
+For **RCS 8225W White Lightning and RCS 8125RC Redline**, the register includes explicitly asterisked, gas-phase **Sutherland/Eucken fallback** values using each RCS-reported chamber temperature, molecular weight and gamma. It reproduces the form already present in `srm_1d.propellant.create_gas_properties_estimated`:
 
 - Specific gas constant: `R_s = R_universal / M`
 - Ideal-gas approximation: `Cp* = gamma * R_s / (gamma - 1)`
