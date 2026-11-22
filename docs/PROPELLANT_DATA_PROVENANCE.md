@@ -8,6 +8,7 @@ The machine-readable register is [data/propellant_source_register.yaml](data/pro
 2. **AeroTech/RCS SDS (2023):** Identifies broad chemical families and explicitly withholds some identities/concentrations as trade secrets. It does not authenticate a particular recipe or quantify combustion-gas transport.
 3. **TQC/TRF repost (2006):** Includes claimed Red/White/Blue formulations with a third-party attribution. It is **not proof** that they correspond to modern RCS/AeroTech Redline, White Lightning, or Blue Thunder products. Their inclusion in this register tracks the historical hypothesis, not the formula itself.
 4. **Southwest Research Institute / DOT report (2020):** Identifies Blue Thunder chemistry as proprietary, consistent with treating any external recipe identification as tentative.
+5. **Rutter et al., *Aerosol and Air Quality Research* (2007):** Measured zinc- and chloride-rich fine-particle emissions from tested White Lightning, Blue Thunder and Black Jack motors. This adds independent *exhaust* chemistry evidence, but the authors' discussion of *unburned propellant* composition was explicitly an assumption; it is neither a current product-specification assay nor a unique reverse identification of a commercial formulation.
 
 ## What the example estimate actually is
 
