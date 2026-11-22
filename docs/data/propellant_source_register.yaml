@@ -28,6 +28,11 @@ sources:
     date: "2006-12-13"
     url: "https://www.tapatalk.com/groups/tqc/formulas-from-trf-t927.html"
     note: "Claims attributed in a repost; authenticity, current relevance and AeroTech/RCS equivalence unverified."
+  - id: rutter_exhaust_aerosol_2007
+    kind: peer_reviewed_emission_measurement
+    date: "2007"
+    url: "https://aaqr.org/articles/aaqr-06-10-oa-0020.pdf"
+    note: "Measured exhaust particulate chemical signatures for historic Blue Thunder, White Lightning and Black Jack samples; inferred propellant chemistry is assumed, not assayed. Cannot establish specific current product recipes."
   - id: swri_dot_test_report_2020
     kind: third_party_government_report
     date: "2020-12-15"
@@ -39,6 +44,7 @@ entries:
     identity_status: manufacturer_reported
     manufacturer_source: rcs_8225w_sheet
     source_specificity: "This exact RCS part number; not necessarily any other White Lightning variant."
+    ancillary_chemistry_source: rutter_exhaust_aerosol_2007
     reported:
       propellant_density_lb_in3: 0.06576
       chamber_pressure_psia: 1000.0
@@ -64,6 +70,7 @@ entries:
       note: "Do not imply the forum White hypothesis is the 8225W recipe."
   - id: rcs_blue_thunder
     commercial_identity: "RCS Blue Thunder (product family)"
+    ancillary_chemistry_source: rutter_exhaust_aerosol_2007
     identity_status: manufacturer_reported
     manufacturer_source: aerotech_sds_2023
     reported_transport: null
