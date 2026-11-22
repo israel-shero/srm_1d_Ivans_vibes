@@ -1,0 +1,53 @@
+name: Request exclusive task claim
+
+# Manual-only privileged workflow. The first successful create-only ref POST wins.
+# No auto-release, auto-merge, lease transfer, or claim ownership assertion.
+on:
+  workflow_dispatch:
+    inputs:
+      task_id:
+        description: 'Existing task identifier (e.g., INF-01); case sensitive'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  request-claim:
+    name: Create exclusive task ref
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out trusted workflow ref
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Run offline coordinator unit tests
+        run: python3 -m unittest discover -s tools/claim-coordinator -p 'test_*.py' -v
+
+      - name: Acquire GitHub ref (create-only)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          TASK_ID: ${{ inputs.task_id }}
+          BASE_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/claim-coordinator/claim.py acquire \
+            --repo "$REPO" --task "$TASK_ID" --base-sha "$BASE_SHA"
+          python3 tools/claim-coordinator/claim.py inspect \
+            --repo "$REPO" --task "$TASK_ID"
+          {
+            echo "### Exclusive claim created"
+            echo "Task ID: \`$TASK_ID\`"
+            echo "Claim ref: \`refs/heads/claims/$TASK_ID\`"
+            echo "Base SHA: \`$BASE_SHA\`"
+            echo "Request actor: \`${{ github.actor }}\`"
+            echo "Workflow run: \`${{ github.run_id }}\`"
+            echo ""
+            echo "**STOP before coding:** publish owner/branch notice and verify no competing PR."
+            echo "No automatic claim release or fencing is configured."
+          } >> "$GITHUB_STEP_SUMMARY"
