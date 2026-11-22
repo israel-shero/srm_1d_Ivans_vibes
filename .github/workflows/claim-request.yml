@@ -9,13 +9,28 @@ on:
         description: 'Existing task identifier (e.g., INF-01); case sensitive'
         required: true
         type: string
+      agent_id:
+        description: 'Human-assigned agent label, e.g. codex-A; not authenticated'
+        required: true
+        type: string
+      work_branch:
+        description: 'Agent implementation branch, distinct from claims/*'
+        required: true
+        type: string
+      scope:
+        description: 'Short single-line work scope (up to 400 characters)'
+        required: true
+        type: string
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   request-claim:
     name: Create exclusive task ref
+    # Privileged workflow must not execute code from user-selected feature branches.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -50,4 +65,31 @@ jobs:
             echo ""
             echo "**STOP before coding:** publish owner/branch notice and verify no competing PR."
             echo "No automatic claim release or fencing is configured."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish mandatory audit record to claim ledger
+        # A failure leaves the persistent claim held; operator reconciliation required.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          TASK_ID: ${{ inputs.task_id }}
+          AGENT_ID: ${{ inputs.agent_id }}
+          WORK_BRANCH: ${{ inputs.work_branch }}
+          SCOPE: ${{ inputs.scope }}
+          GITHUB_ACTOR_ID: ${{ github.actor }}
+          RUN_ID: ${{ github.run_id }}
+          BASE_SHA: ${{ github.sha }}
+          LEDGER_ISSUE: '12'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/claim-coordinator/publish_claim.py \
+            --repo "$REPO" --task "$TASK_ID" --agent "$AGENT_ID" \
+            --work-branch "$WORK_BRANCH" --scope "$SCOPE" \
+            --actor "$GITHUB_ACTOR_ID" --run-id "$RUN_ID" \
+            --base-sha "$BASE_SHA" --ledger "$LEDGER_ISSUE"
+          {
+            echo ""
+            echo "**Claim notice published to ledger #$LEDGER_ISSUE.**"
+            echo "**Supervised pilot:** verify agent/branch, then permit only work branch + PR."
           } >> "$GITHUB_STEP_SUMMARY"

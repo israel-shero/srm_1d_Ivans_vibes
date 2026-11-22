@@ -1,14 +1,14 @@
 # SRM 1D — agent task queue
 
 ## Mandatory before starting any task
-Read [CLAIM_PROTOCOL.md](CLAIM_PROTOCOL.md). **Claim the task atomically on GitHub before any task-specific work.** If a lock already exists or create-only behavior cannot be guaranteed, do not start; choose another eligible task. Issue labels/comments alone are not sufficient for concurrency safety.
+Read [SUPERVISED_PILOT.md](SUPERVISED_PILOT.md) and [CLAIM_PROTOCOL.md](CLAIM_PROTOCOL.md). **Have the operator dispatch and verify an atomic GitHub claim before any task-specific work.** If a lock already exists or create-only behavior cannot be guaranteed, do not start; choose another eligible task. Issue labels/comments alone are not sufficient for concurrency safety.
 
 **Implementation repository:** https://github.com/israel-shero/srm_1d_Ivans_vibes
 **Separate GUI implementation repository:** https://github.com/israel-shero/openMotor_Ivan (do not write there from these tasks).
 
 ## Instructions for Codex/agents
 1. Fetch current branches, issues, PRs, `AGENTS.md` and relevant tests. Do not assume this index is current.
-2. Select one dependency-ready issue; check that its work has not already been implemented, then acquire a verified create-only exclusive claim per CLAIM_PROTOCOL.md before announcing issue number, scope, proposed branch and PR base.
+2. Select one dependency-ready issue and check that its work has not already been implemented. Propose the task, scope and work branch; ask the human operator to dispatch `Request exclusive task claim` on `main`. Before coding, verify the exact claim ref and published owner record match your task and agent label.
 3. Follow the issue's detailed specification and Codex handoff. Make bounded commits with regression tests, numerical/physical evidence, changelog and exact command/results.
 4. Prefer `main` for solver-native changes and `integration/openmotor-packaging` for adapter/plugin-specific changes, only after verifying branch state. Never change defaults or claim physical validation without evidence.
 5. Coordinate interface contracts with openMotor_Ivan through references and separate PRs. Never silently edit both repos as part of one issue.
@@ -35,14 +35,14 @@ Read [CLAIM_PROTOCOL.md](CLAIM_PROTOCOL.md). **Claim the task atomically on GitH
 ## Reliability and coverage backlog (new)
 | Issue | Work | Dependency |
 |---|---|---|
-| [#12](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/12) | INF-01 atomic claims and safe lease recovery | Highest priority for concurrent agents |
-| [#13](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/13) | INF-02 registry and scheduler | #12 for live claims; schema can begin now |
+| [#12](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/12) | INF-01 atomic claims and safe lease recovery | Supervised atomic claiming deployed; automated recovery deferred |
+| [#13](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/13) | INF-02 registry and scheduler | Schema, validator and dry-run selection can begin after verified claim; unattended scheduling remains gated |
 | [#14](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/14) | INF-03 cross-repo contract CI | Coordinate #10 and openMotor INF-03 |
 | [#15](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/15) | INF-04 independent verification | Can begin now |
 | [#16](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/16) | INF-05 performance baselines | Can begin now |
 | [#17](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/17) | QA-01 property/metamorphic tests | Coordinate #2/#3/#4 |
 
-**Recommended parallel starts:** #12 design/adversarial tests, #14 contract inventory, #15 verifier report schema, #17 invariant test design. Do not dispatch implementation without a verified exclusive claim.
+**Recommended parallel starts:** #13 registry schema and dry-run validation, #14 contract inventory, #15 verifier report schema, #17 invariant test design. Do not dispatch implementation without a verified exclusive claim and ownership record.
 
 ## Uncertainty quantification and identification workstream
 | Issue | Task | Dependencies |
@@ -76,14 +76,14 @@ These are bounded follow-ons; #8/#9/#10 and existing UQ/INF tasks remain authori
 - [Validation evidence matrix](VALIDATION_MATRIX.md)
 - [Machine-readable initial requirements coverage](REQUIREMENTS_COVERAGE.json)
 
-**Important:** These are planning artifacts, not proof of code coverage or passing tests. No multi-agent task execution until verified atomic claims are available; task announcement alone does not reserve work.
+**Important:** These are planning artifacts, not proof of code coverage or passing tests. Atomic claims have passed live supervised tests; unattended execution, reassignment and automated merging remain disabled. Task announcement alone does not reserve work.
 
-## Claim coordinator implementation and remaining manual deployment
+## Deployed supervised claim coordinator
 - [Claim coordinator deployment, live tests and required manual steps](CLAIM_COORDINATOR_SETUP.md)
-- Prototype acquisition CLI: [`tools/claim-coordinator/claim.py`](../../tools/claim-coordinator/claim.py)
+- Atomic acquisition CLI: [`tools/claim-coordinator/claim.py`](../../tools/claim-coordinator/claim.py)
 - Offline tests: [`tools/claim-coordinator/test_claim.py`](../../tools/claim-coordinator/test_claim.py)
 
-**Status:** code committed but not executed in this session; no live atomic race test, identity/fencing registry, branch ruleset or PR ownership enforcement yet. Do not run unattended multi-agent tasks until manual checklist passes.
+**Status:** the create-only claim workflow, ownership ledger and branch protections are deployed and live-tested for supervised use. See [supervised pilot instructions](SUPERVISED_PILOT.md) and [live test evidence](CLAIM_LIVE_VERIFICATION.md). Identity fencing, automated recovery and unattended PR ownership enforcement are not implemented. Do not operate unattended agents.
 
 ## Targeted runtime performance workstream
 | Issue | Scope |
