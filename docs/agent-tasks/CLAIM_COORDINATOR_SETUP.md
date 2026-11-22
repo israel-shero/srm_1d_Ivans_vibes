@@ -75,6 +75,13 @@ Create a trusted required status check that validates task ID, claim ref, author
 - `.github/workflows/claim-request.yml`: trusted, manual-only `workflow_dispatch` with `contents: write`, an exclusive create-only ref POST, follow-up ref inspection, and a run-summary ownership record. Requires workflow on default branch before normal manual dispatch use.
 - `.github/workflows/claim-live-race.yml`: manual-only test with `TEST-CLAIM-*` ID; invokes `tools/claim-coordinator/live_race.py` and intentionally leaves a persistent test ref. Use distinct IDs for simultaneous and five-second stagger tests; do not auto-delete.
 
-**Status:** The offline unit tests passed on the branch. Neither live ref-creation workflow was executed; no live race, authorized owner registry, fencing or required PR check has been demonstrated. No repository ruleset was found during the 2026-11-21 check; a protected branch/ruleset must be configured before enforcement.
+**Status:** The offline unit tests passed on the branch. Neither live ref-creation workflow was executed; no live race, authorized owner registry, fencing or required PR check has been demonstrated. Verified active claim-ref ruleset #27825164: refs/heads/claims/*; deletion, non-fast-forward and all updates restricted; repository admin Always allow bypass; creations not restricted. No required claim PR ownership check is configured.
 
 **Next:** Review/merge the appropriate PR, then use GitHub → Actions → Live claim atomicity race test to enter a fresh `TEST-CLAIM-...` identifier; separately repeat with a fresh identifier at a five-second stagger. Retain workflow logs and document the test refs and approvals. GitHub Actions code and repo rules should be reviewed by an administrator before turning on automated agent claiming.
+
+## Verified administrative configuration — 2026-11-21
+- [Active claim ruleset](https://github.com/israel-shero/srm_1d_Ivans_vibes/rules/27825164): applies to `refs/heads/claims/*`; rules `deletion`, `non_fast_forward`, `update`; RepositoryRole admin bypass; creation not restricted. This was confirmed via GitHub read API after browser changes.
+- [Focused draft deployment PR](https://github.com/israel-shero/srm_1d_Ivans_vibes/pull/38): review pending; not merged.
+- Tested on PR branch: claim coordinator unit tests pass. **Live create-ref concurrency is still NOT TESTED.**
+- Existing claim refs are deliberately immutable to non-admin users; recovery requires authorized admin bypass.
+- Do not mistake branch protection for agent ownership verification. Required PR attestation, identity/fencing, and safe stale-claim recovery are pending.
