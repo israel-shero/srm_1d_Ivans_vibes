@@ -14,6 +14,10 @@ sources:
     kind: manufacturer_data_sheet
     url: "https://d3l66gvjdr7rqw.cloudfront.net/Templates/170652/myimages/rcs_8225w_propellant_data.pdf"
     note: "RCS typical values. Sheet explicitly says not to use as a design/specification document."
+  - id: rcs_8125rc_sheet
+    kind: manufacturer_data_sheet
+    url: "https://d3l66gvjdr7rqw.cloudfront.net/Templates/170652/myimages/rcs_8125rc_propellant_data.pdf"
+    note: "RCS typical values, not a design/specification document."
   - id: aerotech_sds_2023
     kind: manufacturer_sds
     date: "2023-04-26"
@@ -70,11 +74,27 @@ entries:
       status: unverified_historical
       is_commercial_identity_confirmed: false
   - id: rcs_redline
-    commercial_identity: "RCS Redline (product family)"
+    commercial_identity: "RCS Redline, part 8125RC (representative sheet)"
     identity_status: manufacturer_reported
-    manufacturer_source: aerotech_sds_2023
-    reported_transport: null
-    estimate_status: unreported
+    manufacturer_source: rcs_8125rc_sheet
+    source_specificity: "This exact RCS part number; not necessarily every Redline variant."
+    reported:
+      propellant_density_lb_in3: 0.0625
+      chamber_pressure_psia: 1000.0
+      chamber_temperature_K: 2238.589
+      chamber_molecular_weight_g_mol: 26.502
+      chamber_gamma: 1.225
+    estimates:
+      flag: "*"
+      status: calculated_estimated
+      source_inputs: [rcs_8125rc_sheet]
+      method: "srm_1d.propellant.create_gas_properties_estimated: ideal-gas Cp, Sutherland viscosity, modified Eucken conductivity"
+      gas_cp_J_kg_K: 1708.08341
+      gas_dynamic_viscosity_Pa_s: 0.000076827201
+      gas_thermal_conductivity_W_m_K: 0.161355976
+      gas_prandtl_number: 0.813278008
+      chemistry_mode: "NOT a CEA equilibrium/frozen calculation"
+      limitations: "Generic-temperature gas transport fallback; substantial possible model error. Not based on authenticated detailed composition."
     forum_formula_link:
       source: tqc_trf_repost_2006
       forum_category: "Red"
