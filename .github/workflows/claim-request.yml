@@ -1,6 +1,7 @@
 name: Request exclusive task claim
 
-# Manual-only privileged workflow. The first successful create-only ref POST wins.
+# Agent-dispatchable privileged workflow: authorized non-admin agents invoke workflow_dispatch.
+# The trusted workflow's GITHUB_TOKEN creates the exclusive ref; first create-only POST wins.
 # No auto-release, auto-merge, lease transfer, or claim ownership assertion.
 on:
   workflow_dispatch:
@@ -10,11 +11,11 @@ on:
         required: true
         type: string
       agent_id:
-        description: 'Human-assigned agent label, e.g. codex-A; not authenticated'
+        description: 'Agent-selected label, e.g. codex-A; not an authenticated identity'
         required: true
         type: string
       work_branch:
-        description: 'Agent implementation branch, distinct from claims/*'
+        description: 'Agent work branch (work/TASK-ID/AGENT-ID), not claims/*'
         required: true
         type: string
       scope:
