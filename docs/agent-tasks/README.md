@@ -84,3 +84,13 @@ These are bounded follow-ons; #8/#9/#10 and existing UQ/INF tasks remain authori
 - Offline tests: [`tools/claim-coordinator/test_claim.py`](../../tools/claim-coordinator/test_claim.py)
 
 **Status:** code committed but not executed in this session; no live atomic race test, identity/fencing registry, branch ruleset or PR ownership enforcement yet. Do not run unattended multi-agent tasks until manual checklist passes.
+
+## Targeted runtime performance workstream
+| Issue | Scope |
+|---|---|
+| [#34](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/34) | PERF-01 full-burn profiler and memory baseline |
+| [#35](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/35) | PERF-02 measured hot-path optimization with equivalence gates |
+| [#36](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/36) | PERF-03 optional compiled kernel feasibility |
+| [#37](https://github.com/israel-shero/srm_1d_Ivans_vibes/issues/37) | PERF-04 batch parallel throughput and resource limits |
+
+Existing #16 remains the umbrella baseline/regression issue. First measure; optimize only verified hotspots. No numerical fidelity regression for speed.
