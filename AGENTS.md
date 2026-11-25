@@ -8,6 +8,12 @@ Read [agent self-assignment](docs/agent-tasks/AGENT_SELF_ASSIGNMENT.md), [superv
 
 **You are responsible for claiming your task.** Using your own authorized **non-admin** GitHub credential with Actions: write, dispatch `claim-request.yml` yourself on `main` with task ID, agent ID, work branch and scope. Do not ask the human operator to press the Run workflow button. A dispatch is not a claim: verify completed success, the exact `claims/TASK-ID` ref and the matching published owner record before touching task code. If missing permissions, stop and report the one-time access needed.
 
-For an eligible unclaimed task, implement only on `work/TASK-ID/AGENT-ID` (or the exact implementation branch recorded in your successful claim); test it and submit a scoped PR to the correct base. Preserve numerical correctness and compatibility. No task hopping, claim release or reassignment without a fresh authorized process.
+For an eligible unclaimed task, implement only on `work/TASK-ID/AGENT-ID` (or the exact implementation branch recorded in your successful claim); test it and submit a scoped PR to `dev`. Preserve numerical correctness and compatibility. No task hopping, claim release or reassignment without a fresh authorized process.
 
-**Do not push to the protected integration branch, approve or merge your own PR, use administrator bypass, release/delete claims, or change GitHub rulesets.** Human approval remains mandatory for merges. After opening the PR, report evidence and stop.
+**Do not bypass branch protection, approve your own PR to satisfy review, use administrator bypass, release/delete claims, or change GitHub rulesets.** After opening the PR, report evidence. An authorized integrator may merge into `dev` under the permanent branch policy below; `main` promotions require owner approval.
+
+## Permanent branch policy
+
+- `dev` is the primary development and integration branch. Start task branches from `dev` and target ordinary development pull requests to `dev`. Tested, scoped changes may be merged into `dev` without a separate owner approval for each merge, subject to existing GitHub permissions, required checks, review rules and task-claim controls. Never bypass protections or approve your own PR to satisfy required review.
+- `main` is the stable milestone branch. Promote coherent, tested integration milestones from `dev` to `main` by a deliberate pull request; require explicit owner approval. Do not make routine development commits to `main`.
+- Preserve both branches and their history. Do not force-push, delete either branch, or alter permissions or rulesets without explicit authorization. Existing trusted workflow dispatch refs are separate from development PR targets; do not change privileged workflow execution refs without a security review.
